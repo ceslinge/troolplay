@@ -2,6 +2,7 @@
 
 ## 1. Cadrage
 - [x] Idée et cible
+- [x] Définir le parcours central
 - [ ] Valider la V1
 - [ ] Interroger des rôlistes
 - [ ] Choisir le nom
@@ -9,7 +10,7 @@
 ## 2. Conception
 - [x] Premier schéma de base
 - [ ] Valider les permissions
-- [ ] Maquettes : accueil, annuaire, fiche, écriture
+- [ ] Maquettes : « Qui traîne ici ? », annuaire, fiche, écriture
 - [ ] Contrat d'API
 
 ## 3. Fondations
@@ -28,7 +29,9 @@
 - [ ] Déploiement au merge sur main
 
 ## 6. Développement
-- [ ] Les stories de la V1, une issue et une PR chacune
+- [ ] Alpha : stories 1 à 7, une issue et une PR chacune
+- [ ] Test avec 3 à 5 rôlistes
+- [ ] V1 publique : stories 8 et 9
 
 ## 7. Sécurité
 - [ ] Tests de permissions (IDOR, fuite de user_id)
@@ -44,9 +47,19 @@
 ## 9. Lancement
 - [ ] Emails : SPF, DKIM, DMARC
 - [ ] Mobile, accessibilité, aperçus de liens
-- [ ] Bêta avec quelques rôlistes
+- [ ] 10 à 15 fiches avant l'annonce
+- [ ] Lancement sur un serveur de jeu d'abord, avec un meneur RP
 
 ## 10. Exploitation
 - [ ] Logs et alertes
 - [ ] Sauvegardes et restauration testée
 - [ ] Mises à jour
+
+## Idées
+À noter ici sans alourdir la V1.
+- Événements, notifications, chat
+- Gazette du serveur
+- Rappel par mail ou retrait automatique des personnages inactifs
+- Grille jour × créneau, si les cases ne suffisent pas
+- Avatars générés à partir du personnage en jeu
+- Pages de tavernes

@@ -1,6 +1,8 @@
 # TroolPlay (nom de code)
 
-Un lieu où les rôlistes de Dofus présentent leurs personnages, racontent leurs histoires et se retrouvent pour jouer.
+Un lieu où les rôlistes de Dofus présentent leurs personnages, racontent leurs histoires et découvrent où se croiser en jeu.
+
+**Le site dit qui, où et plutôt quand. La rencontre se fait en jeu.**
 
 > Projet de fan non officiel et non commercial, sans affiliation avec Ankama.
 
