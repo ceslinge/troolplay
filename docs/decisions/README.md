@@ -15,3 +15,4 @@
 | 11 | Jours et créneaux de jeu approximatifs | savoir quand passer, sans agenda | acceptée |
 | 12 | Retrait manuel par personnage | pause du joueur ou du personnage, on peut jouer sans visiter le site | acceptée |
 | 13 | Favoris et implication après la V1 | utiles surtout quand il y a du monde | proposée |
+| 14 | Monolithe découpé par domaine, pas de microservices | données très liées, une seule personne au développement, déploiement plus simple | acceptée |
