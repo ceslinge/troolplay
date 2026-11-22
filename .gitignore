@@ -1,0 +1,29 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Données
+*.dump
+/backups/
+
+# Éditeurs, OS
+.vscode/
+.idea/
+.DS_Store
