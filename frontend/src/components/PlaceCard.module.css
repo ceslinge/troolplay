@@ -1,0 +1,83 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem 1.25rem 1.25rem;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--filet);
+}
+
+.title {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.name {
+  margin: 0;
+  font-size: 1.1875rem;
+  overflow-wrap: anywhere;
+}
+
+.where {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  color: var(--encre-douce);
+}
+
+.count {
+  flex: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--cire);
+}
+
+.regulars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.regular {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+
+.who {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+
+.link {
+  font-weight: 600;
+  color: var(--bois);
+  overflow-wrap: anywhere;
+}
+
+.facts {
+  font-size: 0.8125rem;
+  color: var(--encre-douce);
+}
+
+.habits {
+  font-family: var(--titre);
+  font-style: italic;
+  font-size: 0.875rem;
+}

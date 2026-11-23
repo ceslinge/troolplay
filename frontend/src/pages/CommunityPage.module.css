@@ -151,3 +151,15 @@
   opacity: 0.5;
   cursor: default;
 }
+
+.tab {
+  text-decoration: none;
+}
+
+.places {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1.5rem 1.25rem;
+  align-items: start;
+}
+

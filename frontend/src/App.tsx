@@ -19,7 +19,8 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/communaute" element={<CommunityIndex />} />
-          <Route path="/communaute/:serverId" element={<CommunityPage />} />
+          <Route path="/communaute/:serverId" element={<CommunityPage tab="personnages" />} />
+          <Route path="/communaute/:serverId/lieux" element={<CommunityPage tab="lieux" />} />
           <Route path="/personnages/nouveau" element={<CreateCharacterPage />} />
           <Route path="/personnages/:id" element={<CharacterPage />} />
           <Route path="/personnages/:id/modifier" element={<EditCharacterPage />} />
