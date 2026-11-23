@@ -10,14 +10,16 @@
 ## 2. Conception
 - [x] Premier schéma de base
 - [ ] Valider les permissions
-- [ ] Maquettes : « Qui traîne ici ? », annuaire, fiche, écriture
+- [x] Premières maquettes : accueil, page Communauté, fiche
+- [ ] Maquette d'écriture d'une histoire
 - [ ] Contrat d'API
 
 ## 3. Fondations
 - [ ] Installer Docker
-- [ ] Squelettes backend et frontend, `.env.example`
+- [x] Squelette backend
+- [ ] Squelette frontend, `.env.example`
 - [ ] Compose : le projet se lance en une commande
-- [ ] Linters et tests
+- [x] Linters et tests du backend
 
 ## 4. Premier déploiement
 - [ ] VPS : SSH par clé, pare-feu, base jamais exposée
@@ -25,10 +27,11 @@
 - [ ] Hello World en ligne
 
 ## 5. CI/CD
-- [ ] Tests sur chaque PR
+- [x] Tests sur chaque PR
 - [ ] Déploiement au merge sur main
 
 ## 6. Développement
+- [ ] Mentions légales, confidentialité et règles d'usage en ligne avant les premiers comptes
 - [ ] Alpha : stories 1 à 7, une issue et une PR chacune
 - [ ] Test avec 3 à 5 rôlistes
 - [ ] V1 publique : stories 8 et 9
@@ -40,7 +43,6 @@
 
 ## 8. Légal
 - [ ] Écrire à Ankama
-- [ ] Mentions légales, confidentialité, règles d'usage
 - [ ] Âge minimum, signalement
 - [ ] Export et suppression des données, purge des preuves
 
@@ -63,3 +65,7 @@
 - Grille jour × créneau, si les cases ne suffisent pas
 - Avatars générés à partir du personnage en jeu
 - Pages de tavernes
+- Tofu voyageur : des lettres d'un personnage à un autre, sans chat
+- Rumeurs glissées par d'autres personnages, publiées si le propriétaire accepte
+- « Ceux qui l'ont croisé » sur la fiche, tiré des histoires où le personnage apparaît
+- Coups de cœur classés par les favoris, sans compteur public

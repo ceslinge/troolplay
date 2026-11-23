@@ -16,3 +16,7 @@
 | 12 | Retrait manuel par personnage | pause du joueur ou du personnage, on peut jouer sans visiter le site | acceptée |
 | 13 | Favoris et implication après la V1 | utiles surtout quand il y a du monde | proposée |
 | 14 | Monolithe découpé par domaine, pas de microservices | données très liées, une seule personne au développement, déploiement plus simple | acceptée |
+| 15 | Une page Communauté par serveur, à onglets | « Qui traîne ici ? » seul prenait trop de place, les histoires doivent rester à un clic | acceptée |
+| 16 | On demande comment accorder, pas le sexe | elle, il ou neutre suffit pour les textes, et laisse la place aux personnages qui jouent avec ça | acceptée |
+| 17 | Coups de cœur choisis par l'équipe en V1 | pas de favoris avant la V1, impossible à truquer, suffisant pour une centaine de joueurs | proposée |
+| 18 | Pages légales avant l'alpha | il en faut dès les premiers vrais comptes | proposée |
