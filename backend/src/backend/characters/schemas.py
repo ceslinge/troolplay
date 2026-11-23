@@ -152,6 +152,9 @@ class CharacterCreate(CharacterFields):
 
 class CharacterUpdate(CharacterFields):
     name: Name | None = None
+    # Un personnage peut déménager (transfert, fusion, serveur temporaire fermé),
+    # vers un serveur ouvert du même jeu (décision 29).
+    server_id: int | None = None
     inactive: bool | None = None
     inactive_note: text(200) = None
 

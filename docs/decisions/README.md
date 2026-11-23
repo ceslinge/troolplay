@@ -30,3 +30,4 @@
 | 26 | Pas de contenu sexuel explicite | il imposerait une vraie vérification d'âge, hors de portée d'un projet de fan, et ce n'est pas le propos du site | acceptée |
 | 27 | On récompense la présence dans le monde, jamais la performance | pas de points, classements, séries ni compteurs publics : ils poussent à écrire pour grimper, punissent les pauses et créent une hiérarchie entre rôlistes | acceptée |
 | 28 | Personne n'occupe tout le panneau | dans les sélections, un passage par joueur à la fois ; dans les listes, on regroupe par personnage. La limite par joueur reste invisible, pour ne jamais révéler qui joue quels personnages (décision 6) | acceptée |
+| 29 | Un personnage peut changer de serveur, dans le même jeu | en jeu, on déménage (transfert payant, fusion, serveur temporaire qui ferme). La fiche suit avec son histoire : c'est le même personnage | acceptée |

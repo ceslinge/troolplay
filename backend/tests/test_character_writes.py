@@ -143,7 +143,7 @@ def test_null_empties_an_optional_field(me: TestClient, mine: int) -> None:
 
 
 @pytest.mark.parametrize(
-    "changes", [{"name": None}, {"server_id": 2}, {"class": "Crâ"}, {"level": -3}]
+    "changes", [{"name": None}, {"server_id": None}, {"class": "Crâ"}, {"level": -3}]
 )
 def test_invalid_changes_are_refused(me: TestClient, mine: int, changes: dict) -> None:
     assert me.patch(f"/characters/{mine}", json=changes).status_code == 422
@@ -248,3 +248,73 @@ def test_visitors_never_see_ownership_details(
 
     assert "is_mine" not in body
     assert "hidden" not in body
+
+
+# Déménager
+
+
+def test_a_character_moves_to_another_open_server_of_the_same_game(
+    session: Session, me: TestClient, mine: int
+) -> None:
+    me.patch(f"/characters/{mine}", json={"class": "cra", "hook": "Je garde tout."})
+    elsewhere = GameServer(game="dofus", name="Autre serveur ouvert de test")
+    session.add(elsewhere)
+    session.flush()
+
+    body = me.patch(f"/characters/{mine}", json={"server_id": elsewhere.id}).json()
+
+    assert body["server"]["id"] == elsewhere.id
+    assert body["class"] == "cra"
+    assert body["hook"] == "Je garde tout."
+
+
+def test_a_character_cannot_move_to_another_game(
+    me: TestClient, mine: int, retro: GameServer
+) -> None:
+    response = me.patch(f"/characters/{mine}", json={"server_id": retro.id})
+
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["loc"] == ["body", "server_id"]
+
+
+def test_a_character_cannot_move_to_a_closed_server(
+    session: Session, me: TestClient, mine: int
+) -> None:
+    closed = GameServer(game="dofus", name="Serveur fermé de test", is_active=False)
+    session.add(closed)
+    session.flush()
+
+    assert (
+        me.patch(f"/characters/{mine}", json={"server_id": closed.id}).status_code
+        == 422
+    )
+
+
+def test_only_the_owner_moves_a_character(
+    session: Session, stranger: TestClient, mine: int
+) -> None:
+    elsewhere = GameServer(game="dofus", name="Autre serveur ouvert de test")
+    session.add(elsewhere)
+    session.flush()
+
+    assert (
+        stranger.patch(
+            f"/characters/{mine}", json={"server_id": elsewhere.id}
+        ).status_code
+        == 403
+    )
+
+
+def test_a_closed_current_server_does_not_block_the_sheet(
+    session: Session, me: TestClient, mine: int, server: GameServer
+) -> None:
+    server.is_active = False
+    session.flush()
+
+    response = me.patch(
+        f"/characters/{mine}",
+        json={"server_id": server.id, "hook": "Toujours là.", "class": "cra"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["hook"] == "Toujours là."
