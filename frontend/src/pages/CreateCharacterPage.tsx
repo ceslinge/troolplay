@@ -22,13 +22,16 @@ import {
 } from './characterForm'
 import styles from './CreateCharacterPage.module.css'
 
-/** Les étapes du mode guidé, et les champs que chacune remplit. */
-const STEPS: (keyof Draft)[][] = [
-  ['name', 'server_id'],
-  ['gender'],
-  ...STORY_FIELDS.map((field) => [field]),
-  ['class', 'level', 'ingame_name', 'play_days', 'play_periods'],
-  ['ooc_note'],
+/**
+ * Les étapes du mode guidé, et les champs que chacune remplit. L'essentiel d'abord (qui, où,
+ * quelle classe), l'histoire ensuite. Les questions d'histoire portent leur titre dans leur champ.
+ */
+const STEPS: { title?: string; fields: (keyof Draft)[] }[] = [
+  { title: "Comment s'appelle ce personnage, et sur quel serveur ?", fields: ['name', 'server_id'] },
+  { title: 'Comment le site doit-il parler de ce personnage ?', fields: ['gender'] },
+  { title: 'Et en jeu ?', fields: ['class', 'level', 'ingame_name', 'play_days', 'play_periods'] },
+  ...STORY_FIELDS.map((field) => ({ fields: [field] })),
+  { fields: ['ooc_note'] },
 ]
 
 function CreateCharacterPage() {
@@ -57,7 +60,7 @@ function CreateCharacterPage() {
       toast.show(onField ? 'Pas encore épinglé : un champ est à corriger.' : `Pas encore épinglé : ${error.message}`, 'error')
       // En mode guidé, on retourne à la première question qui pose problème.
       if (onField) {
-        const wrong = STEPS.findIndex((fields) => fields.some((f) => f in error.fields || (f === 'class' && 'class' in error.fields)))
+        const wrong = STEPS.findIndex(({ fields }) => fields.some((f) => f in error.fields || (f === 'class' && 'class' in error.fields)))
         if (wrong >= 0) setStep(wrong)
         focusFirstError()
       }
@@ -122,9 +125,8 @@ function CreateCharacterPage() {
           <span className={styles.progress}>
             Question {step + 1} sur {STEPS.length}
           </span>
-          {step === 0 && <h2 className={styles.question}>Comment s'appelle ce personnage, et où vit-il ?</h2>}
-          {step === 1 && <h2 className={styles.question}>Comment le site doit-il parler de ce personnage ?</h2>}
-          <div className={styles.stack}>{STEPS[step].map((key) => <div key={key}>{parts[key]}</div>)}</div>
+          {STEPS[step].title && <h2 className={styles.question}>{STEPS[step].title}</h2>}
+          <div className={styles.stack}>{STEPS[step].fields.map((key) => <div key={key}>{parts[key]}</div>)}</div>
           <div className={styles.nav}>
             {step > 0 && (
               <Button variant="secondary" onClick={() => setStep(step - 1)}>
