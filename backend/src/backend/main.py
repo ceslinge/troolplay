@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from backend.accounts.routes import router as accounts_router
+from backend.characters.routes import me_router as my_characters_router
 from backend.characters.routes import router as characters_router
 from backend.config import settings
 from backend.servers.routes import router as servers_router
@@ -30,6 +31,7 @@ async def check_origin(request: Request, call_next):
 
 app.include_router(accounts_router)
 app.include_router(characters_router)
+app.include_router(my_characters_router)
 app.include_router(servers_router)
 
 

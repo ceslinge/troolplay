@@ -165,9 +165,11 @@ Corps : `name` et `server_id`, plus n'importe quel champ facultatif. `hangouts` 
 
 Réponse 201 : la fiche complète, avec l'en-tête `Location: /api/characters/{id}`.
 
-Erreurs : 401, 422 (champ invalide ou serveur inexistant ou inactif).
+Erreurs : 401, 422 (champ invalide, serveur inexistant ou inactif, classe absente du jeu de ce serveur). Les erreurs portent sur le champ concerné, dans le format de FastAPI.
 
-`is_npc` ne peut être mis à `true` que par un admin, un joueur qui l'envoie reçoit un 403. Un PNJ n'a pas de propriétaire (décision 5).
+`is_npc` ne peut être mis à `true` que par un admin, un joueur qui l'envoie reçoit un 403. Un PNJ n'a ni propriétaire ni serveur (décision 5) : `server_id` est alors refusé.
+
+Un champ inconnu, comme `user_id`, est refusé avec un 422 plutôt qu'ignoré.
 
 ### Modifier un personnage
 
@@ -175,7 +177,7 @@ Erreurs : 401, 422 (champ invalide ou serveur inexistant ou inactif).
 
 Seul le propriétaire peut modifier sa fiche. Pour un PNJ, ce sont les admins.
 
-Corps : uniquement les champs à changer. Envoyer `null` vide un champ facultatif. `name` ne peut pas être vidé.
+Corps : uniquement les champs à changer. Envoyer `null` vide un champ facultatif : `gender` revient alors à `neutral`, `play_days` et `play_periods` à une liste vide. `name` ne peut pas être vidé.
 
 La mise en retrait passe aussi par ici (story 7) :
 

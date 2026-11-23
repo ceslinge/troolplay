@@ -14,6 +14,7 @@ export class ApiError extends Error {
 type ValidationIssue = {
   loc: (string | number)[]
   type: string
+  msg: string
   ctx?: { min_length?: number; max_length?: number }
 }
 
@@ -29,7 +30,8 @@ function explain(issue: ValidationIssue): string {
     case 'literal_error':
       return 'Il faut cocher cette case'
     case 'value_error':
-      return 'Adresse email invalide'
+      // Nos propres messages sont déjà en français. Seul celui des adresses vient de Pydantic, en anglais.
+      return issue.loc.at(-1) === 'email' ? 'Adresse email invalide' : issue.msg.replace(/^Value error, /, '')
     default:
       return 'Valeur invalide'
   }
@@ -61,7 +63,8 @@ export async function apiFetch<T = void>(
       const field = String(issue.loc.at(-1))
       fields[field] ??= explain(issue)
     }
-    throw new ApiError(422, 'Certains champs sont à corriger.', fields)
+    // Une règle qui porte sur plusieurs champs à la fois arrive sans champ précis (« body »).
+    throw new ApiError(422, fields.body ?? 'Certains champs sont à corriger.', fields)
   }
   if (response.status >= 500 || typeof detail !== 'string') {
     throw new ApiError(response.status, "Le panneau ne répond pas comme prévu. Réessaie dans un moment.")

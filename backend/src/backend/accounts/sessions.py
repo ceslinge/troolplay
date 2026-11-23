@@ -93,3 +93,19 @@ def current_user(
 
 
 CurrentUser = Annotated[User, Depends(current_user)]
+
+
+def optional_user(
+    session: SessionDep,
+    token: Annotated[str | None, Cookie(alias=COOKIE_NAME)] = None,
+) -> User | None:
+    """La personne connectée, ou None pour un visiteur. Ne refuse jamais."""
+    if not token:
+        return None
+    try:
+        return current_user(session, token)
+    except HTTPException:
+        return None
+
+
+OptionalUser = Annotated[User | None, Depends(optional_user)]
