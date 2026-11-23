@@ -20,4 +20,5 @@ Un lieu où les rôlistes de Dofus présentent leurs personnages, racontent leur
 - [Base de données](docs/database.md)
 - [Permissions](docs/permissions.md)
 - [Contrat d'API](docs/api.md)
+- Pages légales, brouillons : [mentions](docs/legal/mentions-legales.md), [confidentialité](docs/legal/confidentialite.md), [règles d'usage](docs/legal/regles.md)
 - [Décisions](docs/decisions/README.md)
