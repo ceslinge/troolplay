@@ -26,24 +26,6 @@
   color: var(--encre-douce);
 }
 
-.serverPicker select {
-  border: 0;
-  background: transparent;
-  color: var(--bois);
-  font-family: var(--titre);
-  font-size: 2rem;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.visuallyHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-}
-
 .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -91,7 +73,6 @@
   color: var(--encre-douce);
 }
 
-.field select,
 .field input {
   min-height: 2.75rem;
   min-width: 11rem;

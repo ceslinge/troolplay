@@ -6,6 +6,7 @@ import { fetchPlaces, fetchServers } from '../api/servers'
 import CharacterCard from '../components/CharacterCard'
 import Chips from '../components/Chips'
 import Medallion from '../components/Medallion'
+import Menu from '../components/Menu'
 import PlaceCard from '../components/PlaceCard'
 import Sheet from '../components/Sheet'
 import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
@@ -116,19 +117,14 @@ function CommunityPage({ tab }: { tab: Tab }) {
       <div className={styles.top}>
         <Sheet seed={`${server.id}-titre`} contentClassName={styles.title}>
           <span className={styles.kicker}>Communauté du serveur</span>
-          <label className={styles.serverPicker}>
-            <span className={styles.visuallyHidden}>Changer de serveur</span>
-            <select
-              value={server.id}
-              onChange={(event) => navigate(tabLink(tab, event.target.value))}
-            >
-              {servers.data.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <Menu
+            label="Changer de serveur"
+            hideLabel
+            variant="title"
+            value={server.id}
+            options={servers.data.map((s) => ({ value: s.id, label: s.name }))}
+            onChange={(id) => navigate(tabLink(tab, id))}
+          />
         </Sheet>
 
         <nav className={styles.tabs} aria-label="Sections de la communauté">

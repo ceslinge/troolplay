@@ -6,6 +6,7 @@ import { fetchHome, fetchOverheard, type Overheard, type RightNow } from '../api
 import { fetchServers } from '../api/servers'
 import CharacterCard from '../components/CharacterCard'
 import Medallion from '../components/Medallion'
+import Menu from '../components/Menu'
 import Sheet from '../components/Sheet'
 import styles from './HomePage.module.css'
 
@@ -48,16 +49,14 @@ function RightNowSheet({ data, onServer }: { data: RightNow; onServer: (id: numb
         <Medallion icon="pin" tone="dark" />
         <h2 className={styles.cardTitle}>À cette heure-ci</h2>
         {servers.data && servers.data.length > 1 && (
-          <label className={styles.server}>
-            <span className={styles.hidden}>Serveur</span>
-            <select value={data.server.id} onChange={(event) => onServer(Number(event.target.value))}>
-              {servers.data.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <Menu
+            label="Serveur"
+            hideLabel
+            variant="compact"
+            value={data.server.id}
+            options={servers.data.map((s) => ({ value: s.id, label: s.name }))}
+            onChange={onServer}
+          />
         )}
       </div>
       <p className={styles.big}>

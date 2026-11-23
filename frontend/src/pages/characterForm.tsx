@@ -3,6 +3,7 @@ import type { Character, CharacterChanges, CharacterClass, Gender, NewCharacter,
 import type { Server } from '../api/servers'
 import Chips, { type ChipOption } from '../components/Chips'
 import Field from '../components/Field'
+import Menu from '../components/Menu'
 import MultiChips from '../components/MultiChips'
 import { CLASS_LABELS } from '../lib/classes'
 import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
@@ -144,19 +145,15 @@ export function formParts({ draft, set, errors, servers, server, mode }: PartsPr
       <Field label="Nom du personnage" name="name" value={draft.name} onChange={(v) => set('name', v)} required maxLength={40} hint="Tel que les autres l'appelleront." error={errors.name} />
     ),
     server_id: (
-      <label className={styles.select}>
-        <span>Serveur</span>
-        <select value={draft.server_id} onChange={(event) => set('server_id', event.target.value)} aria-invalid={errors.server_id ? true : undefined}>
-          {/* Choisir « aucun serveur » n'a de sens qu'avant le premier choix. */}
-          {!draft.server_id && <option value="">Choisir un serveur</option>}
-          {servers.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-        {errors.server_id && <span className={styles.error}>{errors.server_id}</span>}
-      </label>
+      // Pas d'option « aucun serveur » : avant le premier choix, le bouton invite simplement à choisir.
+      <Menu
+        label="Serveur"
+        value={draft.server_id}
+        options={servers.map((s) => ({ value: String(s.id), label: s.name }))}
+        onChange={(v) => set('server_id', v)}
+        placeholder="Choisir un serveur"
+        error={errors.server_id}
+      />
     ),
     gender: (
       <div className={styles.stack}>
@@ -165,22 +162,13 @@ export function formParts({ draft, set, errors, servers, server, mode }: PartsPr
       </div>
     ),
     class: (
-      <label className={styles.select}>
-        <span>Classe</span>
-        <select
-          value={draft.class}
-          onChange={(event) => set('class', event.target.value as CharacterClass | '')}
-          aria-invalid={errors.class ? true : undefined}
-        >
-          <option value="">Un mystère</option>
-          {(server?.classes ?? []).map((c) => (
-            <option key={c} value={c}>
-              {CLASS_LABELS[c]}
-            </option>
-          ))}
-        </select>
-        {errors.class && <span className={styles.error}>{errors.class}</span>}
-      </label>
+      <Menu<CharacterClass | ''>
+        label="Classe"
+        value={draft.class}
+        options={[{ value: '', label: 'Un mystère' }, ...(server?.classes ?? []).map((c) => ({ value: c, label: CLASS_LABELS[c] }))]}
+        onChange={(v) => set('class', v)}
+        error={errors.class}
+      />
     ),
     level: (
       <Field label="Niveau" name="level" value={draft.level} onChange={(v) => set('level', v.replace(/\D/g, ''))} hint="Facultatif." error={errors.level} />
