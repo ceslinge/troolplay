@@ -8,6 +8,7 @@ import MultiChips from '../components/MultiChips'
 import { CLASS_LABELS } from '../lib/classes'
 import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
 import { FIELD_TEXTS, STORY_FIELDS, type StoryField } from './characterFields'
+import { serverOptions } from '../lib/games'
 import styles from './CreateCharacterPage.module.css'
 
 /** Ce que partagent la création et la modification d'une fiche. */
@@ -149,7 +150,7 @@ export function formParts({ draft, set, errors, servers, server, mode }: PartsPr
       <Menu
         label="Serveur"
         value={draft.server_id}
-        options={servers.map((s) => ({ value: String(s.id), label: s.name }))}
+        options={serverOptions(servers, (s) => String(s.id))}
         onChange={(v) => set('server_id', v)}
         placeholder="Choisir un serveur"
         error={errors.server_id}

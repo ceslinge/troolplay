@@ -8,6 +8,7 @@ import CharacterCard from '../components/CharacterCard'
 import Medallion from '../components/Medallion'
 import Menu from '../components/Menu'
 import Sheet from '../components/Sheet'
+import { serverOptions } from '../lib/games'
 import styles from './HomePage.module.css'
 
 const DAY_NAMES = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
@@ -54,7 +55,7 @@ function RightNowSheet({ data, onServer }: { data: RightNow; onServer: (id: numb
             hideLabel
             variant="compact"
             value={data.server.id}
-            options={servers.data.map((s) => ({ value: s.id, label: s.name }))}
+            options={serverOptions(servers.data, (s) => s.id)}
             onChange={onServer}
           />
         )}
