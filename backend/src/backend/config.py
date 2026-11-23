@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     postgres_host: str = "127.0.0.1"
     postgres_port: int = 5432
 
+    # En production : true (cookies seulement en HTTPS) et l'adresse du site.
+    cookie_secure: bool = False
+    allowed_origins: list[str] = ["http://localhost:5173"]
+
     @property
     def database_url(self) -> URL:
         return URL.create(

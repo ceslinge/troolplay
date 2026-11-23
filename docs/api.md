@@ -288,7 +288,7 @@ En développement, les emails ne partent pas : ils s'affichent dans le terminal 
 
 | Action | Limite | Au-delà |
 |---|---|---|
-| Connexion | 5 essais ratés en 15 minutes, par adresse et par IP | 429 |
+| Connexion | 5 essais ratés en 15 minutes pour une adresse, 20 pour une IP (une IP peut être partagée) | 429 |
 | Inscription | 5 en 1 heure, par IP | 429 |
 | Mot de passe oublié, renvoi de vérification | 3 en 1 heure, par adresse | 429, sans le dire à l'écran |
 

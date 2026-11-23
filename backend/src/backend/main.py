@@ -1,9 +1,34 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
+from backend.accounts.routes import router as accounts_router
 from backend.characters.routes import router as characters_router
+from backend.config import settings
 from backend.servers.routes import router as servers_router
 
 app = FastAPI()
+
+UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+
+
+@app.middleware("http")
+async def check_origin(request: Request, call_next):
+    """Contre le CSRF : une requête qui modifie doit venir du site lui-même.
+
+    Un navigateur envoie toujours l'en-tête Origin sur ces requêtes. Sans lui,
+    ce n'est pas un navigateur (un test, curl…), et il n'a pas de cookie à voler.
+    """
+    origin = request.headers.get("origin")
+    if (
+        request.method in UNSAFE_METHODS
+        and origin is not None
+        and origin not in settings.allowed_origins
+    ):
+        return JSONResponse({"detail": "Origine refusée"}, status_code=403)
+    return await call_next(request)
+
+
+app.include_router(accounts_router)
 app.include_router(characters_router)
 app.include_router(servers_router)
 
