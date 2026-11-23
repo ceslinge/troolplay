@@ -207,7 +207,8 @@ function EditCharacterPage() {
 
   return (
     <main className={styles.page}>
-      <h1 className={styles.title}>Modifier la fiche</h1>
+      {/* Le nom enregistré, pas celui en cours de saisie : on sait toujours quelle fiche on modifie. */}
+      <h1 className={styles.title}>{query.data ? `Modifier la fiche de ${query.data.name}` : 'Modifier la fiche'}</h1>
       {query.isPending ? null : query.isError ? (
         <Notice tone="error">
           <p>Le panneau est inaccessible pour l'instant. Réessaie dans un moment.</p>
