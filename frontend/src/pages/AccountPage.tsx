@@ -1,7 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { type FormEvent, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router'
+import { Link, Navigate, useNavigate } from 'react-router'
 import { changePassword, deleteAccount, logOut } from '../api/accounts'
+import { fetchMyCharacters } from '../api/characters'
+import CharacterCard from '../components/CharacterCard'
 import { ApiError } from '../api/client'
 import Button from '../components/Button'
 import Field from '../components/Field'
@@ -9,6 +11,34 @@ import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
 import { useMe } from '../lib/useMe'
 import styles from './AuthPages.module.css'
+
+function MyCharacters() {
+  const mine = useQuery({ queryKey: ['characters', 'mine'], queryFn: fetchMyCharacters })
+
+  return (
+    <section className={styles.mine}>
+      <div className={styles.mineHead}>
+        <h2 className={styles.title}>Mes personnages</h2>
+        <Link to="/personnages/nouveau">Présenter un nouveau personnage</Link>
+      </div>
+      {mine.isPending ? null : mine.isError ? (
+        <Notice tone="error">
+          <p>Impossible de charger tes personnages pour l'instant.</p>
+        </Notice>
+      ) : mine.data.length === 0 ? (
+        <Notice>
+          <p>Pas encore de personnage sur le panneau. Le premier t'attend.</p>
+        </Notice>
+      ) : (
+        <div className={styles.grid}>
+          {mine.data.map((character) => (
+            <CharacterCard key={character.id} character={character} />
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
 
 function ChangePasswordForm() {
   const [current, setCurrent] = useState('')
@@ -95,6 +125,8 @@ function AccountPage() {
 
   async function leave() {
     queryClient.setQueryData(['me'], null)
+    // Ce qui a été chargé connecté ne doit pas resservir au visiteur qui suit.
+    await queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] !== 'me' })
     navigate('/')
   }
   const logout = useMutation({ mutationFn: logOut, onSuccess: leave })
@@ -124,6 +156,7 @@ function AccountPage() {
           </div>
         </div>
       </Sheet>
+      <MyCharacters />
       <Sheet seed="compte-mot-de-passe" as="section">
         <ChangePasswordForm />
       </Sheet>
