@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { type FormEvent, useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router'
-import { createCharacter } from '../api/characters'
+import { Link, Navigate, useNavigate } from 'react-router'
+import { createCharacter, MAX_CHARACTERS } from '../api/characters'
 import { ApiError } from '../api/client'
 import { fetchServers, type Server } from '../api/servers'
 import Button from '../components/Button'
@@ -20,7 +20,7 @@ import {
   toCreateRequest,
   withChange,
 } from './characterForm'
-import { setActiveCharacter } from '../lib/activeCharacter'
+import { setActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
 import styles from './CreateCharacterPage.module.css'
 
 /**
@@ -37,6 +37,7 @@ const STEPS: { title?: string; fields: (keyof Draft)[] }[] = [
 
 function CreateCharacterPage() {
   const me = useMe()
+  const mine = useMyCharacters()
   const servers = useQuery({ queryKey: ['servers'], queryFn: fetchServers })
   const queryClient = useQueryClient()
   const navigate = useNavigate()
@@ -100,10 +101,29 @@ function CreateCharacterPage() {
   const last = step === STEPS.length - 1
   const firstStepDone = draft.name.trim().length >= 2 && draft.server_id !== ''
 
+  // On attend de savoir combien de personnages on a, pour ne pas faire écrire une fiche refusée à la fin.
+  if (mine === undefined) {
+    return null
+  }
+  if (mine.length >= MAX_CHARACTERS) {
+    return (
+      <main className={styles.page}>
+        <h1 className={styles.title}>Présenter un nouveau personnage</h1>
+        <Notice>
+          <p>
+            Tu ne peux pas présenter de nouveau personnage : un compte peut en avoir {MAX_CHARACTERS} au plus. Pour faire de la
+            place, retire une fiche dont tu ne te sers plus, depuis <Link to="/compte">ton compte</Link>. Mettre un
+            personnage en retrait ne libère pas de place.
+          </p>
+        </Notice>
+      </main>
+    )
+  }
+
   return (
     <main className={styles.page}>
       <div className={styles.top}>
-        <h1 className={styles.title}>Épingler un personnage</h1>
+        <h1 className={styles.title}>Présenter un nouveau personnage</h1>
         <div className={styles.modes} role="group" aria-label="Façon de remplir">
           <button type="button" aria-pressed={mode === 'guided'} onClick={() => setMode('guided')}>
             Guidé
