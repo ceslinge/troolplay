@@ -26,11 +26,20 @@ En tant que joueur, je veux…
 | 8 | poster une histoire | publique | elle est signée par le personnage de mon choix |
 | 9 | signaler un contenu | publique | un modérateur peut le masquer |
 
+## Pages
+- Accueil : coups de cœur choisis par l'équipe, qui joue d'habitude le soir, personnages fraîchement épinglés.
+- Communauté, par serveur : onglets « Qui traîne ici ? », Personnages et Histoires. Le serveur est celui du personnage actif.
+- Fiche d'un personnage, avec ses histoires et de quoi le retrouver en jeu.
+- Écriture d'une histoire, accessible de partout.
+- Une fois connecté, une barre fine pour passer d'un de ses personnages à l'autre.
+
 ## Principes
 - On lit tout ce qui est publié sans compte.
 - Seuls le nom et le serveur sont obligatoires pour un personnage, le guidé est passable.
 - On ne perd jamais un texte : les brouillons se sauvegardent seuls.
 - Le site fonctionne sur mobile et ses liens ont un aperçu dans Discord.
+- Les textes s'accordent au personnage : elle, il, ou des tournures neutres s'il n'a rien choisi.
+- Ce qui fait vivre le site, ce sont les traces des joueurs : répliques, rumeurs, rencontres racontées.
 
 ## Étapes
 | Étape | On passe à la suite quand |
@@ -45,6 +54,7 @@ En tant que joueur, je veux…
 - Implication d'un personnage dans une histoire
 - Histoires à plusieurs mains
 - Liens entre personnages
+- Tofu voyageur, rumeurs glissées par d'autres, « Ceux qui l'ont croisé »
 - Groupes, commentaires
 
 ## Hors périmètre
