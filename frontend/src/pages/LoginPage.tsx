@@ -19,7 +19,8 @@ function LoginPage() {
   const login = useMutation({
     mutationFn: logIn,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['me'] })
+      // Tout ce qui a été chargé en visiteur peut changer une fois connecté (« Modifier ma fiche »…).
+      await queryClient.invalidateQueries()
       navigate(params.get('suite') ?? '/')
     },
   })
