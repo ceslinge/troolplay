@@ -45,7 +45,7 @@ On te répond sous un mois au plus. Si ça ne te convient pas, tu peux saisir la
 
 ## Âge
 
-Il faut avoir au moins [ÂGE MINIMUM, à décider : 15 ans ?] pour créer un compte.
+Il faut avoir au moins 18 ans pour créer un compte. Les fiches se lisent sans compte, les histoires sont réservées aux membres.
 
 ## Changements
 

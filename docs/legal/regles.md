@@ -6,7 +6,7 @@
 
 ## Ton compte
 
-- Il faut avoir au moins [ÂGE MINIMUM] pour créer un compte.
+- Il faut avoir au moins 18 ans pour créer un compte. Les fiches se lisent sans compte, les histoires sont réservées aux membres.
 - Un compte peut porter autant de personnages que tu veux.
 - Tu es responsable de ce qui est publié depuis ton compte. Garde ton mot de passe pour toi.
 
@@ -22,7 +22,7 @@ Publie seulement ce que tu as écrit, ou ce qu'on t'a autorisé à publier.
 
 - Le harcèlement, les insultes et les attaques contre un joueur. Ce qui arrive à un personnage en RP ne justifie pas de s'en prendre à la personne qui le joue.
 - Les propos haineux ou discriminatoires.
-- Les contenus sexuels explicites, et tout contenu illégal.
+- Les contenus sexuels explicites, et tout contenu illégal. Les relations et les thèmes adultes ont leur place en RP, racontés comme dans un roman, sans scène explicite.
 - Les informations personnelles sur quelqu'un d'autre : vrai nom, adresse, photo…
 - La publicité, le spam, la vente de kamas ou de comptes.
 

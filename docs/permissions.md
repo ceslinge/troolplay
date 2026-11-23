@@ -4,7 +4,8 @@ Chaque ligne deviendra un test.
 
 | Action | Visiteur | Joueur | Propriétaire | Modérateur | Admin |
 |---|:-:|:-:|:-:|:-:|:-:|
-| Lire une fiche ou une histoire publiée | oui | oui | oui | oui | oui |
+| Lire une fiche publiée | oui | oui | oui | oui | oui |
+| Lire une histoire publiée | non | oui | oui | oui | oui |
 | Lire un brouillon | non | non | oui | non | non |
 | Lire un contenu masqué | non | non | oui | oui | oui |
 | Créer personnage ou histoire | non | oui | oui | oui | oui |
