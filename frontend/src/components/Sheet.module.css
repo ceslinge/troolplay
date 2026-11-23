@@ -1,0 +1,57 @@
+.sheet {
+  position: relative;
+  transform: rotate(var(--tilt, 0deg));
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18)) drop-shadow(0 6px 10px rgba(40, 25, 10, 0.22));
+}
+
+.paper {
+  height: 100%;
+  background-color: var(--papier);
+  /* Un grain de papier, à peine visible. */
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.25  0 0 0 0 0.12  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23g)' opacity='0.35'/></svg>");
+  /* Les bords prennent la lumière : plus la feuille est vieille, plus ils jaunissent. */
+  box-shadow: inset 0 0 calc(1rem + 1.5rem * var(--age, 0)) rgba(176, 128, 48, calc(0.12 + 0.3 * var(--age, 0)));
+  border-radius: 2px;
+  padding: 1.5rem;
+}
+
+.plain {
+}
+
+.marked {
+  border-top: 4px solid var(--bois);
+}
+
+.muted {
+  background-color: var(--papier-sombre);
+}
+
+.straight {
+}
+
+/* Le bas de la feuille, déchiré : un masque garde tout sauf une dentelure en bas. */
+.torn {
+  padding-bottom: calc(1.5rem + 9px);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  --dechirure: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='9'><path d='M0 0H320V5L320 5.0L314 8.3L311 6.9L308 7.8L305 6.5L303 7.9L298 8.5L293 8.2L290 8.0L287 8.5L282 8.5L279 8.5L277 8.5L274 8.5L271 7.3L265 5.9L261 7.7L258 7.9L252 8.5L247 8.5L245 8.5L243 8.2L238 6.9L234 6.8L230 7.2L226 6.8L223 5.8L221 7.0L219 6.1L216 6.1L212 6.6L208 5.2L205 4.3L199 4.0L196 5.3L190 5.5L186 5.9L183 6.9L178 5.5L175 4.1L171 4.9L169 3.8L167 4.8L164 4.1L158 3.4L154 3.9L148 4.8L142 6.0L136 7.5L130 5.9L127 5.3L124 5.8L118 4.6L114 5.4L111 4.1L108 2.3L102 3.3L96 4.9L93 4.6L88 3.2L85 2.0L81 2.0L76 3.2L74 2.4L71 2.0L67 3.1L64 4.5L61 2.8L58 3.6L55 2.9L53 2.0L48 2.0L44 2.7L38 2.0L33 2.4L28 2.0L26 2.0L22 2.0L17 2.6L15 2.0L12 2.8L6 3.6L0 5.0Z' fill='black'/></svg>");
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - 9px) no-repeat,
+    var(--dechirure) bottom / 320px 9px repeat-x;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - 9px) no-repeat,
+    var(--dechirure) bottom / 320px 9px repeat-x;
+}
+
+.pin {
+  position: absolute;
+  z-index: 1;
+  top: 0.5rem;
+  left: 50%;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-left: -0.375rem;
+  border-radius: 50%;
+  background: var(--punaise);
+  border: 1px solid var(--punaise-bord);
+}
