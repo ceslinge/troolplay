@@ -147,7 +147,8 @@ export function formParts({ draft, set, errors, servers, server, mode }: PartsPr
       <label className={styles.select}>
         <span>Serveur</span>
         <select value={draft.server_id} onChange={(event) => set('server_id', event.target.value)} aria-invalid={errors.server_id ? true : undefined}>
-          <option value="">Choisir un serveur</option>
+          {/* Choisir « aucun serveur » n'a de sens qu'avant le premier choix. */}
+          {!draft.server_id && <option value="">Choisir un serveur</option>}
           {servers.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
@@ -160,13 +161,17 @@ export function formParts({ draft, set, errors, servers, server, mode }: PartsPr
     gender: (
       <div className={styles.stack}>
         <Chips legend="Accords du site" options={GENDERS} value={draft.gender} onChange={(v) => set('gender', v ?? 'neutral')} />
-        <p className={styles.hint}>Sert seulement à accorder les textes du site. Les pronoms, tu peux les préciser dans la fiche.</p>
+        <p className={styles.hint}>Sert seulement à accorder les textes du site.</p>
       </div>
     ),
     class: (
       <label className={styles.select}>
         <span>Classe</span>
-        <select value={draft.class} onChange={(event) => set('class', event.target.value as CharacterClass | '')}>
+        <select
+          value={draft.class}
+          onChange={(event) => set('class', event.target.value as CharacterClass | '')}
+          aria-invalid={errors.class ? true : undefined}
+        >
           <option value="">Un mystère</option>
           {(server?.classes ?? []).map((c) => (
             <option key={c} value={c}>

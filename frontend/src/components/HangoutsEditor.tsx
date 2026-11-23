@@ -39,7 +39,7 @@ function HangoutsEditor({ value, onChange, error }: Props) {
         </fieldset>
       ))}
       {error && (
-        <p className={styles.error} role="alert">
+        <p className={styles.error} role="alert" data-error tabIndex={-1}>
           {error}
         </p>
       )}
