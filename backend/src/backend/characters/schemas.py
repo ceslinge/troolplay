@@ -160,3 +160,15 @@ class CharacterUpdate(CharacterFields):
         if "name" in self.model_fields_set and self.name is None:
             raise ValueError("Le nom ne peut pas être vidé")
         return self
+
+
+class HangoutIn(BaseModel):
+    """Un lieu de prédilection, tel qu'on l'envoie."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    area: Annotated[str, Field(min_length=1, max_length=40)]
+    x: Annotated[int, Field(ge=-1000, le=1000)]
+    y: Annotated[int, Field(ge=-1000, le=1000)]
+    label: text(60) = None
+    habits: text(200) = None

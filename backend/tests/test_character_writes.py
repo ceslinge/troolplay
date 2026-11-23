@@ -4,57 +4,8 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from backend.accounts.models import User
-from backend.accounts.security import hash_password
 from backend.characters.models import Character
-from backend.main import app
 from backend.servers.models import GameServer
-
-PASSWORD = "une phrase de passe assez longue"
-
-
-def log_in(client: TestClient, user: User) -> TestClient:
-    response = client.post("/session", json={"email": user.email, "password": PASSWORD})
-    assert response.status_code == 204
-    return client
-
-
-def make_user(session: Session, email: str, role: str = "user") -> User:
-    user = User(
-        email=email,
-        password_hash=hash_password(PASSWORD),
-        email_verified_at=datetime.now(UTC),
-        role=role,
-    )
-    session.add(user)
-    session.flush()
-    return user
-
-
-@pytest.fixture
-def owner(session: Session) -> User:
-    return make_user(session, "proprietaire.test@example.com")
-
-
-@pytest.fixture
-def me(client: TestClient, owner: User) -> TestClient:
-    """Le client, connecté en tant que propriétaire."""
-    return log_in(client, owner)
-
-
-@pytest.fixture
-def stranger(client: TestClient, session: Session):
-    """Un autre membre, connecté dans son propre navigateur."""
-    user = make_user(session, "voisin.test@example.com")
-    with TestClient(app) as other:
-        yield log_in(other, user)
-
-
-@pytest.fixture
-def admin(client: TestClient, session: Session):
-    user = make_user(session, "admin.test@example.com", role="admin")
-    with TestClient(app) as other:
-        yield log_in(other, user)
 
 
 @pytest.fixture
@@ -63,13 +14,6 @@ def retro(session: Session) -> GameServer:
     session.add(server)
     session.flush()
     return server
-
-
-@pytest.fixture
-def mine(me: TestClient, server: GameServer) -> int:
-    response = me.post("/characters", json={"name": "Maëlis", "server_id": server.id})
-    assert response.status_code == 201
-    return response.json()["id"]
 
 
 # Créer

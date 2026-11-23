@@ -2,13 +2,13 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, Response
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session, selectinload
 
 from backend.accounts.models import User
 from backend.accounts.sessions import CurrentUser, OptionalUser
 from backend.characters.classes import CharacterClass, is_available
-from backend.characters.models import Character
+from backend.characters.models import Character, CharacterHangout
 from backend.characters.schemas import (
     CharacterCreate,
     CharacterList,
@@ -17,6 +17,8 @@ from backend.characters.schemas import (
     CharacterOwnedSummary,
     CharacterSummary,
     CharacterUpdate,
+    HangoutIn,
+    HangoutOut,
     MyCharacters,
     Period,
 )
@@ -205,3 +207,37 @@ def list_my_characters(user: CurrentUser, session: SessionDep) -> MyCharacters:
     return MyCharacters(
         items=[CharacterOwnedSummary.model_validate(c) for c in characters]
     )
+
+
+MAX_HANGOUTS = 3
+
+
+@router.put("/{character_id}/hangouts")
+def replace_hangouts(
+    character_id: int,
+    hangouts: list[HangoutIn],
+    user: CurrentUser,
+    session: SessionDep,
+) -> list[HangoutOut]:
+    character = load_character(session, character_id, user)
+    if not can_edit(user, character):
+        raise HTTPException(status_code=403, detail="Ce n'est pas ton personnage")
+    if len(hangouts) > MAX_HANGOUTS:
+        raise HTTPException(
+            status_code=409, detail=f"{MAX_HANGOUTS} lieux au plus par personnage"
+        )
+    places = [(h.area.strip().lower(), h.x, h.y) for h in hangouts]
+    if len(set(places)) != len(places):
+        raise field_error("hangouts", "Le même lieu apparaît deux fois")
+
+    # On remplace d'un bloc : l'ancienne liste part, la nouvelle arrive.
+    session.execute(
+        delete(CharacterHangout).where(CharacterHangout.character_id == character.id)
+    )
+    session.flush()
+    saved = [
+        CharacterHangout(character_id=character.id, **h.model_dump()) for h in hangouts
+    ]
+    session.add_all(saved)
+    session.commit()
+    return [HangoutOut.model_validate(h) for h in saved]
