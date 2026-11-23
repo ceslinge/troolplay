@@ -128,6 +128,22 @@ def check_server_and_class(
         raise field_error("class", "Cette classe n'existe pas dans ce jeu")
 
 
+def move_to_server(
+    session: Session, character: Character, server_id: int | None
+) -> None:
+    """Un déménagement : vers un serveur ouvert, et sans changer de jeu."""
+    if character.is_npc:
+        raise field_error("server_id", "Un PNJ n'a pas de serveur")
+    if server_id is None:
+        raise field_error("server_id", "Un personnage a toujours un serveur")
+    target = session.get(GameServer, server_id)
+    if target is None or not target.is_active:
+        raise field_error("server_id", "Ce serveur n'existe pas, ou plus")
+    current = session.get(GameServer, character.server_id)
+    if current is not None and target.game != current.game:
+        raise field_error("server_id", "Un personnage ne change pas de jeu")
+
+
 @router.get("/{character_id}")
 def read_character(
     character_id: int, session: SessionDep, viewer: OptionalUser
@@ -160,8 +176,20 @@ def update_character(
         raise HTTPException(status_code=403, detail="Ce n'est pas ton personnage")
 
     changes = data.model_dump(exclude_unset=True)
-    if "class_" in changes:
-        check_server_and_class(session, character.server_id, changes["class_"])
+    # Garder son serveur n'est jamais vérifié : même fermé, il ne doit pas bloquer la fiche.
+    if changes.get("server_id", character.server_id) == character.server_id:
+        changes.pop("server_id", None)
+    if "server_id" in changes:
+        move_to_server(session, character, changes["server_id"])
+    if "class_" in changes or "server_id" in changes:
+        target = session.get(GameServer, changes.get("server_id", character.server_id))
+        character_class = changes.get("class_", character.class_)
+        if (
+            target
+            and character_class
+            and not is_available(character_class, target.game)
+        ):
+            raise field_error("class", "Cette classe n'existe pas dans ce jeu")
 
     inactive = changes.pop("inactive", None)
     note = changes.pop("inactive_note", None)

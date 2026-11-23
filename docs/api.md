@@ -197,7 +197,7 @@ Réponse 200 : la fiche complète à jour.
 
 Erreurs : 401, 403 si ce n'est pas mon personnage, 404, 422.
 
-Changer de serveur n'est pas permis : `server_id` est refusé avec un 422. Un personnage qui change de serveur, c'est une nouvelle fiche.
+Un personnage peut changer de serveur, comme en jeu (transfert, fusion, serveur temporaire qui ferme) : `server_id` accepte un serveur ouvert du même jeu. La fiche garde tout. Un autre jeu, un serveur fermé ou `null` sont refusés avec un 422, comme un serveur pour un PNJ.
 
 ### Remplacer les lieux
 
