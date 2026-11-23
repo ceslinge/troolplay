@@ -281,6 +281,7 @@ Vérification de l'adresse et mot de passe oublié passent par un lien contenant
 - à usage unique ;
 - valable 24 heures pour la vérification, 1 heure pour le mot de passe ;
 - stocké en empreinte seulement, dans la table `email_tokens`.
+- utiliser un lien rend caducs les autres liens du même genre encore en circulation.
 
 En développement, les emails ne partent pas : ils s'affichent dans le terminal du backend.
 
@@ -362,7 +363,7 @@ Erreurs : 401.
 
 `POST /api/password/forgot` avec `{"email": "…"}`. Réponse 202, toujours.
 
-`POST /api/password/reset` avec `{"token": "…", "password": "…"}`. Réponse 204. Toutes les sessions du compte sont fermées : si quelqu'un d'autre était connecté, il ne l'est plus.
+`POST /api/password/reset` avec `{"token": "…", "password": "…"}`. Réponse 204. Toutes les sessions du compte sont fermées : si quelqu'un d'autre était connecté, il ne l'est plus. Le lien prouve aussi que l'adresse est la sienne : un compte pas encore vérifié le devient.
 
 Erreurs : 400 (jeton inconnu, expiré ou utilisé), 422.
 

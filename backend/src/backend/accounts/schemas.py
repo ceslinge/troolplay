@@ -1,7 +1,10 @@
 from datetime import datetime
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+# La règle d'un nouveau mot de passe, partagée par l'inscription et les changements.
+NewPassword = Annotated[str, Field(min_length=10, max_length=128)]
 
 
 class LoginIn(BaseModel):
@@ -19,7 +22,7 @@ class MeOut(BaseModel):
 
 class SignupIn(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=10, max_length=128)
+    password: NewPassword
     accept_rules: Literal[True]
     age_confirmed: Literal[True]
 
@@ -34,3 +37,13 @@ class EmailIn(BaseModel):
 
 class Message(BaseModel):
     detail: str
+
+
+class PasswordResetIn(BaseModel):
+    token: str = Field(max_length=100)
+    password: NewPassword
+
+
+class PasswordChangeIn(BaseModel):
+    current_password: str = Field(max_length=128)
+    new_password: NewPassword

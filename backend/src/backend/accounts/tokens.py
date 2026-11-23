@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from backend.accounts.models import EmailToken, User
@@ -38,5 +38,14 @@ def use_token(session: Session, token: str, purpose: str) -> User | None:
     ).one_or_none()
     if found is None:
         return None
-    found.used_at = now
+    # Un lien utilisé rend caducs les autres liens du même genre, encore en circulation.
+    session.execute(
+        update(EmailToken)
+        .where(
+            EmailToken.user_id == found.user_id,
+            EmailToken.purpose == purpose,
+            EmailToken.used_at.is_(None),
+        )
+        .values(used_at=now)
+    )
     return session.get(User, found.user_id)
