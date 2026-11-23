@@ -250,6 +250,26 @@ Réponse 200 :
 
 Seuls les serveurs actifs sont listés, triés par jeu puis par nom. `classes` donne les classes jouables dans le jeu du serveur, dans l'ordre du jeu.
 
+## L'accueil
+
+`GET /api/home`, accessible sans compte. Paramètre facultatif : `server_id`, le serveur de « À cette heure-ci ». Sans lui, le premier serveur actif.
+
+Réponse 200 :
+
+```json
+{
+  "right_now": {"server": {"id": 3, "name": "Ombrelune", "…": "…"}, "day": 4, "period": "evening", "count": 9, "places": ["Taverne du Bouftou Ivre", "Quais du port"]},
+  "overheard": {"character_id": 42, "name": "Maëlis", "server": "Ombrelune", "hook": "Si c'est pour l'arc, il n'est pas à vendre."},
+  "recent": [{"id": 42, "name": "Maëlis", "…": "…"}]
+}
+```
+
+- `right_now` compte les personnages du serveur qui ont l'habitude de jouer ce jour-là et à ce créneau, à l'heure de Paris. C'est déclaratif : ce n'est pas qui est connecté. `places` donne leurs deux lieux les plus fréquentés.
+- `overheard` est une réplique d'accroche tirée au hasard. `GET /api/home/overheard` en tire une autre.
+- `recent` liste les six dernières fiches.
+
+Les fiches masquées, en retrait et les PNJ n'apparaissent dans aucune de ces trois parties, ni les répliques vides. Un `server_id` inconnu ou fermé ne fait pas d'erreur : on retombe sur le premier serveur actif.
+
 ## Les comptes
 
 Un compte est privé : seul son propriétaire le voit. Il n'est jamais relié publiquement à ses personnages.
