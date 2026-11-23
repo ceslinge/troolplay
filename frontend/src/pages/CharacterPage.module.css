@@ -179,7 +179,6 @@
 }
 
 .edit {
-  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
@@ -194,5 +193,12 @@
 .edit:hover {
   background: var(--bois);
   color: var(--laiton);
+}
+
+.ownerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 

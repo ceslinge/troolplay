@@ -4,6 +4,7 @@ import { type Character, fetchCharacter } from '../api/characters'
 import CopyButton from '../components/CopyButton'
 import type { IconName } from '../components/Icon'
 import Medallion from '../components/Medallion'
+import RetreatControl from '../components/RetreatControl'
 import Seal from '../components/Seal'
 import Section from '../components/Section'
 import Sheet from '../components/Sheet'
@@ -116,9 +117,12 @@ function CharacterPage() {
           {meta && <span className={styles.meta}>{meta}</span>}
           <h1 className={styles.name}>{c.name}</h1>
           {c.is_mine && (
-            <Link to={`/personnages/${c.id}/modifier`} className={styles.edit}>
-              Modifier ma fiche
-            </Link>
+            <div className={styles.ownerActions}>
+              <Link to={`/personnages/${c.id}/modifier`} className={styles.edit}>
+                Modifier ma fiche
+              </Link>
+              <RetreatControl character={c} />
+            </div>
           )}
           {c.inactive && (
             <span className={styles.inactive}>En retrait{c.inactive_note && ` : ${c.inactive_note}`}</span>
