@@ -122,6 +122,7 @@ Pour l'annuaire (story 4). Accessible sans compte.
 | `server_id` | obligatoire, le serveur affiché |
 | `day` | facultatif, de 1 à 7 : ceux qui jouent ce jour-là |
 | `period` | facultatif : ceux qui jouent sur ce créneau |
+| `q` | facultatif, 60 caractères au plus : ceux dont le nom ou le nom en jeu contient ce texte, sans tenir compte des accents ni des majuscules. Vide, il est ignoré |
 | `include_inactive` | facultatif, `false` par défaut : inclure ceux en retrait (story 7) |
 | `limit`, `offset` | pagination, `limit` vaut 50 par défaut et 100 au plus |
 

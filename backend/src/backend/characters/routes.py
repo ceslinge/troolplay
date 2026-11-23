@@ -2,12 +2,12 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, Response
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from backend.accounts.models import User
 from backend.accounts.sessions import CurrentUser, OptionalUser
-from backend.characters.classes import CharacterClass, is_available
+from backend.characters.classes import is_available
 from backend.characters.models import Character, CharacterHangout
 from backend.characters.schemas import (
     CharacterCreate,
@@ -34,7 +34,7 @@ def list_characters(
     server_id: int,
     day: Annotated[int | None, Query(ge=1, le=7)] = None,
     period: Period | None = None,
-    character_class: Annotated[CharacterClass | None, Query(alias="class")] = None,
+    q: Annotated[str | None, Query(max_length=60)] = None,
     include_inactive: bool = False,
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
     offset: Annotated[int, Query(ge=0)] = 0,
@@ -49,8 +49,8 @@ def list_characters(
         query = query.where(Character.play_days.contains([day]))
     if period is not None:
         query = query.where(Character.play_periods.contains([period]))
-    if character_class is not None:
-        query = query.where(Character.class_ == character_class)
+    if q and q.strip():
+        query = query.where(matches_name(q.strip()))
     if not include_inactive:
         query = query.where(Character.inactive_at.is_(None))
 
@@ -63,6 +63,17 @@ def list_characters(
     )
     return CharacterList(
         items=[CharacterSummary.model_validate(c) for c in characters], total=total
+    )
+
+
+def matches_name(text: str):
+    """Le nom ou le nom en jeu contient ce texte, sans tenir compte des accents ni des majuscules."""
+    # % et _ tapés par quelqu'un sont des caractères comme les autres, pas des jokers.
+    escaped = text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+    pattern = func.unaccent(f"%{escaped}%")
+    return or_(
+        func.unaccent(Character.name).ilike(pattern, escape="\\"),
+        func.unaccent(Character.ingame_name).ilike(pattern, escape="\\"),
     )
 
 
