@@ -6,8 +6,9 @@ from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session
 
 from backend.accounts import emails
-from backend.accounts.models import LoginFailure, User
+from backend.accounts.models import LoginFailure, ThrottleEvent, User
 from backend.accounts.schemas import (
+    AccountDeletionIn,
     EmailIn,
     LoginIn,
     MeOut,
@@ -230,4 +231,24 @@ def change_password(
         raise HTTPException(status_code=403, detail="Mot de passe actuel incorrect")
     user.password_hash = hash_password(data.new_password)
     close_all_sessions(session, user, keep_token=token)
+    session.commit()
+
+
+@router.delete("/me", status_code=204)
+def delete_account(
+    data: AccountDeletionIn,
+    user: CurrentUser,
+    response: Response,
+    session: SessionDep,
+    token: Annotated[str | None, Cookie(alias=COOKIE_NAME)] = None,
+) -> None:
+    if not verify_password(data.password, user.password_hash):
+        raise HTTPException(status_code=403, detail="Mot de passe incorrect")
+    email = user.email.lower()
+    # La base supprime en cascade ses personnages, leurs lieux, ses sessions et ses liens.
+    session.delete(user)
+    # L'adresse reste aussi dans les traces des limites : on les efface avec le compte.
+    session.execute(delete(LoginFailure).where(LoginFailure.email == email))
+    session.execute(delete(ThrottleEvent).where(ThrottleEvent.key == email))
+    close_session(session, token, response)
     session.commit()

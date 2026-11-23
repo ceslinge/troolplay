@@ -47,3 +47,7 @@ class PasswordResetIn(BaseModel):
 class PasswordChangeIn(BaseModel):
     current_password: str = Field(max_length=128)
     new_password: NewPassword
+
+
+class AccountDeletionIn(BaseModel):
+    password: str = Field(max_length=128)
