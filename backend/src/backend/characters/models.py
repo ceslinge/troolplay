@@ -15,6 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from backend.characters.classes import CLASS_VALUES_SQL
 from backend.db import Base
 from backend.servers.models import GameServer
 
@@ -32,6 +33,7 @@ class Character(Base):
             "gender IN ('feminine', 'masculine', 'neutral')", name="gender"
         ),
         CheckConstraint("level >= 1", name="level"),
+        CheckConstraint(f"class IN ({CLASS_VALUES_SQL})", name="class"),
         CheckConstraint(
             "play_days <@ ARRAY[1, 2, 3, 4, 5, 6, 7]::smallint[]", name="play_days"
         ),
@@ -52,7 +54,7 @@ class Character(Base):
     name: Mapped[str] = mapped_column(String(40))
     gender: Mapped[str] = mapped_column(String(10), server_default="neutral")
     ingame_name: Mapped[str | None] = mapped_column(String(40))
-    class_: Mapped[str | None] = mapped_column("class", String(30))
+    class_: Mapped[str | None] = mapped_column("class", String(20))
     level: Mapped[int | None]
     avatar: Mapped[str | None] = mapped_column(String(40))
     seal: Mapped[str | None] = mapped_column(String(40))
