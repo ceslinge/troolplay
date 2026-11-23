@@ -1,86 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { type FormEvent, type ReactNode, useEffect, useState } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router'
-import { type CharacterClass, createCharacter, type Gender, type NewCharacter, type Period } from '../api/characters'
+import { createCharacter } from '../api/characters'
 import { ApiError } from '../api/client'
 import { fetchServers, type Server } from '../api/servers'
 import Button from '../components/Button'
-import Chips, { type ChipOption } from '../components/Chips'
-import Field from '../components/Field'
-import MultiChips from '../components/MultiChips'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
-import { CLASS_LABELS } from '../lib/classes'
-import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
 import { useMe } from '../lib/useMe'
-import { FIELD_TEXTS, STORY_FIELDS, type StoryField } from './characterFields'
+import { STORY_FIELDS } from './characterFields'
+import {
+  DRAFT_KEY,
+  type Draft,
+  formParts,
+  loadDraft,
+  type Mode,
+  saveDraft,
+  toCreateRequest,
+  withChange,
+} from './characterForm'
 import styles from './CreateCharacterPage.module.css'
-
-type Draft = Record<StoryField | 'ooc_note' | 'name' | 'ingame_name' | 'level' | 'server_id', string> & {
-  gender: Gender
-  class: CharacterClass | ''
-  play_days: number[]
-  play_periods: Period[]
-}
-
-const EMPTY: Draft = {
-  name: '',
-  server_id: '',
-  gender: 'neutral',
-  class: '',
-  level: '',
-  ingame_name: '',
-  hook: '',
-  appearance: '',
-  personality: '',
-  backstory: '',
-  goals: '',
-  flaws: '',
-  rumors: '',
-  ooc_note: '',
-  play_days: [],
-  play_periods: [],
-}
-
-const GENDERS: ChipOption<Gender>[] = [
-  { value: 'feminine', label: 'Féminin' },
-  { value: 'masculine', label: 'Masculin' },
-  { value: 'neutral', label: 'Neutre' },
-]
-
-// « On ne perd jamais un texte » : le brouillon vit dans le navigateur jusqu'à l'envoi.
-const DRAFT_KEY = 'troolplay:brouillon-personnage'
-
-function loadDraft(): Draft {
-  try {
-    const saved = localStorage.getItem(DRAFT_KEY)
-    return saved ? { ...EMPTY, ...JSON.parse(saved) } : EMPTY
-  } catch {
-    return EMPTY
-  }
-}
-
-function saveDraft(draft: Draft) {
-  try {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
-  } catch {
-    // Navigation privée ou stockage plein : tant pis, le formulaire marche quand même.
-  }
-}
-
-/** Ce qu'on envoie : les champs vides restent de côté. */
-function toRequest(draft: Draft): NewCharacter {
-  const body: NewCharacter = { name: draft.name.trim(), server_id: Number(draft.server_id), gender: draft.gender }
-  if (draft.class) body.class = draft.class
-  if (draft.level) body.level = Number(draft.level)
-  if (draft.play_days.length) body.play_days = draft.play_days
-  if (draft.play_periods.length) body.play_periods = draft.play_periods
-  for (const key of ['ingame_name', 'ooc_note', ...STORY_FIELDS] as const) {
-    const text = draft[key].trim()
-    if (text) body[key] = text
-  }
-  return body
-}
 
 /** Les étapes du mode guidé, et les champs que chacune remplit. */
 const STEPS: (keyof Draft)[][] = [
@@ -90,8 +29,6 @@ const STEPS: (keyof Draft)[][] = [
   ['class', 'level', 'ingame_name', 'play_days', 'play_periods'],
   ['ooc_note'],
 ]
-
-type Mode = 'guided' | 'free'
 
 function CreateCharacterPage() {
   const me = useMe()
@@ -131,89 +68,15 @@ function CreateCharacterPage() {
   const server: Server | undefined = servers.data?.find((s) => String(s.id) === draft.server_id)
 
   function set<K extends keyof Draft>(key: K, value: Draft[K]) {
-    setDraft((current) => {
-      const next = { ...current, [key]: value }
-      // Une classe qui n'existe pas dans le jeu du nouveau serveur redevient un mystère.
-      if (key === 'server_id') {
-        const chosen = servers.data?.find((s) => String(s.id) === value)
-        if (next.class && chosen && !chosen.classes.includes(next.class)) next.class = ''
-      }
-      return next
-    })
+    setDraft((current) => withChange(current, key, value, servers.data ?? []))
   }
 
   function submit(event?: FormEvent) {
     event?.preventDefault()
-    create.mutate(toRequest(draft))
+    create.mutate(toCreateRequest(draft))
   }
 
-  // Chaque morceau du formulaire n'est écrit qu'une fois, et sert aux deux modes.
-  const parts: Record<keyof Draft, ReactNode> = {
-    name: (
-      <Field label="Nom du personnage" name="name" value={draft.name} onChange={(v) => set('name', v)} required maxLength={40} hint="Tel que les autres l'appelleront." error={errors.name} />
-    ),
-    server_id: (
-      <label className={styles.select}>
-        <span>Serveur</span>
-        <select value={draft.server_id} onChange={(event) => set('server_id', event.target.value)} aria-invalid={errors.server_id ? true : undefined}>
-          <option value="">Choisir un serveur</option>
-          {servers.data?.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-        {errors.server_id && <span className={styles.error}>{errors.server_id}</span>}
-      </label>
-    ),
-    gender: (
-      <div className={styles.stack}>
-        <Chips legend="Accords du site" options={GENDERS} value={draft.gender} onChange={(v) => set('gender', v ?? 'neutral')} />
-        <p className={styles.hint}>Sert seulement à accorder les textes du site. Les pronoms, tu peux les préciser dans la fiche.</p>
-      </div>
-    ),
-    class: (
-      <label className={styles.select}>
-        <span>Classe</span>
-        <select value={draft.class} onChange={(event) => set('class', event.target.value as CharacterClass | '')}>
-          <option value="">Un mystère</option>
-          {(server?.classes ?? []).map((c) => (
-            <option key={c} value={c}>
-              {CLASS_LABELS[c]}
-            </option>
-          ))}
-        </select>
-        {errors.class && <span className={styles.error}>{errors.class}</span>}
-      </label>
-    ),
-    level: (
-      <Field label="Niveau" name="level" value={draft.level} onChange={(v) => set('level', v.replace(/\D/g, ''))} hint="Facultatif." error={errors.level} />
-    ),
-    ingame_name: (
-      <Field label="Nom en jeu" name="ingame_name" value={draft.ingame_name} onChange={(v) => set('ingame_name', v)} maxLength={40} hint="Pour le retrouver : les autres pourront le copier." error={errors.ingame_name} />
-    ),
-    play_days: <MultiChips legend="Joue plutôt le" options={DAY_OPTIONS} value={draft.play_days} onChange={(v) => set('play_days', v)} />,
-    play_periods: <MultiChips legend="Plutôt" options={PERIOD_OPTIONS} value={draft.play_periods} onChange={(v) => set('play_periods', v)} />,
-    ...Object.fromEntries(
-      (['ooc_note', ...STORY_FIELDS] as const).map((key) => {
-        const text = FIELD_TEXTS[key]
-        return [
-          key,
-          <Field
-            key={key}
-            label={mode === 'guided' ? text.question(draft.gender) : text.label}
-            name={key}
-            value={draft[key]}
-            onChange={(v) => set(key, v)}
-            rows={text.rows}
-            maxLength={text.maxLength}
-            hint={text.hint}
-            error={errors[key]}
-          />,
-        ]
-      }),
-    ),
-  } as Record<keyof Draft, ReactNode>
+  const parts = formParts({ draft, set, errors, servers: servers.data ?? [], server, mode })
 
   const groups: { title: string; fields: (keyof Draft)[] }[] = [
     { title: 'Qui est-ce ?', fields: ['name', 'server_id', 'gender'] },

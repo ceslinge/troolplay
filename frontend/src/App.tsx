@@ -4,6 +4,7 @@ import AccountPage from './pages/AccountPage'
 import CharacterPage from './pages/CharacterPage'
 import CommunityPage, { CommunityIndex } from './pages/CommunityPage'
 import CreateCharacterPage from './pages/CreateCharacterPage'
+import EditCharacterPage from './pages/EditCharacterPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -21,6 +22,7 @@ function App() {
           <Route path="/communaute/:serverId" element={<CommunityPage />} />
           <Route path="/personnages/nouveau" element={<CreateCharacterPage />} />
           <Route path="/personnages/:id" element={<CharacterPage />} />
+          <Route path="/personnages/:id/modifier" element={<EditCharacterPage />} />
           <Route path="/connexion" element={<LoginPage />} />
           <Route path="/inscription" element={<SignupPage />} />
           <Route path="/verifier" element={<VerifyPage />} />

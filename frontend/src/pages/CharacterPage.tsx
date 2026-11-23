@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useParams } from 'react-router'
+import { Link, useParams } from 'react-router'
 import { type Character, fetchCharacter } from '../api/characters'
 import CopyButton from '../components/CopyButton'
 import type { IconName } from '../components/Icon'
@@ -115,6 +115,11 @@ function CharacterPage() {
         <div className={styles.identity}>
           {meta && <span className={styles.meta}>{meta}</span>}
           <h1 className={styles.name}>{c.name}</h1>
+          {c.is_mine && (
+            <Link to={`/personnages/${c.id}/modifier`} className={styles.edit}>
+              Modifier ma fiche
+            </Link>
+          )}
           {c.inactive && (
             <span className={styles.inactive}>En retrait{c.inactive_note && ` : ${c.inactive_note}`}</span>
           )}
