@@ -1,4 +1,5 @@
 import type { Period } from '../api/characters'
+import type { ChipOption } from '../components/Chips'
 
 const DAYS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
 
@@ -34,3 +35,21 @@ export function formatSchedule(dayNumbers: number[], periods: Period[]): string 
   const text = [when, on].filter(Boolean).join(', ')
   return text ? text.charAt(0).toUpperCase() + text.slice(1) : null
 }
+
+/** Les jours et les créneaux, prêts pour des boutons de choix. */
+export const DAY_OPTIONS: ChipOption<number>[] = [
+  { value: 1, label: 'L', title: 'Lundi' },
+  { value: 2, label: 'M', title: 'Mardi' },
+  { value: 3, label: 'M', title: 'Mercredi' },
+  { value: 4, label: 'J', title: 'Jeudi' },
+  { value: 5, label: 'V', title: 'Vendredi' },
+  { value: 6, label: 'S', title: 'Samedi' },
+  { value: 7, label: 'D', title: 'Dimanche' },
+]
+
+export const PERIOD_OPTIONS: ChipOption<Period>[] = [
+  { value: 'morning', label: 'Matin' },
+  { value: 'afternoon', label: 'Après-midi' },
+  { value: 'evening', label: 'Soir' },
+  { value: 'night', label: 'Nuit' },
+]

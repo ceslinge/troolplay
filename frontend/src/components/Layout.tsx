@@ -18,9 +18,14 @@ function Layout() {
               Communauté
             </NavLink>
             {me.data ? (
-              <NavLink to="/compte" className={styles.link}>
-                Mon compte
-              </NavLink>
+              <>
+                <NavLink to="/compte" className={styles.link}>
+                  Mon compte
+                </NavLink>
+                <Link to="/personnages/nouveau" className={styles.cta}>
+                  Épingler un personnage
+                </Link>
+              </>
             ) : (
               !me.isPending && (
                 <Link to="/connexion" className={styles.cta}>
