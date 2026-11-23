@@ -48,6 +48,7 @@ function CreateCharacterPage() {
     onSuccess: async (character) => {
       localStorage.removeItem(DRAFT_KEY)
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
+      await queryClient.invalidateQueries({ queryKey: ['home'] })
       toast.show(`${character.name} est sur le panneau !`, 'success')
       navigate(`/personnages/${character.id}`)
     },

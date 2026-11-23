@@ -155,6 +155,9 @@ export type CharacterChanges = {
   ooc_note?: string | null
   play_days?: number[]
   play_periods?: Period[]
+  /** Mettre en retrait (true, avec une raison facultative) ou faire revenir (false). */
+  inactive?: boolean
+  inactive_note?: string | null
 }
 
 export const updateCharacter = (id: number, body: CharacterChanges) =>

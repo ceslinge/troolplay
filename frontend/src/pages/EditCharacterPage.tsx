@@ -60,6 +60,7 @@ function EditForm({ character }: { character: Character }) {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['character', String(character.id)] })
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
+      await queryClient.invalidateQueries({ queryKey: ['home'] })
       toast.show('Fiche enregistrée.', 'success')
       navigate(`/personnages/${character.id}`)
     },
@@ -151,6 +152,7 @@ function DeleteCharacter({ character }: { character: Character }) {
     onSuccess: async () => {
       queryClient.removeQueries({ queryKey: ['character', String(character.id)] })
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
+      await queryClient.invalidateQueries({ queryKey: ['home'] })
       toast.show(`${character.name} a quitté le panneau.`, 'success')
       navigate('/compte')
     },
