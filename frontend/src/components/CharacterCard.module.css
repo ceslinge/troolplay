@@ -1,0 +1,64 @@
+.link {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.link:hover .name,
+.link:focus-visible .name {
+  text-decoration: underline;
+  text-decoration-color: var(--medaillon-bord);
+  text-underline-offset: 0.2em;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.125rem 1.25rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.name {
+  margin: 0;
+  font-size: 1.125rem;
+  overflow-wrap: anywhere;
+}
+
+.facts {
+  font-size: 0.875rem;
+  color: var(--encre-douce);
+}
+
+.hook {
+  margin: 0;
+  font-family: var(--titre);
+  font-style: italic;
+  color: var(--bois);
+}
+
+.schedule {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.inactive {
+  align-self: flex-start;
+  padding: 0.125rem 0.625rem;
+  border-radius: 999px;
+  background: var(--papier-sombre);
+  color: var(--encre-douce);
+  font-size: 0.8125rem;
+}

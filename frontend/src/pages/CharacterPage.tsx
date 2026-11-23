@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router'
 import { type Character, fetchCharacter } from '../api/characters'
 import CopyButton from '../components/CopyButton'
@@ -11,12 +11,6 @@ import { agree } from '../lib/agree'
 import { CLASS_LABELS } from '../lib/classes'
 import { formatSchedule } from '../lib/schedule'
 import styles from './CharacterPage.module.css'
-
-type State =
-  | { status: 'loading' }
-  | { status: 'not-found' }
-  | { status: 'error' }
-  | { status: 'ready'; character: Character; age: number }
 
 type SectionData = {
   id: string
@@ -74,42 +68,30 @@ function ageOf(character: Character): number {
 
 function CharacterPage() {
   const { id = '' } = useParams()
-  const [state, setState] = useState<State>({ status: 'loading' })
-
-  useEffect(() => {
-    let ignore = false
-    fetchCharacter(id)
-      .then((character) => {
-        if (!ignore) {
-          setState(character ? { status: 'ready', character, age: ageOf(character) } : { status: 'not-found' })
-        }
-      })
-      .catch(() => {
-        if (!ignore) {
-          setState({ status: 'error' })
-        }
-      })
-    return () => {
-      ignore = true
-    }
-  }, [id])
-
-  if (state.status !== 'ready') {
-    const messages = {
-      loading: 'On cherche la fiche…',
-      'not-found': 'Personne ne répond à ce nom sur le panneau.',
-      error: "Le panneau est inaccessible pour l'instant. Réessaie dans un moment.",
-    }
+  const query = useQuery({
+    queryKey: ['character', id],
+    queryFn: async () => {
+      const character = await fetchCharacter(id)
+      // L'âge se calcule au chargement : l'affichage doit rester pur.
+      return character && { character, age: ageOf(character) }
+    },
+  })
+  if (query.isPending || query.isError || !query.data) {
+    const message = query.isPending
+      ? 'On cherche la fiche…'
+      : query.isError
+        ? "Le panneau est inaccessible pour l'instant. Réessaie dans un moment."
+        : 'Personne ne répond à ce nom sur le panneau.'
     return (
       <main className={styles.page}>
         <Sheet>
-          <p className={styles.message}>{messages[state.status]}</p>
+          <p className={styles.message}>{message}</p>
         </Sheet>
       </main>
     )
   }
 
-  const { character: c, age } = state
+  const { character: c, age } = query.data
   const sections = sectionsOf(c)
   const schedule = formatSchedule(c.play_days, c.play_periods)
   const meta = c.server ? `Sur ${c.server.name}` : null
