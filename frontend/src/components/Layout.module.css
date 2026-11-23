@@ -1,0 +1,52 @@
+.header {
+  background: var(--bois);
+  color: var(--papier);
+}
+
+.inner {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+}
+
+.brand {
+  font-family: var(--titre);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--papier);
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.5rem;
+}
+
+.link {
+  color: #eadfcf;
+  text-decoration: none;
+}
+
+.link:hover,
+.link[aria-current='page'] {
+  color: var(--laiton);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border-radius: 4px;
+  background: var(--laiton);
+  color: var(--bois);
+  font-weight: 600;
+  text-decoration: none;
+}

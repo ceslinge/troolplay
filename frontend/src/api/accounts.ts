@@ -1,0 +1,44 @@
+import { ApiError, apiFetch } from './client'
+
+export type Me = {
+  email: string
+  role: 'user' | 'moderator' | 'admin'
+  created_at: string
+}
+
+type Message = { detail: string }
+
+/** La personne connectée, ou null. */
+export async function fetchMe(): Promise<Me | null> {
+  try {
+    return await apiFetch<Me>('/me')
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      return null
+    }
+    throw error
+  }
+}
+
+export const signUp = (body: { email: string; password: string; accept_rules: boolean; age_confirmed: boolean }) =>
+  apiFetch<Message>('/accounts', { method: 'POST', body })
+
+export const verifyEmail = (token: string) => apiFetch('/accounts/verify', { method: 'POST', body: { token } })
+
+export const resendVerification = (email: string) =>
+  apiFetch<Message>('/accounts/verify/resend', { method: 'POST', body: { email } })
+
+export const logIn = (body: { email: string; password: string }) => apiFetch('/session', { method: 'POST', body })
+
+export const logOut = () => apiFetch('/session', { method: 'DELETE' })
+
+export const forgotPassword = (email: string) =>
+  apiFetch<Message>('/password/forgot', { method: 'POST', body: { email } })
+
+export const resetPassword = (body: { token: string; password: string }) =>
+  apiFetch('/password/reset', { method: 'POST', body })
+
+export const changePassword = (body: { current_password: string; new_password: string }) =>
+  apiFetch('/me/password', { method: 'PATCH', body })
+
+export const deleteAccount = (password: string) => apiFetch('/me', { method: 'DELETE', body: { password } })

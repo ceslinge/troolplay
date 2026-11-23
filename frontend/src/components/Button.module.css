@@ -1,0 +1,35 @@
+.button {
+  min-height: 2.75rem;
+  padding: 0 1.125rem;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--bois);
+  outline-offset: 2px;
+}
+
+.primary {
+  background: var(--bois);
+  color: var(--laiton);
+}
+
+.secondary {
+  background: transparent;
+  border-color: var(--bois);
+  color: var(--bois);
+}
+
+.danger {
+  background: var(--cire);
+  color: var(--papier);
+}
