@@ -6,6 +6,7 @@ from backend.characters.routes import me_router as my_characters_router
 from backend.characters.routes import router as characters_router
 from backend.config import settings
 from backend.home.routes import router as home_router
+from backend.servers.places import router as places_router
 from backend.servers.routes import router as servers_router
 
 app = FastAPI()
@@ -35,6 +36,7 @@ app.include_router(home_router)
 app.include_router(characters_router)
 app.include_router(my_characters_router)
 app.include_router(servers_router)
+app.include_router(places_router)
 
 
 @app.get("/health")

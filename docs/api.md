@@ -250,6 +250,18 @@ Réponse 200 :
 
 Seuls les serveurs actifs sont listés, triés par jeu puis par nom. `classes` donne les classes jouables dans le jeu du serveur, dans l'ordre du jeu.
 
+## Qui traîne ici ?
+
+`GET /api/servers/{id}/places`, accessible sans compte. Paramètres facultatifs : `day` et `period`, comme pour l'annuaire.
+
+Réponse 200 : les lieux du serveur où au moins un personnage a ses habitudes, les plus fréquentés d'abord.
+
+```json
+{"items": [{"area": "Astrub", "x": 5, "y": -18, "label": "Taverne du Bouftou Ivre", "regulars": [{"character": {"id": 42, "name": "Maëlis", "…": "…"}, "habits": "Accoudée au comptoir."}]}]}
+```
+
+Un même lieu est reconnu à sa zone et à ses coordonnées, même écrit différemment d'une fiche à l'autre. Son nom est celui que les fiches lui donnent le plus souvent. Les personnages masqués ou en retrait n'y figurent pas. Erreurs : 404 si le serveur n'existe pas, 422 si un filtre est invalide.
+
 ## L'accueil
 
 `GET /api/home`, accessible sans compte. Paramètre facultatif : `server_id`, le serveur de « À cette heure-ci ». Sans lui, le premier serveur actif.
