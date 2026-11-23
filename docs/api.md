@@ -215,12 +215,12 @@ Corps :
 
 | Champ | Règle |
 |---|---|
-| `area` | obligatoire, 40 caractères au plus |
-| `x`, `y` | obligatoires, entiers |
+| `area` | obligatoire, de 1 à 40 caractères |
+| `x`, `y` | obligatoires, entiers entre -1000 et 1000 |
 | `label` | 60 caractères au plus |
 | `habits` | 200 caractères au plus |
 
-Deux lieux d'un même personnage ne peuvent pas avoir les mêmes `area`, `x` et `y`. Une liste vide efface tous les lieux.
+Deux lieux d'un même personnage ne peuvent pas avoir les mêmes `area`, `x` et `y` : un doublon est refusé avec un 422, sans tenir compte des majuscules ni des espaces autour de `area`. Une liste vide efface tous les lieux.
 
 Réponse 200 : la liste enregistrée, avec les `id`.
 

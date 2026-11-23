@@ -1,4 +1,4 @@
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from datetime import UTC, datetime
 
 import pytest
@@ -74,3 +74,65 @@ def member(session: Session, member_password: str) -> User:
     session.add(user)
     session.flush()
     return user
+
+
+@pytest.fixture
+def make_member(session: Session, member_password: str) -> Callable[..., User]:
+    """Fabrique un compte vérifié, avec le mot de passe des tests."""
+
+    def make(email: str, role: str = "user") -> User:
+        user = User(
+            email=email,
+            password_hash=hash_password(member_password),
+            email_verified_at=datetime.now(UTC),
+            role=role,
+        )
+        session.add(user)
+        session.flush()
+        return user
+
+    return make
+
+
+@pytest.fixture
+def log_in_as(member_password: str) -> Callable[[TestClient, User], TestClient]:
+    def log_in(client: TestClient, user: User) -> TestClient:
+        response = client.post(
+            "/session", json={"email": user.email, "password": member_password}
+        )
+        assert response.status_code == 204
+        return client
+
+    return log_in
+
+
+@pytest.fixture
+def owner(make_member: Callable[..., User]) -> User:
+    return make_member("proprietaire.test@example.com")
+
+
+@pytest.fixture
+def me(client: TestClient, owner: User, log_in_as) -> TestClient:
+    """Le client, connecté en tant que propriétaire."""
+    return log_in_as(client, owner)
+
+
+@pytest.fixture
+def stranger(client: TestClient, make_member, log_in_as) -> Iterator[TestClient]:
+    """Un autre membre, connecté dans son propre navigateur."""
+    with TestClient(app) as other:
+        yield log_in_as(other, make_member("voisin.test@example.com"))
+
+
+@pytest.fixture
+def admin(client: TestClient, make_member, log_in_as) -> Iterator[TestClient]:
+    with TestClient(app) as other:
+        yield log_in_as(other, make_member("admin.test@example.com", role="admin"))
+
+
+@pytest.fixture
+def mine(me: TestClient, server: GameServer) -> int:
+    """Un personnage du propriétaire."""
+    response = me.post("/characters", json={"name": "Maëlis", "server_id": server.id})
+    assert response.status_code == 201
+    return response.json()["id"]
