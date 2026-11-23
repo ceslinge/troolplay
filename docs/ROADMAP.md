@@ -75,3 +75,5 @@
 - « Ceux qui l'ont croisé » sur la fiche, tiré des histoires où le personnage apparaît
 - Coups de cœur classés par les favoris, sans compteur public
 - Fil d'évolutions de la fiche : publier un changement comme une étape de la vie du personnage, au choix du joueur, jamais automatiquement
+- Souvenirs d'événements épinglés sur la fiche (« était au bal de Bonta ») : une présence, pas une performance
+- Repères collectifs plutôt qu'individuels : « cette semaine, 12 histoires racontées sur Ombrelune »
