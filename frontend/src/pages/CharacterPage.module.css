@@ -177,3 +177,22 @@
   margin: 0;
   font-style: italic;
 }
+
+.edit {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 2px solid var(--bois);
+  border-radius: 4px;
+  color: var(--bois);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.edit:hover {
+  background: var(--bois);
+  color: var(--laiton);
+}
+
