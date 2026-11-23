@@ -57,6 +57,7 @@ Tous ces champs sont facultatifs.
 ## Présentation d'un personnage
 - `gender` : genre grammatical, `feminine`, `masculine` ou `neutral` par défaut. Il ne sert qu'à accorder les textes du site, les pronoms se précisent dans la fiche.
 - `hook` : la réplique d'accroche, ce que le personnage répond quand on l'aborde.
+- `class` : une classe du jeu, en identifiant (`cra`, `xelor`…), ou NULL. Le nom affiché vit dans le frontend.
 - `seal` : sceau prédéfini, forme et couleur de cire, comme l'avatar.
 
 ## Avant les histoires à plusieurs mains

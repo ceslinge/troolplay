@@ -37,7 +37,7 @@ Aucune réponse ne contient de `user_id`, ni rien qui permette de relier deux pe
   "name": "Maëlis Sombrefeu",
   "gender": "feminine",
   "ingame_name": "Maelis-Sombrefeu",
-  "class": "Crâ",
+  "class": "cra",
   "level": 142,
   "avatar": "archere-3",
   "seal": "fleche-brisee-sang",
@@ -74,7 +74,7 @@ Le propriétaire, les modérateurs et les admins reçoivent en plus :
   "server": {"id": 3, "game": "dofus", "name": "Ombrelune"},
   "name": "Maëlis Sombrefeu",
   "gender": "feminine",
-  "class": "Crâ",
+  "class": "cra",
   "level": 142,
   "avatar": "archere-3",
   "seal": "fleche-brisee-sang",
@@ -95,7 +95,7 @@ Seuls `name` et `server_id` sont obligatoires à la création. Tout le reste peu
 | `server_id` | un serveur actif |
 | `gender` | `feminine`, `masculine` ou `neutral` (par défaut). Sert seulement à accorder les textes du site |
 | `ingame_name` | 40 caractères au plus |
-| `class` | 30 caractères au plus |
+| `class` | `null` ou une classe du jeu : `feca`, `osamodas`, `enutrof`, `sram`, `xelor`, `ecaflip`, `eniripsa`, `iop`, `cra`, `sadida`, `sacrieur`, `pandawa`, `roublard`, `zobal`, `steamer`, `eliotrope`, `huppermage`, `ouginak`, `forgelance`, `bellaphone`, si elle existe dans le jeu du serveur. Retro n'a que les douze premières, Touch n'a ni `eliotrope`, ni `huppermage`, ni `ouginak`, ni `forgelance`. Vide, elle reste un mystère |
 | `level` | `null` ou un entier à partir de 1 |
 | `avatar`, `seal` | un identifiant de la liste prédéfinie |
 | `hook` | 200 caractères au plus |

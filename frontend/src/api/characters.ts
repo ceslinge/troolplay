@@ -13,6 +13,28 @@ export type Hangout = {
   habits: string | null
 }
 
+export type CharacterClass =
+  | 'feca'
+  | 'osamodas'
+  | 'enutrof'
+  | 'sram'
+  | 'xelor'
+  | 'ecaflip'
+  | 'eniripsa'
+  | 'iop'
+  | 'cra'
+  | 'sadida'
+  | 'sacrieur'
+  | 'pandawa'
+  | 'roublard'
+  | 'zobal'
+  | 'steamer'
+  | 'eliotrope'
+  | 'huppermage'
+  | 'ouginak'
+  | 'forgelance'
+  | 'bellaphone'
+
 export type Gender = 'feminine' | 'masculine' | 'neutral'
 
 export type Period = 'morning' | 'afternoon' | 'evening' | 'night'
@@ -24,7 +46,7 @@ export type Character = {
   name: string
   gender: Gender
   ingame_name: string | null
-  class: string | null
+  class: CharacterClass | null
   level: number | null
   avatar: string | null
   seal: string | null
