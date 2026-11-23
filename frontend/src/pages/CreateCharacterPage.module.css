@@ -82,37 +82,12 @@
   gap: 1rem;
 }
 
-.select {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--encre-douce);
-}
-
-.select select {
-  min-height: 2.75rem;
-  padding: 0 0.75rem;
-  border: 1px solid var(--medaillon-bord);
-  border-radius: 4px;
-  background: var(--papier);
-  color: var(--encre);
-  font: inherit;
-  font-weight: 400;
-}
-
 .hint {
   margin: 0;
   font-size: 0.8125rem;
   color: var(--encre-douce);
 }
 
-.error {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--cire);
-}
 
 .nav {
   display: flex;
