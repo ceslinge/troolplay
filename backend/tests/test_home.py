@@ -178,3 +178,35 @@ def test_the_home_never_reveals_owners(
 
     assert "user_id" not in response.text
     assert user.email not in response.text
+
+
+def test_freshly_pinned_shows_one_character_per_player(
+    session: Session, client: TestClient, user: User, server: GameServer, make_member
+) -> None:
+    for number in range(4):
+        add(session, user, server, f"Rafale {number}")
+    other = make_member("autre.joueur.test@example.com")
+    add(session, other, server, "Solitaire")
+
+    recent = [c["name"] for c in client.get("/home").json()["recent"]]
+
+    assert recent[:2] == ["Solitaire", "Rafale 3"]
+    assert not {"Rafale 0", "Rafale 1", "Rafale 2"} & set(recent)
+
+
+def test_the_counter_draws_a_player_before_a_character(
+    session: Session, client: TestClient, user: User, server: GameServer, make_member
+) -> None:
+    # Sur une base vide : un joueur bavard avec 30 répliques, un autre avec une seule.
+    for number in range(30):
+        add(
+            session, user, server, f"Bavard {number}", hook=f"Réplique bavarde {number}"
+        )
+    other = make_member("discret.test@example.com")
+    add(session, other, server, "Discret", hook="Réplique discrète de test")
+
+    names = [client.get("/home/overheard").json()["name"] for _ in range(80)]
+
+    # Par personnage, Discret sortirait une fois sur 31. Par joueur, une fois sur deux
+    # (ou moins s'il y a d'autres joueurs en base) : il doit sortir.
+    assert "Discret" in names

@@ -48,18 +48,32 @@ def right_now(session: Session, server: GameServer) -> RightNow:
     )
 
 
+def owner():
+    """Qui tient ce personnage. Un PNJ, qui n'appartient à personne, compte pour lui-même."""
+    return func.coalesce(Character.user_id, -Character.id)
+
+
 def overheard(session: Session) -> Overheard | None:
-    found = session.execute(
-        select(Character, GameServer.name)
-        .outerjoin(GameServer, GameServer.id == Character.server_id)
-        # Une réplique faite d'espaces ne dirait rien au comptoir.
-        .where(*visible(), func.trim(Character.hook) != "")
+    # Une réplique faite d'espaces ne dirait rien au comptoir.
+    candidates = (*visible(), func.trim(Character.hook) != "")
+    # D'abord un joueur au hasard, puis une de ses répliques : celui qui a dix
+    # personnages n'a pas dix fois plus de chances d'être entendu.
+    someone = session.scalar(
+        select(owner())
+        .where(*candidates)
+        .group_by(owner())
         .order_by(func.random())
         .limit(1)
-    ).one_or_none()
-    if found is None:
+    )
+    if someone is None:
         return None
-    character, server_name = found
+    character, server_name = session.execute(
+        select(Character, GameServer.name)
+        .outerjoin(GameServer, GameServer.id == Character.server_id)
+        .where(*candidates, owner() == someone)
+        .order_by(func.random())
+        .limit(1)
+    ).one()
     return Overheard(
         character_id=character.id,
         name=character.name,
@@ -85,11 +99,21 @@ def home(session: SessionDep, server_id: int | None = None) -> HomeOut:
         ).one_or_none()
     )
 
+    # Un seul personnage par joueur, son plus récent : six créations d'affilée
+    # ne remplissent pas toute la rangée. Rien ne montre qu'ils ont le même joueur.
+    newest_first = (Character.created_at.desc(), Character.id.desc())
+    rank = func.row_number().over(partition_by=Character.user_id, order_by=newest_first)
+    latest = (
+        select(Character.id, rank.label("rank"))
+        .where(*visible(), Character.is_npc.is_(False))
+        .subquery()
+    )
     recent = session.scalars(
         select(Character)
-        .where(*visible(), Character.is_npc.is_(False))
+        .join(latest, latest.c.id == Character.id)
+        .where(latest.c.rank == 1)
         .options(selectinload(Character.server))
-        .order_by(Character.created_at.desc(), Character.id.desc())
+        .order_by(*newest_first)
         .limit(RECENT_COUNT)
     )
     return HomeOut(
