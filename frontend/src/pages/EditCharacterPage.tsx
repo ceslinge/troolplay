@@ -3,7 +3,7 @@ import { type FormEvent, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { type Character, deleteCharacter, fetchCharacter, replaceHangouts, updateCharacter } from '../api/characters'
 import { ApiError } from '../api/client'
-import { fetchServers } from '../api/servers'
+import { fetchPlaces, fetchServers } from '../api/servers'
 import Button from '../components/Button'
 import Field from '../components/Field'
 import HangoutsEditor, { type HangoutDraft } from '../components/HangoutsEditor'
@@ -91,6 +91,13 @@ function EditForm({ character }: { character: Character }) {
   }
 
   const server = servers.data?.find((s) => String(s.id) === draft.server_id)
+  // Les lieux déjà épinglés sur le serveur choisi : la même requête que « Qui traîne ici ? », donc souvent déjà en mémoire.
+  const places = useQuery({
+    queryKey: ['places', Number(draft.server_id), undefined, undefined],
+    queryFn: () => fetchPlaces(Number(draft.server_id), {}),
+    enabled: draft.server_id !== '',
+  })
+  const known = (places.data ?? []).map((p) => ({ area: p.area, x: p.x, y: p.y, label: p.label, count: p.regulars.length }))
   // On peut déménager, mais seulement vers un serveur ouvert du même jeu (décision 29).
   const sameGame = (servers.data ?? []).filter((s) => s.game === character.server?.game)
   const parts = formParts({ draft, set, errors, servers: sameGame, server, mode: 'free' })
@@ -126,7 +133,7 @@ function EditForm({ character }: { character: Character }) {
       ))}
       <Sheet seed="edition-lieux" as="section" contentClassName={styles.card}>
         <h2 className={styles.question}>Où le croiser</h2>
-        <HangoutsEditor value={hangouts} onChange={setHangouts} error={hangoutError} />
+        <HangoutsEditor value={hangouts} onChange={setHangouts} error={hangoutError} known={known} />
       </Sheet>
       <div className={styles.nav}>
         <Link to={`/personnages/${character.id}`}>Annuler</Link>
