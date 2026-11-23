@@ -1,3 +1,4 @@
+import { apiFetch } from './client'
 import type { Server } from './servers'
 
 export type Hangout = {
@@ -109,3 +110,27 @@ export async function fetchCharacters(
   }
   return response.json()
 }
+
+/** Ce qu'on envoie pour créer un personnage : seuls le nom et le serveur sont obligatoires. */
+export type NewCharacter = {
+  name: string
+  server_id: number
+  gender?: Gender
+  class?: CharacterClass
+  level?: number
+  ingame_name?: string
+  hook?: string
+  appearance?: string
+  personality?: string
+  backstory?: string
+  goals?: string
+  flaws?: string
+  rumors?: string
+  ooc_note?: string
+  play_days?: number[]
+  play_periods?: Period[]
+}
+
+export const createCharacter = (body: NewCharacter) =>
+  apiFetch<Character>('/characters', { method: 'POST', body })
+

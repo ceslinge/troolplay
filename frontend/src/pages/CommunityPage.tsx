@@ -9,28 +9,12 @@ import {
 } from '../api/characters'
 import { fetchServers } from '../api/servers'
 import CharacterCard from '../components/CharacterCard'
-import Chips, { type ChipOption } from '../components/Chips'
+import Chips from '../components/Chips'
 import Medallion from '../components/Medallion'
 import Sheet from '../components/Sheet'
 import { CLASS_LABELS } from '../lib/classes'
+import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
 import styles from './CommunityPage.module.css'
-
-const DAYS: ChipOption<number>[] = [
-  { value: 1, label: 'L', title: 'Lundi' },
-  { value: 2, label: 'M', title: 'Mardi' },
-  { value: 3, label: 'M', title: 'Mercredi' },
-  { value: 4, label: 'J', title: 'Jeudi' },
-  { value: 5, label: 'V', title: 'Vendredi' },
-  { value: 6, label: 'S', title: 'Samedi' },
-  { value: 7, label: 'D', title: 'Dimanche' },
-]
-
-const PERIODS: ChipOption<Period>[] = [
-  { value: 'morning', label: 'Matin' },
-  { value: 'afternoon', label: 'Après-midi' },
-  { value: 'evening', label: 'Soir' },
-  { value: 'night', label: 'Nuit' },
-]
 
 /** /communaute tout court : on ouvre le premier serveur. */
 export function CommunityIndex() {
@@ -128,13 +112,13 @@ function CommunityPage() {
       <Sheet edge="straight" contentClassName={styles.filters}>
         <Chips
           legend="Joue le"
-          options={DAYS}
+          options={DAY_OPTIONS}
           value={filters.day}
           onChange={(day) => setFilter('day', day ? String(day) : undefined)}
         />
         <Chips
           legend="Plutôt"
-          options={PERIODS}
+          options={PERIOD_OPTIONS}
           value={filters.period}
           onChange={(period) => setFilter('period', period)}
         />
