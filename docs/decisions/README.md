@@ -28,4 +28,4 @@
 | 24 | 18 ans minimum pour s'inscrire | le RP mène vite à des relations entre personnages, et bientôt à des lettres privées : on évite de mêler adultes et mineurs | acceptée |
 | 25 | Fiches publiques, histoires réservées aux membres | les fiches attirent et s'affichent dans Discord, les histoires portent les thèmes les plus durs | acceptée |
 | 26 | Pas de contenu sexuel explicite | il imposerait une vraie vérification d'âge, hors de portée d'un projet de fan, et ce n'est pas le propos du site | acceptée |
-
+| 28 | Personne n'occupe tout le panneau | dans les sélections, un passage par joueur à la fois ; dans les listes, on regroupe par personnage. La limite par joueur reste invisible, pour ne jamais révéler qui joue quels personnages (décision 6) | acceptée |

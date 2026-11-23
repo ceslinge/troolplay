@@ -265,8 +265,8 @@ Réponse 200 :
 ```
 
 - `right_now` compte les personnages du serveur qui ont l'habitude de jouer ce jour-là et à ce créneau, à l'heure de Paris. C'est déclaratif : ce n'est pas qui est connecté. `places` donne leurs deux lieux les plus fréquentés.
-- `overheard` est une réplique d'accroche tirée au hasard. `GET /api/home/overheard` en tire une autre.
-- `recent` liste les six dernières fiches.
+- `overheard` est une réplique d'accroche tirée au hasard : d'abord un joueur, puis une de ses répliques, pour que celui qui a dix personnages ne soit pas dix fois plus entendu. `GET /api/home/overheard` en tire une autre.
+- `recent` liste les six dernières fiches, une seule par joueur : la plus récente.
 
 Les fiches masquées, en retrait et les PNJ n'apparaissent dans aucune de ces trois parties, ni les répliques vides. Un `server_id` inconnu ou fermé ne fait pas d'erreur : on retombe sur le premier serveur actif.
 
