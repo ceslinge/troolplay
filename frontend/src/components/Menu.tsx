@@ -3,7 +3,8 @@ import { createPortal } from 'react-dom'
 import { normalize } from '../lib/text'
 import styles from './Menu.module.css'
 
-export type MenuOption<T> = { value: T; label: string }
+/** group : un titre au-dessus des options qui se suivent avec le même (par exemple le jeu d'un serveur). */
+export type MenuOption<T> = { value: T; label: string; group?: string }
 
 type MenuProps<T> = {
   label: string
@@ -164,6 +165,31 @@ function Menu<T extends string | number>({
     }
   }
 
+  // Les options qui se suivent avec le même groupe, sous un même titre. Un seul groupe : pas de titre.
+  const groups: { title: string; indexes: number[] }[] = []
+  options.forEach((option, index) => {
+    const last = groups.at(-1)
+    if (last && last.title === (option.group ?? '')) last.indexes.push(index)
+    else groups.push({ title: option.group ?? '', indexes: [index] })
+  })
+
+  function renderOption(index: number) {
+    const option = options[index]
+    return (
+      <li
+        key={String(option.value)}
+        id={`${id}-${index}`}
+        role="option"
+        aria-selected={index === selected}
+        className={`${styles.option} ${index === active ? styles.active : ''}`}
+        onPointerMove={() => setActive(index)}
+        onClick={() => choose(index)}
+      >
+        {option.label}
+      </li>
+    )
+  }
+
   return (
     <div className={`${styles.menu} ${styles[variant]}`}>
       <span id={`${id}-label`} className={hideLabel ? styles.hidden : styles.label}>
@@ -210,19 +236,18 @@ function Menu<T extends string | number>({
             // Le focus reste sur le bouton : cliquer dans la liste ne doit pas le lui retirer.
             onMouseDown={(event) => event.preventDefault()}
           >
-            {options.map((option, index) => (
-              <li
-                key={String(option.value)}
-                id={`${id}-${index}`}
-                role="option"
-                aria-selected={index === selected}
-                className={`${styles.option} ${index === active ? styles.active : ''}`}
-                onPointerMove={() => setActive(index)}
-                onClick={() => choose(index)}
-              >
-                {option.label}
-              </li>
-            ))}
+            {groups.length > 1
+              ? groups.map((group, g) => (
+                  <li key={group.title} role="presentation">
+                    <span id={`${id}-group-${g}`} className={styles.groupTitle}>
+                      {group.title}
+                    </span>
+                    <ul role="group" aria-labelledby={`${id}-group-${g}`} className={styles.group}>
+                      {group.indexes.map(renderOption)}
+                    </ul>
+                  </li>
+                ))
+              : options.map((_, index) => renderOption(index))}
           </ul>,
           document.body,
         )}

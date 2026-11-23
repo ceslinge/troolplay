@@ -143,6 +143,23 @@
   transform: translateY(-100%);
 }
 
+/* Le titre d'un groupe : le nom du jeu, en petites capitales. */
+.groupTitle {
+  display: block;
+  padding: 0.625rem 0.75rem 0.25rem;
+  color: var(--encre-douce);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .option {
   display: flex;
   align-items: center;

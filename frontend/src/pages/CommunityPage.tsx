@@ -12,6 +12,7 @@ import Sheet from '../components/Sheet'
 import { useActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
 import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
 import { useMe } from '../lib/useMe'
+import { serverOptions } from '../lib/games'
 import styles from './CommunityPage.module.css'
 
 /** /communaute tout court : le serveur du personnage actif, ou à défaut le premier. */
@@ -130,7 +131,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
             hideLabel
             variant="title"
             value={server.id}
-            options={servers.data.map((s) => ({ value: s.id, label: s.name }))}
+            options={serverOptions(servers.data, (s) => s.id)}
             onChange={(id) => navigate(tabLink(tab, id))}
           />
         </Sheet>
