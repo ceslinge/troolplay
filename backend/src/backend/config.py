@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     # En production : true (cookies seulement en HTTPS) et l'adresse du site.
     cookie_secure: bool = False
     allowed_origins: list[str] = ["http://localhost:5173"]
+    site_url: str = "http://localhost:5173"
 
     @property
     def database_url(self) -> URL:

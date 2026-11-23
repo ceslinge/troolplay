@@ -36,6 +36,7 @@ erDiagram
 | sessions | connexion ouverte | token_hash unique | suit le compte |
 | email_tokens | lien envoyé par email | token_hash unique, purpose verify ou reset | suit le compte |
 | login_failures | connexion ratée, pour limiter les essais | index sur email, ip et date | effacée à la connexion réussie |
+| throttle_events | action limitée (inscription, renvoi d'email) | index sur la date | |
 
 ## Colonnes
 - **users** : id, email, password_hash, role, email_verified_at, banned_at, created_at
@@ -49,6 +50,7 @@ erDiagram
 - **character_links** : source_id, target_id, label
 - **sessions** : id, user_id, token_hash, created_at, last_seen_at, expires_at
 - **login_failures** : id, email, ip, created_at
+- **throttle_events** : id, action, key, created_at
 - **email_tokens** : id, user_id, purpose, token_hash, expires_at, used_at, created_at
 - **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, snapshot, decision, handled_by, handled_at, created_at
 
