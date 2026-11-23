@@ -15,9 +15,10 @@
 - [ ] Contrat d'API
 
 ## 3. Fondations
-- [ ] Installer Docker
+- [x] Installer Docker
+- [x] Base Postgres locale avec Compose
 - [x] Squelette backend
-- [ ] Squelette frontend, `.env.example`
+- [x] Squelette frontend, `.env.example`
 - [ ] Compose : le projet se lance en une commande
 - [x] Linters et tests du backend
 
