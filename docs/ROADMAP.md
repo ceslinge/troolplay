@@ -61,7 +61,8 @@
 
 ## Idées
 À noter ici sans alourdir la V1.
-- Événements, notifications, chat
+- Événements, en jeu ou hors jeu, proposés à la communauté, avec les histoires qui s'y rattachent (V2)
+- Notifications, chat
 - Gazette du serveur
 - Rappel par mail ou retrait automatique des personnages inactifs
 - Grille jour × créneau, si les cases ne suffisent pas
