@@ -379,7 +379,7 @@ Erreurs : 401, 403 si le mot de passe actuel est faux, 422.
 
 `DELETE /api/me` avec `{"password": "…"}`, pour éviter une suppression par erreur ou depuis un ordinateur laissé ouvert.
 
-Réponse 204. Le compte, ses personnages, leurs lieux et ses histoires sont supprimés. Les signalements restent, sans lien vers lui. Le cookie est effacé.
+Réponse 204. Le compte, ses personnages, leurs lieux, ses histoires, ses sessions et ses liens en cours sont supprimés, ainsi que les traces de son adresse dans les limites contre les abus. Les signalements restent, sans lien vers lui. Le cookie est effacé.
 
 Erreurs : 401, 403 si le mot de passe est faux.
 
