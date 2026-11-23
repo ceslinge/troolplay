@@ -1,9 +1,12 @@
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 from backend.characters.classes import CharacterClass
 from backend.servers.schemas import ServerOut
+
+Period = Literal["morning", "afternoon", "evening", "night"]
 
 
 class HangoutOut(BaseModel):
@@ -17,22 +20,34 @@ class HangoutOut(BaseModel):
     habits: str | None
 
 
-class CharacterOut(BaseModel):
-    """La fiche complète, telle que tout le monde peut la lire."""
+class CharacterSummary(BaseModel):
+    """Ce qu'une liste montre d'un personnage."""
 
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     server: ServerOut | None
-    is_npc: bool
     name: str
     gender: str
-    ingame_name: str | None
     class_: CharacterClass | None = Field(serialization_alias="class")
     level: int | None
     avatar: str | None
     seal: str | None
     hook: str | None
+    play_days: list[int]
+    play_periods: list[str]
+    inactive_at: datetime | None = Field(exclude=True)
+
+    @computed_field
+    def inactive(self) -> bool:
+        return self.inactive_at is not None
+
+
+class CharacterOut(CharacterSummary):
+    """La fiche complète, telle que tout le monde peut la lire."""
+
+    is_npc: bool
+    ingame_name: str | None
     appearance: str | None
     personality: str | None
     backstory: str | None
@@ -40,14 +55,12 @@ class CharacterOut(BaseModel):
     flaws: str | None
     rumors: str | None
     ooc_note: str | None
-    play_days: list[int]
-    play_periods: list[str]
     hangouts: list[HangoutOut]
-    inactive_at: datetime | None = Field(exclude=True)
     inactive_note: str | None
     created_at: datetime
     updated_at: datetime
 
-    @computed_field
-    def inactive(self) -> bool:
-        return self.inactive_at is not None
+
+class CharacterList(BaseModel):
+    items: list[CharacterSummary]
+    total: int

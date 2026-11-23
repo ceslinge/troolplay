@@ -243,10 +243,10 @@ Pour les listes déroulantes. Accessible sans compte.
 Réponse 200 :
 
 ```json
-{"items": [{"id": 3, "game": "dofus", "name": "Ombrelune"}]}
+{"items": [{"id": 3, "game": "dofus", "name": "Ombrelune", "classes": ["feca", "osamodas", "…"]}]}
 ```
 
-Seuls les serveurs actifs sont listés, triés par jeu puis par nom.
+Seuls les serveurs actifs sont listés, triés par jeu puis par nom. `classes` donne les classes jouables dans le jeu du serveur, dans l'ordre du jeu.
 
 ## Plus tard
 
