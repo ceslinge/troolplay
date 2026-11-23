@@ -6,7 +6,7 @@ Un lieu où les rôlistes de Dofus présentent leurs personnages, racontent leur
 
 > Projet de fan non officiel et non commercial, sans affiliation avec Ankama.
 
-**État : conception.** Il n'y a pas encore de code.
+**État : fondations.** Le backend parle à Postgres, le frontend au backend, la CI vérifie les deux. Pas encore de fonctionnalité.
 
 ## Stack envisagée
 - Front : React, TypeScript, Vite
@@ -19,4 +19,5 @@ Un lieu où les rôlistes de Dofus présentent leurs personnages, racontent leur
 - [Feuille de route](docs/ROADMAP.md)
 - [Base de données](docs/database.md)
 - [Permissions](docs/permissions.md)
+- [Contrat d'API](docs/api.md)
 - [Décisions](docs/decisions/README.md)
