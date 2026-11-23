@@ -2,7 +2,7 @@
 
 Ce que le frontend et le backend se promettent. On l'écrit avant de coder une route, et on le met à jour dans la même PR quand elle change.
 
-Ce document couvre les personnages. Les comptes, les histoires, « Qui traîne ici ? » et la modération viendront ensuite.
+Ce document couvre les personnages et les comptes. Les histoires, « Qui traîne ici ? » et la modération viendront ensuite.
 
 ## Conventions
 
@@ -248,11 +248,145 @@ Réponse 200 :
 
 Seuls les serveurs actifs sont listés, triés par jeu puis par nom. `classes` donne les classes jouables dans le jeu du serveur, dans l'ordre du jeu.
 
+## Les comptes
+
+Un compte est privé : seul son propriétaire le voit. Il n'est jamais relié publiquement à ses personnages.
+
+### La session
+
+Se connecter, c'est recevoir un cookie `session` :
+
+- `HttpOnly` : JavaScript ne peut pas le lire, un script injecté ne peut donc pas le voler ;
+- `Secure` en production : il ne voyage qu'en HTTPS ;
+- `SameSite=Lax` : il n'est pas envoyé quand un autre site déclenche une requête vers le nôtre ;
+- `Path=/`, valable 30 jours, prolongé à chaque visite.
+
+Il contient un jeton aléatoire de 32 octets. La base n'en garde que l'empreinte (SHA-256), dans la table `sessions` : une fuite de la base ne donne accès à aucune session. Chaque connexion crée un nouveau jeton. La déconnexion supprime la session côté serveur, pas seulement le cookie.
+
+### Ce qui protège les requêtes
+
+- Toute requête qui modifie quelque chose (`POST`, `PATCH`, `PUT`, `DELETE`) doit venir du site lui-même : le serveur vérifie l'en-tête `Origin` et répond 403 sinon. Avec `SameSite=Lax`, c'est la protection contre le CSRF.
+- Les droits se vérifient toujours côté serveur, selon `permissions.md`. Le frontend ne fait qu'afficher ce qu'on a le droit de faire.
+- Les fiches et les serveurs se lisent sans compte. Les histoires demandent une session : sans elle, leurs routes répondent 401.
+
+### Mots de passe
+
+- De 10 à 128 caractères, sans autre règle imposée : une phrase vaut mieux qu'un mot compliqué.
+- Hachés en Argon2id. Jamais stockés, renvoyés ni écrits dans les journaux en clair.
+
+### Liens envoyés par email
+
+Vérification de l'adresse et mot de passe oublié passent par un lien contenant un jeton aléatoire :
+
+- à usage unique ;
+- valable 24 heures pour la vérification, 1 heure pour le mot de passe ;
+- stocké en empreinte seulement, dans la table `email_tokens`.
+
+En développement, les emails ne partent pas : ils s'affichent dans le terminal du backend.
+
+### Limites contre les abus
+
+| Action | Limite | Au-delà |
+|---|---|---|
+| Connexion | 5 essais ratés en 15 minutes, par adresse et par IP | 429 |
+| Inscription | 5 en 1 heure, par IP | 429 |
+| Mot de passe oublié, renvoi de vérification | 3 en 1 heure, par adresse | 429, sans le dire à l'écran |
+
+Une réponse 429 porte l'en-tête `Retry-After`, en secondes.
+
+### Ne pas révéler qui est inscrit
+
+L'inscription, le mot de passe oublié et le renvoi de vérification répondent la même chose, que l'adresse existe ou non. Si l'adresse a déjà un compte, c'est son propriétaire qui reçoit un email pour le prévenir. Personne ne peut tester si quelqu'un est inscrit.
+
+## Routes des comptes
+
+### S'inscrire
+
+`POST /api/accounts`
+
+Corps :
+
+```json
+{"email": "toi@example.com", "password": "une phrase assez longue", "accept_rules": true, "age_confirmed": true}
+```
+
+`accept_rules` (les règles d'usage) et `age_confirmed` (« J'ai au moins 18 ans ») doivent valoir `true`.
+
+Réponse 202 : `{"detail": "Si cette adresse est libre, un lien de vérification vient de partir."}`. Le compte est créé, mais il faut vérifier l'adresse avant de se connecter.
+
+Erreurs : 422 (adresse invalide, mot de passe trop court ou trop long, case non cochée), 429.
+
+### Vérifier son adresse
+
+`POST /api/accounts/verify`
+
+Corps : `{"token": "…"}`, le jeton du lien reçu.
+
+Réponse 204. Erreurs : 400 si le jeton est inconnu, expiré ou déjà utilisé.
+
+`POST /api/accounts/verify/resend` avec `{"email": "…"}` renvoie un lien. Réponse 202, toujours.
+
+### Se connecter
+
+`POST /api/session`
+
+Corps : `{"email": "…", "password": "…"}`
+
+Réponse 204, avec le cookie `session`.
+
+Erreurs :
+
+- 401 « Email ou mot de passe incorrect », sans préciser lequel ;
+- 403 si l'adresse n'est pas encore vérifiée, ou si le compte est suspendu. Seulement quand le mot de passe est bon, pour ne rien révéler à un inconnu ;
+- 429.
+
+### Se déconnecter
+
+`DELETE /api/session`
+
+Réponse 204, toujours, même sans session : le cookie est effacé et la session supprimée.
+
+### Mon compte
+
+`GET /api/me`
+
+Réponse 200 :
+
+```json
+{"email": "toi@example.com", "role": "user", "created_at": "2026-11-23T10:00:00Z"}
+```
+
+Erreurs : 401.
+
+### Mot de passe oublié
+
+`POST /api/password/forgot` avec `{"email": "…"}`. Réponse 202, toujours.
+
+`POST /api/password/reset` avec `{"token": "…", "password": "…"}`. Réponse 204. Toutes les sessions du compte sont fermées : si quelqu'un d'autre était connecté, il ne l'est plus.
+
+Erreurs : 400 (jeton inconnu, expiré ou utilisé), 422.
+
+### Changer de mot de passe
+
+`PATCH /api/me/password` avec `{"current_password": "…", "new_password": "…"}`.
+
+Réponse 204. Les autres sessions sont fermées, celle en cours est gardée.
+
+Erreurs : 401, 403 si le mot de passe actuel est faux, 422.
+
+### Supprimer son compte
+
+`DELETE /api/me` avec `{"password": "…"}`, pour éviter une suppression par erreur ou depuis un ordinateur laissé ouvert.
+
+Réponse 204. Le compte, ses personnages, leurs lieux et ses histoires sont supprimés. Les signalements restent, sans lien vers lui. Le cookie est effacé.
+
+Erreurs : 401, 403 si le mot de passe est faux.
+
 ## Plus tard
 
 Après ce contrat :
 
-- les comptes : inscription, connexion, mot de passe oublié, suppression ;
+- l'export de ses données ;
 - « Qui traîne ici ? » : les lieux d'un serveur et leurs habitués ;
 - les histoires ;
 - la modération : masquer, signaler, voir à qui appartient un personnage.

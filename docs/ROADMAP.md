@@ -13,7 +13,8 @@
 - [x] Premières maquettes : accueil, page Communauté, fiche
 - [ ] Maquette d'écriture d'une histoire
 - [x] Contrat d'API des personnages
-- [ ] Contrat d'API : comptes, « Qui traîne ici ? », histoires, modération
+- [x] Contrat d'API des comptes
+- [ ] Contrat d'API : « Qui traîne ici ? », histoires, modération
 
 ## 3. Fondations
 - [x] Installer Docker
@@ -45,7 +46,8 @@
 
 ## 8. Légal
 - [ ] Écrire à Ankama
-- [ ] Âge minimum, signalement
+- [x] Âge minimum : 18 ans
+- [ ] Signalement
 - [ ] Export et suppression des données, purge des preuves
 
 ## 9. Lancement

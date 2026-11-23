@@ -33,6 +33,8 @@ erDiagram
 | favorite_stories (après V1) | favori privé | PK (user_id, story_id) | suit les deux |
 | character_links (après V1) | source considère cible comme… | PK (source_id, target_id), source différente de cible | suit les deux |
 | reports | signalement | une cible au plus, copie du contenu | survit à tout |
+| sessions | connexion ouverte | token_hash unique | suit le compte |
+| email_tokens | lien envoyé par email | token_hash unique, purpose verify ou reset | suit le compte |
 
 ## Colonnes
 - **users** : id, email, password_hash, role, email_verified_at, banned_at, created_at
@@ -44,6 +46,8 @@ erDiagram
 - **favorite_characters** : user_id, character_id, created_at
 - **favorite_stories** : user_id, story_id, created_at
 - **character_links** : source_id, target_id, label
+- **sessions** : id, user_id, token_hash, created_at, last_seen_at, expires_at
+- **email_tokens** : id, user_id, purpose, token_hash, expires_at, used_at, created_at
 - **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, snapshot, decision, handled_by, handled_at, created_at
 
 ## Retrouver un personnage en jeu

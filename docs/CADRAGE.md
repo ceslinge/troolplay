@@ -34,7 +34,9 @@ En tant que joueur, je veux…
 - Une fois connecté, une barre fine pour passer d'un de ses personnages à l'autre.
 
 ## Principes
-- On lit tout ce qui est publié sans compte.
+- Les fiches se lisent sans compte : elles sont la vitrine de la communauté et donnent un aperçu dans Discord.
+- Les histoires sont réservées aux membres, tous majeurs : c'est là que les thèmes durs sont les plus probables.
+- Il faut avoir 18 ans pour s'inscrire. Le contenu sexuel explicite reste interdit.
 - Seuls le nom et le serveur sont obligatoires pour un personnage, le guidé est passable.
 - On ne perd jamais un texte : les brouillons se sauvegardent seuls.
 - Le site fonctionne sur mobile et ses liens ont un aperçu dans Discord.
@@ -64,6 +66,5 @@ Monétisation, assets Ankama, présence en jeu en temps réel.
 ## Questions ouvertes
 - Nom définitif
 - Jeux couverts : Dofus, Retro, Touch ?
-- Âge minimum
 - Accord d'Ankama
 - Licence du code

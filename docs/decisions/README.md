@@ -22,3 +22,10 @@
 | 18 | Pages légales avant l'alpha | il en faut dès les premiers vrais comptes | proposée |
 | 19 | Frontend en composants réutilisables, avec des variantes | le style panneau revient partout (feuille, médaillon, sceau, onglet) : on l'écrit une fois | acceptée |
 | 20 | Caddy en production | un seul site : HTTPS automatique, sert le frontend et transmet /api au backend, config de quelques lignes | acceptée |
+| 21 | Adresse vérifiée avant la première connexion | limite les faux comptes, et le mot de passe oublié a besoin d'une adresse qui marche | proposée |
+| 22 | Sessions stockées en base, en empreinte | on peut les fermer à distance (déconnexion, mot de passe changé, bannissement), et une fuite de la base n'en ouvre aucune | proposée |
+| 23 | Aucune route ne révèle si une adresse est inscrite | une commu RP est petite, savoir qui joue peut suffire à harceler | proposée |
+| 24 | 18 ans minimum pour s'inscrire | le RP mène vite à des relations entre personnages, et bientôt à des lettres privées : on évite de mêler adultes et mineurs | acceptée |
+| 25 | Fiches publiques, histoires réservées aux membres | les fiches attirent et s'affichent dans Discord, les histoires portent les thèmes les plus durs | acceptée |
+| 26 | Pas de contenu sexuel explicite | il imposerait une vraie vérification d'âge, hors de portée d'un projet de fan, et ce n'est pas le propos du site | acceptée |
+
