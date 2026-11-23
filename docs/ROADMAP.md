@@ -64,6 +64,7 @@
 ## Idées
 À noter ici sans alourdir la V1.
 - Événements, en jeu ou hors jeu, proposés à la communauté, avec les histoires qui s'y rattachent (V2)
+- Un groupe de RP, de guilde ou non, peut être un sujet d'événement : on s'y retrouve et on y écrit ensemble (V2). Pas de champ guilde sur la fiche (décision 30)
 - Notifications, chat
 - Gazette du serveur
 - Rappel par mail ou retrait automatique des personnages inactifs
