@@ -72,3 +72,4 @@
 - Rumeurs glissées par d'autres personnages, publiées si le propriétaire accepte
 - « Ceux qui l'ont croisé » sur la fiche, tiré des histoires où le personnage apparaît
 - Coups de cœur classés par les favoris, sans compteur public
+- Fil d'évolutions de la fiche : publier un changement comme une étape de la vie du personnage, au choix du joueur, jamais automatiquement

@@ -8,6 +8,7 @@ import Seal from '../components/Seal'
 import Section from '../components/Section'
 import Sheet from '../components/Sheet'
 import { agree } from '../lib/agree'
+import { CLASS_LABELS } from '../lib/classes'
 import { formatSchedule } from '../lib/schedule'
 import styles from './CharacterPage.module.css'
 
@@ -111,7 +112,7 @@ function CharacterPage() {
   const { character: c, age } = state
   const sections = sectionsOf(c)
   const schedule = formatSchedule(c.play_days, c.play_periods)
-  const meta = [c.class, c.level && `niveau ${c.level}`, c.server?.name].filter(Boolean).join(' · ')
+  const meta = c.server ? `Sur ${c.server.name}` : null
   const findTitle = agree(c.gender, {
     feminine: 'La retrouver en jeu',
     masculine: 'Le retrouver en jeu',
@@ -187,6 +188,16 @@ function CharacterPage() {
               <h2>{findTitle}</h2>
             </div>
             <dl className={styles.facts}>
+              <div>
+                <dt>Classe</dt>
+                <dd>{c.class ? CLASS_LABELS[c.class] : <em>Un mystère, pour l'instant</em>}</dd>
+              </div>
+              {c.level && (
+                <div>
+                  <dt>Niveau</dt>
+                  <dd>{c.level}</dd>
+                </div>
+              )}
               {c.ingame_name && (
                 <div>
                   <dt>Nom en jeu</dt>
@@ -214,9 +225,6 @@ function CharacterPage() {
                 </div>
               )}
             </dl>
-            {!c.ingame_name && c.hangouts.length === 0 && !schedule && (
-              <p className={styles.message}>Pas encore d'indication. Un mot en jeu, peut-être ?</p>
-            )}
           </Sheet>
 
           {c.ooc_note && (
