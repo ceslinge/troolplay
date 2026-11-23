@@ -122,9 +122,10 @@ def test_a_blank_hook_is_never_overheard(
 ) -> None:
     add(session, user, server, "Muet", hook="   ")
 
-    quotes = {client.get("/home/overheard").json()["hook"] for _ in range(30)}
+    # Sur une base vide, la seule réplique est vide : l'API ne doit alors rien citer du tout.
+    answers = [client.get("/home/overheard").json() for _ in range(30)]
 
-    assert "   " not in quotes
+    assert all(answer is None or answer["hook"].strip() for answer in answers)
 
 
 def test_overheard_never_quotes_a_hidden_or_inactive_character(
