@@ -28,7 +28,9 @@ class Character(Base):
             name="npc_owner",
         ),
         CheckConstraint("char_length(name) >= 2", name="name_length"),
-        CheckConstraint("pronoun IN ('elle', 'il')", name="pronoun"),
+        CheckConstraint(
+            "gender IN ('feminine', 'masculine', 'neutral')", name="gender"
+        ),
         CheckConstraint("level >= 1", name="level"),
         CheckConstraint(
             "play_days <@ ARRAY[1, 2, 3, 4, 5, 6, 7]::smallint[]", name="play_days"
@@ -48,7 +50,7 @@ class Character(Base):
     )
     is_npc: Mapped[bool] = mapped_column(server_default=false())
     name: Mapped[str] = mapped_column(String(40))
-    pronoun: Mapped[str | None] = mapped_column(String(4))
+    gender: Mapped[str] = mapped_column(String(10), server_default="neutral")
     ingame_name: Mapped[str | None] = mapped_column(String(40))
     class_: Mapped[str | None] = mapped_column("class", String(30))
     level: Mapped[int | None]

@@ -32,7 +32,7 @@ def test_a_player_character_is_saved_with_its_defaults(
     [
         {"name": "M"},
         {"level": 0},
-        {"pronoun": "iel"},
+        {"gender": "iel"},
         {"play_days": [8]},
         {"play_periods": ["midi"]},
     ],
