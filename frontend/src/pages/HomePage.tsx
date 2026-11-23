@@ -120,7 +120,7 @@ function HomePage() {
             Découvrir la communauté
           </Link>
           <Link to="/personnages/nouveau" className={styles.secondary}>
-            Présenter mon personnage
+            Présenter un nouveau personnage
           </Link>
         </div>
       </Sheet>
