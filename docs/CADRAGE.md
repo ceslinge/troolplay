@@ -42,6 +42,7 @@ En tant que joueur, je veux…
 - Le site fonctionne sur mobile et ses liens ont un aperçu dans Discord.
 - Les textes s'accordent au genre grammatical du personnage : féminin, masculin ou neutre, par défaut.
 - Ce qui fait vivre le site, ce sont les traces des joueurs : répliques, rumeurs, rencontres racontées.
+- On récompense la présence dans le monde, jamais la performance. Pas de points, de classements, de séries ni de compteurs publics, et rien ne se perd quand on s'absente.
 
 ## Étapes
 | Étape | On passe à la suite quand |
