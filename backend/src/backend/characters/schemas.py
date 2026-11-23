@@ -112,6 +112,14 @@ class MyCharacters(BaseModel):
     items: list[CharacterOwnedSummary]
 
 
+class CharacterOrder(BaseModel):
+    """Tous ses personnages, dans l'ordre voulu."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ids: Annotated[list[int], AfterValidator(no_duplicates)]
+
+
 class CharacterFields(BaseModel):
     """Les champs qu'on peut écrire, tous facultatifs."""
 

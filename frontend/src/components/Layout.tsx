@@ -1,10 +1,13 @@
 import { Link, NavLink, Outlet } from 'react-router'
+import { useMyCharacters } from '../lib/activeCharacter'
 import { useMe } from '../lib/useMe'
+import CharacterRail from './CharacterRail'
 import styles from './Layout.module.css'
 
-/** Le cadre de toutes les pages : l'en-tête, puis la page elle-même. */
+/** Le cadre de toutes les pages : l'en-tête, la barre de ses personnages, puis la page elle-même. */
 function Layout() {
   const me = useMe()
+  const mine = useMyCharacters()
 
   return (
     <>
@@ -22,9 +25,12 @@ function Layout() {
                 <NavLink to="/compte" className={styles.link}>
                   Mon compte
                 </NavLink>
-                <Link to="/personnages/nouveau" className={styles.cta}>
-                  Épingler un personnage
-                </Link>
+                {/* Avec des personnages, le « + » de la barre suffit. */}
+                {mine?.length === 0 && (
+                  <Link to="/personnages/nouveau" className={styles.cta}>
+                    Présenter mon premier personnage
+                  </Link>
+                )}
               </>
             ) : (
               !me.isPending && (
@@ -36,7 +42,12 @@ function Layout() {
           </nav>
         </div>
       </header>
-      <Outlet />
+      <div className={styles.body}>
+        <CharacterRail />
+        <div className={styles.main}>
+          <Outlet />
+        </div>
+      </div>
     </>
   )
 }

@@ -20,6 +20,7 @@ import {
   toCreateRequest,
   withChange,
 } from './characterForm'
+import { setActiveCharacter } from '../lib/activeCharacter'
 import styles from './CreateCharacterPage.module.css'
 
 /**
@@ -50,6 +51,8 @@ function CreateCharacterPage() {
     mutationFn: createCharacter,
     onSuccess: async (character) => {
       localStorage.removeItem(DRAFT_KEY)
+      // Le nouveau venu devient le personnage actif.
+      setActiveCharacter(character.id)
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
       await queryClient.invalidateQueries({ queryKey: ['home'] })
       toast.show(`${character.name} est sur le panneau !`, 'success')

@@ -10,7 +10,7 @@ function waxFor(name: string): string {
 
 type Props = {
   name: string
-  size?: 'sm' | 'lg'
+  size?: 'sm' | 'md' | 'lg'
 }
 
 function Seal({ name, size = 'sm' }: Props) {

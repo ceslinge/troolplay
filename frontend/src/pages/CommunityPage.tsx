@@ -9,15 +9,23 @@ import Medallion from '../components/Medallion'
 import Menu from '../components/Menu'
 import PlaceCard from '../components/PlaceCard'
 import Sheet from '../components/Sheet'
+import { useActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
 import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
+import { useMe } from '../lib/useMe'
 import styles from './CommunityPage.module.css'
 
-/** /communaute tout court : on ouvre le premier serveur. */
+/** /communaute tout court : le serveur du personnage actif, ou à défaut le premier. */
 export function CommunityIndex() {
   const servers = useQuery({ queryKey: ['servers'], queryFn: fetchServers })
-  if (servers.isPending) return null
-  const first = servers.data?.[0]
-  return first ? <Navigate to={`/communaute/${first.id}`} replace /> : <p>Aucun serveur pour l'instant.</p>
+  const me = useMe()
+  const mine = useMyCharacters()
+  const active = useActiveCharacter()
+  // Connecté, on attend ses personnages pour ne pas ouvrir un serveur puis sauter à un autre.
+  if (servers.isPending || me.isPending || (me.data && mine === undefined)) return null
+  const list = servers.data ?? []
+  // Un serveur fermé depuis n'est plus dans la liste : on retombe alors sur le premier.
+  const target = list.find((s) => s.id === active?.server?.id) ?? list[0]
+  return target ? <Navigate to={`/communaute/${target.id}`} replace /> : <p>Aucun serveur pour l'instant.</p>
 }
 
 type Tab = 'lieux' | 'personnages'

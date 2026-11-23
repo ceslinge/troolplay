@@ -75,6 +75,8 @@ class Character(Base):
     inactive_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     inactive_note: Mapped[str | None] = mapped_column(String(200))
     hidden_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # La place du personnage dans la barre de son joueur, choisie par lui.
+    position: Mapped[int] = mapped_column(SmallInteger, server_default="0")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

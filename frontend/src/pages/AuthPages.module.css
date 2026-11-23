@@ -94,3 +94,21 @@
   align-items: start;
 }
 
+
+.mineActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.25rem;
+}
+
+/* Un bouton qui a l'air d'un lien, comme ses voisins. */
+.linkButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cire);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
