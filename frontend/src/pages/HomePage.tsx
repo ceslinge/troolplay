@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 type Health = 'loading' | 'ok' | 'down'
 
-function App() {
+function HomePage() {
   const [health, setHealth] = useState<Health>('loading')
 
   useEffect(() => {
@@ -21,4 +21,4 @@ function App() {
   )
 }
 
-export default App
+export default HomePage

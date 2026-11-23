@@ -1,0 +1,15 @@
+.button {
+  min-height: 2rem;
+  padding: 0 0.625rem;
+  border: 1px solid var(--medaillon-bord);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--bois);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--medaillon);
+}
