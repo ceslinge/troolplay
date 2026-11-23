@@ -25,7 +25,7 @@ class CharacterOut(BaseModel):
     server: ServerOut | None
     is_npc: bool
     name: str
-    pronoun: str | None
+    gender: str
     ingame_name: str | None
     class_: str | None = Field(serialization_alias="class")
     level: int | None

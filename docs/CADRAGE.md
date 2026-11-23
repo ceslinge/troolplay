@@ -38,7 +38,7 @@ En tant que joueur, je veux…
 - Seuls le nom et le serveur sont obligatoires pour un personnage, le guidé est passable.
 - On ne perd jamais un texte : les brouillons se sauvegardent seuls.
 - Le site fonctionne sur mobile et ses liens ont un aperçu dans Discord.
-- Les textes s'accordent au personnage : elle, il, ou des tournures neutres s'il n'a rien choisi.
+- Les textes s'accordent au genre grammatical du personnage : féminin, masculin ou neutre, par défaut.
 - Ce qui fait vivre le site, ce sont les traces des joueurs : répliques, rumeurs, rencontres racontées.
 
 ## Étapes

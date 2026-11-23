@@ -24,8 +24,8 @@ BIBLIOTHEQUE = ("Bonta", -28, -56, "Bibliothèque")
 CHARACTERS = [
     {
         "player": "demo-1",
-        "name": "Maëlis Sombrefeu",
-        "pronoun": "elle",
+        "name": "Maëlis",
+        "gender": "feminine",
         "ingame_name": "Maelis-Sombrefeu",
         "class_": "Crâ",
         "level": 142,
@@ -34,7 +34,7 @@ CHARACTERS = [
         "appearance": "Grande, cape de voyage râpée, un arc bien trop beau "
         "pour le reste de sa tenue.",
         "personality": "Polie avec tout le monde, confiante avec personne.",
-        "backstory": "Fille d'un archer de la milice d'Astrub, elle a quitté la "
+        "backstory": "Maëlis Sombrefeu, fille d'un archer de la milice d'Astrub, a quitté la "
         "ville après une affaire que personne n'évoque devant elle. Elle est "
         "revenue l'an dernier, seule, et loue une chambre au-dessus de la taverne.",
         "goals": "Le nom de celui qui a signé l'ordre.",
@@ -49,8 +49,8 @@ CHARACTERS = [
     },
     {
         "player": "demo-2",
-        "name": "Gorrik le Tanneur",
-        "pronoun": "il",
+        "name": "Gorrik",
+        "gender": "masculine",
         "class_": "Enutrof",
         "level": 88,
         "hook": "Tout se paie. Même les sourires.",
@@ -60,7 +60,7 @@ CHARACTERS = [
     },
     {
         "player": "demo-3",
-        "name": "Lysandre Vey",
+        "name": "Lysandre",
         "class_": "Eniripsa",
         "level": 199,
         "hook": "Assieds-toi, tu saignes sur le parquet.",
@@ -70,7 +70,7 @@ CHARACTERS = [
     },
     {
         "player": "demo-4",
-        "name": "Pip Cendremousse",
+        "name": "Pip",
         "class_": "Ecaflip",
         "level": 61,
         "hook": "Pile, je gagne. Face, tu perds.",
@@ -80,8 +80,8 @@ CHARACTERS = [
     },
     {
         "player": "demo-2",
-        "name": "Ysolde Brisemer",
-        "pronoun": "elle",
+        "name": "Ysolde",
+        "gender": "feminine",
         "class_": "Pandawa",
         "level": 175,
         "hook": "Le large ne pose pas de questions.",
@@ -91,8 +91,8 @@ CHARACTERS = [
     },
     {
         "player": "demo-1",
-        "name": "Tobias Crochefer",
-        "pronoun": "il",
+        "name": "Tobias",
+        "gender": "masculine",
         "class_": "Roublard",
         "level": 120,
         "hook": "Je n'étais pas là. Demande à n'importe qui.",
@@ -102,8 +102,8 @@ CHARACTERS = [
     },
     {
         "player": "demo-3",
-        "name": "Aldegonde Fervent",
-        "pronoun": "elle",
+        "name": "Aldegonde",
+        "gender": "feminine",
         "class_": "Féca",
         "level": 160,
         "hook": "Chut.",
@@ -113,8 +113,8 @@ CHARACTERS = [
     },
     {
         "player": "demo-4",
-        "name": "Nérée Vifargent",
-        "pronoun": "elle",
+        "name": "Nérée",
+        "gender": "feminine",
         "class_": "Xélor",
         "level": 133,
         "hook": "Tu es en retard. Ou moi en avance.",
@@ -124,8 +124,8 @@ CHARACTERS = [
     },
     {
         "player": "demo-1",
-        "name": "Oswin Bruyère",
-        "pronoun": "il",
+        "name": "Oswin",
+        "gender": "masculine",
         "class_": "Sadida",
         "level": 47,
         "hook": "Les arbres de Bonta ont la mémoire courte.",

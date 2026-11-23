@@ -35,7 +35,7 @@ Aucune réponse ne contient de `user_id`, ni rien qui permette de relier deux pe
   "server": {"id": 3, "game": "dofus", "name": "Ombrelune"},
   "is_npc": false,
   "name": "Maëlis Sombrefeu",
-  "pronoun": "elle",
+  "gender": "feminine",
   "ingame_name": "Maelis-Sombrefeu",
   "class": "Crâ",
   "level": 142,
@@ -73,7 +73,7 @@ Le propriétaire, les modérateurs et les admins reçoivent en plus :
   "id": 42,
   "server": {"id": 3, "game": "dofus", "name": "Ombrelune"},
   "name": "Maëlis Sombrefeu",
-  "pronoun": "elle",
+  "gender": "feminine",
   "class": "Crâ",
   "level": 142,
   "avatar": "archere-3",
@@ -93,7 +93,7 @@ Seuls `name` et `server_id` sont obligatoires à la création. Tout le reste peu
 |---|---|
 | `name` | 2 à 40 caractères, pas forcément unique |
 | `server_id` | un serveur actif |
-| `pronoun` | `elle`, `il` ou `null` (tournures neutres) |
+| `gender` | `feminine`, `masculine` ou `neutral` (par défaut). Sert seulement à accorder les textes du site |
 | `ingame_name` | 40 caractères au plus |
 | `class` | 30 caractères au plus |
 | `level` | `null` ou un entier à partir de 1 |
