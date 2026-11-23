@@ -2,8 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { type FormEvent, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router'
 import { changePassword, deleteAccount, logOut } from '../api/accounts'
-import { fetchMyCharacters } from '../api/characters'
+import { fetchMyCharacters, MAX_CHARACTERS } from '../api/characters'
 import CharacterCard from '../components/CharacterCard'
+import CharacterOrder from '../components/CharacterOrder'
 import { ApiError } from '../api/client'
 import Button from '../components/Button'
 import Field from '../components/Field'
@@ -14,12 +15,25 @@ import styles from './AuthPages.module.css'
 
 function MyCharacters() {
   const mine = useQuery({ queryKey: ['characters', 'mine'], queryFn: fetchMyCharacters })
+  const [ordering, setOrdering] = useState(false)
+  const count = mine.data?.length ?? 0
 
   return (
     <section className={styles.mine}>
       <div className={styles.mineHead}>
         <h2 className={styles.title}>Mes personnages</h2>
-        <Link to="/personnages/nouveau">Présenter un nouveau personnage</Link>
+        <div className={styles.mineActions}>
+          {count > 1 && (
+            <button type="button" className={styles.linkButton} aria-pressed={ordering} onClick={() => setOrdering(!ordering)}>
+              {ordering ? 'Terminer' : 'Changer l’ordre'}
+            </button>
+          )}
+          {count >= MAX_CHARACTERS ? (
+            <span className={styles.lead}>{MAX_CHARACTERS} personnages, c'est le maximum.</span>
+          ) : (
+            <Link to="/personnages/nouveau">Présenter un nouveau personnage</Link>
+          )}
+        </div>
       </div>
       {mine.isPending ? null : mine.isError ? (
         <Notice tone="error">
@@ -29,6 +43,8 @@ function MyCharacters() {
         <Notice>
           <p>Pas encore de personnage sur le panneau. Le premier t'attend.</p>
         </Notice>
+      ) : ordering && count > 1 ? (
+        <CharacterOrder characters={mine.data} />
       ) : (
         <div className={styles.grid}>
           {mine.data.map((character) => (

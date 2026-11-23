@@ -12,6 +12,7 @@ from backend.characters.models import Character, CharacterHangout
 from backend.characters.schemas import (
     CharacterCreate,
     CharacterList,
+    CharacterOrder,
     CharacterOut,
     CharacterOwnedOut,
     CharacterOwnedSummary,
@@ -26,6 +27,9 @@ from backend.db import SessionDep
 from backend.servers.models import GameServer
 
 router = APIRouter(prefix="/characters", tags=["characters"])
+
+# Assez pour plusieurs vies, pas au point d'encombrer la barre (ni l'annuaire).
+MAX_CHARACTERS = 10
 
 
 @router.get("")
@@ -171,6 +175,19 @@ def create_character(
     check_server_and_class(session, data.server_id, data.class_)
 
     values = data.model_dump(exclude_none=True)
+    if not data.is_npc:
+        count, last = session.execute(
+            select(func.count(), func.max(Character.position)).where(
+                Character.user_id == user.id
+            )
+        ).one()
+        if count >= MAX_CHARACTERS:
+            raise HTTPException(
+                status_code=409,
+                detail=f"{MAX_CHARACTERS} personnages au plus par compte",
+            )
+        # Le nouveau venu se range au bout de la barre.
+        values["position"] = (last or 0) + 1
     character = Character(user_id=None if data.is_npc else user.id, **values)
     session.add(character)
     session.commit()
@@ -235,17 +252,38 @@ def delete_character(character_id: int, user: CurrentUser, session: SessionDep) 
 me_router = APIRouter(prefix="/me", tags=["characters"])
 
 
-@me_router.get("/characters")
-def list_my_characters(user: CurrentUser, session: SessionDep) -> MyCharacters:
+def my_characters(session: Session, user: User) -> MyCharacters:
     characters = session.scalars(
         select(Character)
         .where(Character.user_id == user.id)
         .options(selectinload(Character.server))
-        .order_by(Character.name, Character.id)
+        .order_by(Character.position, Character.name, Character.id)
     )
     return MyCharacters(
         items=[CharacterOwnedSummary.model_validate(c) for c in characters]
     )
+
+
+@me_router.get("/characters")
+def list_my_characters(user: CurrentUser, session: SessionDep) -> MyCharacters:
+    return my_characters(session, user)
+
+
+@me_router.put("/characters/order")
+def order_my_characters(
+    order: CharacterOrder, user: CurrentUser, session: SessionDep
+) -> MyCharacters:
+    """Ranger ses personnages : la liste doit les contenir tous, chacun une fois."""
+    characters = {
+        c.id: c
+        for c in session.scalars(select(Character).where(Character.user_id == user.id))
+    }
+    if set(order.ids) != characters.keys():
+        raise field_error("ids", "La liste doit contenir tous tes personnages")
+    for position, character_id in enumerate(order.ids, start=1):
+        characters[character_id].position = position
+    session.commit()
+    return my_characters(session, user)
 
 
 MAX_HANGOUTS = 3

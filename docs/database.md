@@ -41,7 +41,7 @@ erDiagram
 ## Colonnes
 - **users** : id, email, password_hash, role, email_verified_at, banned_at, created_at
 - **game_servers** : id, game, name, is_active
-- **characters** : id, user_id, server_id, is_npc, name, gender, ingame_name, class, level, avatar, seal, hook, appearance, personality, backstory, goals, flaws, rumors, ooc_note, play_days, play_periods, inactive_at, inactive_note, hidden_at, created_at, updated_at
+- **characters** : id, user_id, server_id, is_npc, name, gender, ingame_name, class, level, avatar, seal, hook, appearance, personality, backstory, goals, flaws, rumors, ooc_note, play_days, play_periods, inactive_at, inactive_note, hidden_at, position, created_at, updated_at
 - **character_hangouts** : id, character_id, area, x, y, label, habits
 - **stories** : id, user_id, character_id, title, body, published_at, hidden_at, created_at, updated_at
 - **story_characters** : story_id, character_id, accepted_at, created_at

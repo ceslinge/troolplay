@@ -152,9 +152,19 @@ Erreurs : 404 si elle n'existe pas, ou si elle est masquée et qu'on n'est ni so
 
 Pour la barre de mes personnages. Il faut être connecté.
 
-Réponse 200 : `{"items": […]}`, les résumés de tous mes personnages, en retrait et masqués compris, avec `hidden` et `is_mine`.
+Réponse 200 : `{"items": […]}`, les résumés de tous mes personnages, en retrait et masqués compris, avec `hidden` et `is_mine`. Ils sont dans l'ordre que j'ai choisi ; un nouveau personnage se range au bout.
 
 Erreurs : 401.
+
+### Ranger mes personnages
+
+`PUT /api/me/characters/order`
+
+Corps : `{"ids": [12, 7, 31]}`, tous mes personnages, chacun une fois, dans l'ordre voulu.
+
+Réponse 200 : la liste rangée, comme `GET /api/me/characters`.
+
+Erreurs : 401, 422 si la liste en oublie un, en répète un ou contient celui d'un autre.
 
 ### Créer un personnage
 
@@ -166,7 +176,7 @@ Corps : `name` et `server_id`, plus n'importe quel champ facultatif. `hangouts` 
 
 Réponse 201 : la fiche complète, avec l'en-tête `Location: /api/characters/{id}`.
 
-Erreurs : 401, 422 (champ invalide, serveur inexistant ou inactif, classe absente du jeu de ce serveur). Les erreurs portent sur le champ concerné, dans le format de FastAPI.
+Erreurs : 401, 409 au-delà de 10 personnages par compte (décision 31), 422 (champ invalide, serveur inexistant ou inactif, classe absente du jeu de ce serveur). Les erreurs portent sur le champ concerné, dans le format de FastAPI.
 
 `is_npc` ne peut être mis à `true` que par un admin, un joueur qui l'envoie reçoit un 403. Un PNJ n'a ni propriétaire ni serveur (décision 5) : `server_id` est alors refusé.
 

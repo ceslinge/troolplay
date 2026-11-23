@@ -179,3 +179,12 @@ export async function fetchMyCharacters(): Promise<MyCharacter[]> {
   return body.items
 }
 
+/** Ranger ses personnages : tous, dans l'ordre voulu. */
+export async function orderMyCharacters(ids: number[]): Promise<MyCharacter[]> {
+  const body = await apiFetch<{ items: MyCharacter[] }>('/me/characters/order', { method: 'PUT', body: { ids } })
+  return body.items
+}
+
+/** Pas plus de personnages par compte (le serveur le vérifie aussi). */
+export const MAX_CHARACTERS = 10
+
