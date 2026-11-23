@@ -21,6 +21,7 @@ def directory(session: Session, user: User, server: GameServer) -> GameServer:
                 user_id=user.id,
                 server_id=server.id,
                 name="Bruyère",
+                ingame_name="Ronce-des-Bois",
                 class_="sadida",
                 play_days=[6],
                 play_periods=["afternoon"],
@@ -82,8 +83,19 @@ def test_inactive_characters_can_be_included(
     [
         ({"day": 6}, ["Bruyère"]),
         ({"period": "morning"}, ["Aldegonde"]),
-        ({"class": "feca"}, ["Aldegonde"]),
-        ({"class": "feca", "include_inactive": True}, ["Aldegonde", "Cendre"]),
+        ({"q": "bruy"}, ["Bruyère"]),
+        ({"q": "BRUYERE"}, ["Bruyère"]),
+        ({"q": "ronce"}, ["Bruyère"]),
+        ({"q": "  gonde "}, ["Aldegonde"]),
+        ({"q": "cendre"}, []),
+        ({"q": "cendre", "include_inactive": True}, ["Cendre"]),
+        ({"q": "discr"}, []),
+        ({"q": "ailleurs"}, []),
+        ({"q": "%"}, []),
+        ({"q": "_"}, []),
+        ({"q": ""}, ["Aldegonde", "Bruyère"]),
+        ({"q": "   "}, ["Aldegonde", "Bruyère"]),
+        ({"q": "e", "day": 6}, ["Bruyère"]),
         ({"day": 6, "period": "morning"}, []),
     ],
 )
@@ -120,7 +132,7 @@ def test_an_unknown_server_is_not_found(client: TestClient) -> None:
 
 @pytest.mark.parametrize(
     "params",
-    [{"day": 8}, {"period": "midi"}, {"class": "Crâ"}, {"limit": 500}, {}],
+    [{"day": 8}, {"period": "midi"}, {"q": "x" * 61}, {"limit": 500}, {}],
 )
 def test_invalid_parameters_are_refused(
     client: TestClient, directory: GameServer, params: dict

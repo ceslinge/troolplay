@@ -91,7 +91,8 @@
   color: var(--encre-douce);
 }
 
-.field select {
+.field select,
+.field input {
   min-height: 2.75rem;
   min-width: 11rem;
   padding: 0 0.75rem;

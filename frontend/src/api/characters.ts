@@ -87,7 +87,8 @@ export type DirectoryFilters = {
   serverId: number
   day?: number
   period?: Period
-  characterClass?: CharacterClass
+  /** Une partie du nom ou du nom en jeu. */
+  q?: string
   includeInactive?: boolean
   page: number
 }
@@ -104,7 +105,7 @@ export async function fetchCharacters(
   })
   if (filters.day) params.set('day', String(filters.day))
   if (filters.period) params.set('period', filters.period)
-  if (filters.characterClass) params.set('class', filters.characterClass)
+  if (filters.q) params.set('q', filters.q)
   if (filters.includeInactive) params.set('include_inactive', 'true')
 
   const response = await fetch(`/api/characters?${params}`)

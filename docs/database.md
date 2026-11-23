@@ -61,6 +61,7 @@ Tous ces champs sont facultatifs.
 - `inactive_at` : NULL si le personnage est actif. `inactive_note` peut donner une raison RP.
 - `area` distingue des coordonnées identiques dans deux mondes.
 - La limite de trois lieux est vérifiée par le back.
+- La recherche par nom passe par l'extension `unaccent` de Postgres (« maelis » trouve « Maëlis »). Pas d'index pour l'instant : l'annuaire est filtré par serveur, la table reste petite.
 
 ## Présentation d'un personnage
 - `gender` : genre grammatical, `feminine`, `masculine` ou `neutral` par défaut. Il ne sert qu'à accorder les textes du site, les pronoms se précisent dans la fiche.
