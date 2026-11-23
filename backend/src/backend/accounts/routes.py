@@ -7,11 +7,21 @@ from sqlalchemy.orm import Session
 
 from backend.accounts import emails
 from backend.accounts.models import LoginFailure, User
-from backend.accounts.schemas import EmailIn, LoginIn, MeOut, Message, SignupIn, TokenIn
+from backend.accounts.schemas import (
+    EmailIn,
+    LoginIn,
+    MeOut,
+    Message,
+    PasswordChangeIn,
+    PasswordResetIn,
+    SignupIn,
+    TokenIn,
+)
 from backend.accounts.security import hash_password, verify_password
 from backend.accounts.sessions import (
     COOKIE_NAME,
     CurrentUser,
+    close_all_sessions,
     close_session,
     open_session,
 )
@@ -169,3 +179,55 @@ def resend_verification(data: EmailIn, session: SessionDep) -> Message:
     else:
         session.commit()
     return Message(detail=RESEND_SENT)
+
+
+FORGOT_SENT = "Si cette adresse a un compte, un lien pour changer de mot de passe vient de partir."
+
+
+@router.post("/password/forgot", status_code=202)
+def forgot_password(data: EmailIn, session: SessionDep) -> Message:
+    email = data.email.lower()
+    throttle(session, "forgot", email, limit=3, window=timedelta(hours=1))
+    user = find_user(session, email)
+    if user is not None and user.banned_at is None:
+        token = issue_token(session, user, "reset")
+        session.commit()
+        link = f"{settings.site_url}/mot-de-passe?jeton={token}"
+        emails.send_email(
+            user.email,
+            "Changer ton mot de passe",
+            "Pour choisir un nouveau mot de passe, ouvre ce lien dans l'heure :\n\n"
+            f"{link}\n\n"
+            "Si tu n'as rien demandé, ignore ce message : ton mot de passe ne change pas.",
+        )
+    else:
+        session.commit()
+    return Message(detail=FORGOT_SENT)
+
+
+@router.post("/password/reset", status_code=204)
+def reset_password(data: PasswordResetIn, session: SessionDep) -> None:
+    user = use_token(session, data.token, "reset")
+    if user is None:
+        raise HTTPException(status_code=400, detail="Ce lien n'est plus valable")
+    user.password_hash = hash_password(data.password)
+    # Le lien est arrivé dans sa boîte : l'adresse est donc bien la sienne.
+    if user.email_verified_at is None:
+        user.email_verified_at = datetime.now(UTC)
+    # Si quelqu'un d'autre était connecté, il ne l'est plus.
+    close_all_sessions(session, user)
+    session.commit()
+
+
+@router.patch("/me/password", status_code=204)
+def change_password(
+    data: PasswordChangeIn,
+    user: CurrentUser,
+    session: SessionDep,
+    token: Annotated[str | None, Cookie(alias=COOKIE_NAME)] = None,
+) -> None:
+    if not verify_password(data.current_password, user.password_hash):
+        raise HTTPException(status_code=403, detail="Mot de passe actuel incorrect")
+    user.password_hash = hash_password(data.new_password)
+    close_all_sessions(session, user, keep_token=token)
+    session.commit()

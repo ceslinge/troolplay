@@ -55,6 +55,16 @@ def close_session(session: Session, token: str | None, response: Response) -> No
     )
 
 
+def close_all_sessions(
+    session: Session, user: User, keep_token: str | None = None
+) -> None:
+    """Déconnecte le compte partout, sauf de la session qu'on garde."""
+    query = delete(UserSession).where(UserSession.user_id == user.id)
+    if keep_token:
+        query = query.where(UserSession.token_hash != token_hash(keep_token))
+    session.execute(query)
+
+
 def current_user(
     session: SessionDep,
     token: Annotated[str | None, Cookie(alias=COOKIE_NAME)] = None,
