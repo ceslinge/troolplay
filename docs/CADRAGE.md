@@ -55,6 +55,7 @@ En tant que joueur, je veux…
 - Histoires à plusieurs mains
 - Liens entre personnages
 - Tofu voyageur, rumeurs glissées par d'autres, « Ceux qui l'ont croisé »
+- Événements, auxquels on rattache des histoires
 - Groupes, commentaires
 
 ## Hors périmètre

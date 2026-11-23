@@ -20,3 +20,4 @@
 | 16 | On demande comment accorder, pas le sexe | elle, il ou neutre suffit pour les textes, et laisse la place aux personnages qui jouent avec ça | acceptée |
 | 17 | Coups de cœur choisis par l'équipe en V1 | pas de favoris avant la V1, impossible à truquer, suffisant pour une centaine de joueurs | proposée |
 | 18 | Pages légales avant l'alpha | il en faut dès les premiers vrais comptes | proposée |
+| 19 | Frontend en composants réutilisables, avec des variantes | le style panneau revient partout (feuille, médaillon, sceau, onglet) : on l'écrit une fois | acceptée |
