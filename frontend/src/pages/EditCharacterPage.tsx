@@ -9,6 +9,7 @@ import Field from '../components/Field'
 import HangoutsEditor, { type HangoutDraft } from '../components/HangoutsEditor'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
+import { focusFirstError, useToast } from '../lib/toast'
 import { STORY_FIELDS } from './characterFields'
 import { type Draft, formParts, fromCharacter, toUpdateRequest, withChange } from './characterForm'
 import styles from './CreateCharacterPage.module.css'
@@ -29,6 +30,7 @@ function EditForm({ character }: { character: Character }) {
   const navigate = useNavigate()
   const [draft, setDraft] = useState<Draft>(() => fromCharacter(character))
   const [hangouts, setHangouts] = useState<HangoutDraft[]>(() => toHangoutDrafts(character))
+  const toast = useToast()
 
   const save = useMutation({
     // D'abord la fiche, puis ses lieux. Si l'un échoue, le formulaire garde tout : rien n'est perdu.
@@ -40,7 +42,10 @@ function EditForm({ character }: { character: Character }) {
           hangouts: 'Chaque lieu a besoin de sa zone et de ses deux coordonnées.',
         })
       }
-      await updateCharacter(character.id, toUpdateRequest(draft))
+      const changes = toUpdateRequest(draft)
+      // Le serveur ne part que s'il a changé : un serveur actuel fermé ne bloque pas la fiche.
+      if (draft.server_id !== String(character.server?.id ?? '')) changes.server_id = Number(draft.server_id)
+      await updateCharacter(character.id, changes)
       await replaceHangouts(
         character.id,
         hangouts.map((h) => ({
@@ -55,7 +60,14 @@ function EditForm({ character }: { character: Character }) {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['character', String(character.id)] })
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
+      toast.show('Fiche enregistrée.', 'success')
       navigate(`/personnages/${character.id}`)
+    },
+    onError: (failure) => {
+      // L'erreur s'affiche sous son champ, souvent loin du bouton : on prévient, puis on y amène.
+      const onField = failure instanceof ApiError && Object.keys(failure.fields).length > 0
+      toast.show(onField ? 'Pas enregistré : un champ est à corriger.' : `Pas enregistré : ${failure.message}`, 'error')
+      if (onField) focusFirstError()
     },
   })
   const error = save.error instanceof ApiError ? save.error : null
@@ -78,9 +90,11 @@ function EditForm({ character }: { character: Character }) {
   }
 
   const server = servers.data?.find((s) => String(s.id) === draft.server_id)
-  const parts = formParts({ draft, set, errors, servers: servers.data ?? [], server, mode: 'free' })
+  // On peut déménager, mais seulement vers un serveur ouvert du même jeu (décision 29).
+  const sameGame = (servers.data ?? []).filter((s) => s.game === character.server?.game)
+  const parts = formParts({ draft, set, errors, servers: sameGame, server, mode: 'free' })
   const groups: { title: string; fields: (keyof Draft)[] }[] = [
-    { title: 'Qui est-ce ?', fields: ['name', 'gender'] },
+    { title: 'Qui est-ce ?', fields: ['name', 'server_id', 'gender'] },
     { title: 'En jeu', fields: ['class', 'level', 'ingame_name', 'play_days', 'play_periods'] },
     { title: 'Son histoire', fields: [...STORY_FIELDS] },
     { title: 'Hors RP', fields: ['ooc_note'] },
@@ -96,7 +110,12 @@ function EditForm({ character }: { character: Character }) {
       {groups.map((group, index) => (
         <Sheet key={group.title} seed={`edition-${group.title}`} as="section" contentClassName={styles.card}>
           <h2 className={styles.question}>{group.title}</h2>
-          {index === 0 && <p className={styles.hint}>Serveur : {character.server?.name ?? 'aucun'}. Il ne change pas : sur un autre serveur, c'est une nouvelle fiche.</p>}
+          {index === 0 && (
+            <p className={styles.hint}>
+              Un transfert, une fusion, un serveur temporaire qui ferme ? Change de serveur ici : la fiche garde tout.
+              On reste dans le même jeu.
+            </p>
+          )}
           <div className={styles.stack}>
             {group.fields.map((key) => (
               <div key={key}>{parts[key]}</div>
@@ -122,6 +141,7 @@ function EditForm({ character }: { character: Character }) {
 function DeleteCharacter({ character }: { character: Character }) {
   const [confirming, setConfirming] = useState(false)
   const [typed, setTyped] = useState('')
+  const toast = useToast()
   // Taper le nom : on ne le fait pas par réflexe, et c'est moins pénible qu'un mot de passe.
   const confirmed = typed.trim() === character.name
   const queryClient = useQueryClient()
@@ -131,8 +151,10 @@ function DeleteCharacter({ character }: { character: Character }) {
     onSuccess: async () => {
       queryClient.removeQueries({ queryKey: ['character', String(character.id)] })
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
+      toast.show(`${character.name} a quitté le panneau.`, 'success')
       navigate('/compte')
     },
+    onError: (failure) => toast.show(`Pas supprimé : ${failure.message}`, 'error'),
   })
 
   return (

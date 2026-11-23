@@ -140,6 +140,7 @@ export const createCharacter = (body: NewCharacter) =>
 /** Ce qu'on envoie pour modifier : null vide un champ facultatif. */
 export type CharacterChanges = {
   name?: string
+  server_id?: number
   gender?: Gender
   class?: CharacterClass | null
   level?: number | null

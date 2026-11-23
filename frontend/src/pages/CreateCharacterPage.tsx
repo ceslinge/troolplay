@@ -7,6 +7,7 @@ import { fetchServers, type Server } from '../api/servers'
 import Button from '../components/Button'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
+import { focusFirstError, useToast } from '../lib/toast'
 import { useMe } from '../lib/useMe'
 import { STORY_FIELDS } from './characterFields'
 import {
@@ -38,6 +39,7 @@ function CreateCharacterPage() {
   const [draft, setDraft] = useState<Draft>(loadDraft)
   const [mode, setMode] = useState<Mode>('guided')
   const [step, setStep] = useState(0)
+  const toast = useToast()
 
   useEffect(() => saveDraft(draft), [draft])
 
@@ -46,13 +48,17 @@ function CreateCharacterPage() {
     onSuccess: async (character) => {
       localStorage.removeItem(DRAFT_KEY)
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
+      toast.show(`${character.name} est sur le panneau !`, 'success')
       navigate(`/personnages/${character.id}`)
     },
     onError: (error) => {
+      const onField = error instanceof ApiError && Object.keys(error.fields).length > 0
+      toast.show(onField ? 'Pas encore épinglé : un champ est à corriger.' : `Pas encore épinglé : ${error.message}`, 'error')
       // En mode guidé, on retourne à la première question qui pose problème.
-      if (error instanceof ApiError) {
+      if (onField) {
         const wrong = STEPS.findIndex((fields) => fields.some((f) => f in error.fields || (f === 'class' && 'class' in error.fields)))
         if (wrong >= 0) setStep(wrong)
+        focusFirstError()
       }
     },
   })
