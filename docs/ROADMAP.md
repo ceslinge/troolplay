@@ -12,7 +12,8 @@
 - [ ] Valider les permissions
 - [x] Premières maquettes : accueil, page Communauté, fiche
 - [ ] Maquette d'écriture d'une histoire
-- [ ] Contrat d'API
+- [x] Contrat d'API des personnages
+- [ ] Contrat d'API : comptes, « Qui traîne ici ? », histoires, modération
 
 ## 3. Fondations
 - [x] Installer Docker
