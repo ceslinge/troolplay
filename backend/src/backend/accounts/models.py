@@ -52,3 +52,37 @@ class LoginFailure(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), index=True
     )
+
+
+class EmailToken(Base):
+    """Un lien envoyé par email : vérifier son adresse, ou changer son mot de passe."""
+
+    __tablename__ = "email_tokens"
+    __table_args__ = (
+        CheckConstraint("purpose IN ('verify', 'reset')", name="purpose"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    purpose: Mapped[str] = mapped_column(String(10))
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class ThrottleEvent(Base):
+    """Une action limitée (inscription, renvoi d'email…), gardée pour la compter."""
+
+    __tablename__ = "throttle_events"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    action: Mapped[str] = mapped_column(String(30))
+    key: Mapped[str] = mapped_column(String(254))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), index=True
+    )

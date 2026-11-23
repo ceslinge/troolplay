@@ -42,3 +42,15 @@ def server(session: Session) -> GameServer:
     session.add(server)
     session.flush()
     return server
+
+
+@pytest.fixture
+def outbox(monkeypatch: pytest.MonkeyPatch) -> list[dict[str, str]]:
+    """Les emails « envoyés » pendant le test, au lieu du terminal."""
+    sent: list[dict[str, str]] = []
+
+    def capture(to: str, subject: str, body: str) -> None:
+        sent.append({"to": to, "subject": subject, "body": body})
+
+    monkeypatch.setattr("backend.accounts.emails.send_email", capture)
+    return sent

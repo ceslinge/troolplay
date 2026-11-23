@@ -3,16 +3,21 @@ from typing import Annotated
 
 from fastapi import APIRouter, Cookie, HTTPException, Request, Response
 from sqlalchemy import delete, func, or_, select
+from sqlalchemy.orm import Session
 
+from backend.accounts import emails
 from backend.accounts.models import LoginFailure, User
-from backend.accounts.schemas import LoginIn, MeOut
-from backend.accounts.security import verify_password
+from backend.accounts.schemas import EmailIn, LoginIn, MeOut, Message, SignupIn, TokenIn
+from backend.accounts.security import hash_password, verify_password
 from backend.accounts.sessions import (
     COOKIE_NAME,
     CurrentUser,
     close_session,
     open_session,
 )
+from backend.accounts.throttle import throttle
+from backend.accounts.tokens import issue_token, use_token
+from backend.config import settings
 from backend.db import SessionDep
 
 router = APIRouter(tags=["accounts"])
@@ -25,6 +30,12 @@ WRONG_CREDENTIALS = "Email ou mot de passe incorrect"
 
 def client_ip(request: Request) -> str:
     return request.client.host if request.client else "inconnue"
+
+
+def find_user(session: Session, email: str) -> User | None:
+    return session.scalars(
+        select(User).where(func.lower(User.email) == email.lower())
+    ).one_or_none()
 
 
 @router.post("/session", status_code=204)
@@ -85,3 +96,76 @@ def log_out(
 @router.get("/me")
 def read_me(user: CurrentUser) -> MeOut:
     return MeOut.model_validate(user)
+
+
+SIGNUP_SENT = "Si cette adresse est libre, un lien de vérification vient de partir."
+RESEND_SENT = (
+    "Si cette adresse attend sa vérification, un nouveau lien vient de partir."
+)
+
+
+def verification_email(token: str) -> tuple[str, str]:
+    link = f"{settings.site_url}/verifier?jeton={token}"
+    return (
+        "Bienvenue sur le panneau : vérifie ton adresse",
+        (
+            "Pour finir ton inscription, ouvre ce lien dans les 24 heures :\n\n"
+            f"{link}\n\nSi tu n'as rien demandé, ignore ce message."
+        ),
+    )
+
+
+@router.post("/accounts", status_code=202)
+def sign_up(data: SignupIn, request: Request, session: SessionDep) -> Message:
+    throttle(session, "signup", client_ip(request), limit=5, window=timedelta(hours=1))
+    # On hache toujours, même si l'adresse est prise :
+    # la réponse prend le même temps, et ne trahit pas qui est inscrit.
+    password_hash = hash_password(data.password)
+    user = find_user(session, data.email)
+
+    if user is None:
+        user = User(email=data.email.lower(), password_hash=password_hash)
+        session.add(user)
+        session.flush()
+        token = issue_token(session, user, "verify")
+        session.commit()
+        emails.send_email(user.email, *verification_email(token))
+    elif user.email_verified_at is None:
+        token = issue_token(session, user, "verify")
+        session.commit()
+        emails.send_email(user.email, *verification_email(token))
+    else:
+        session.commit()
+        emails.send_email(
+            user.email,
+            "Quelqu'un a voulu s'inscrire avec ton adresse",
+            "Une inscription vient d'être tentée avec ton adresse, qui a déjà un compte.\n\n"
+            "Si c'était toi, connecte-toi simplement. Mot de passe oublié ? "
+            f"Tu peux le changer depuis {settings.site_url}.\n\n"
+            "Si ce n'était pas toi, rien n'a changé : ton compte est intact.",
+        )
+    return Message(detail=SIGNUP_SENT)
+
+
+@router.post("/accounts/verify", status_code=204)
+def verify_email(data: TokenIn, session: SessionDep) -> None:
+    user = use_token(session, data.token, "verify")
+    if user is None:
+        raise HTTPException(status_code=400, detail="Ce lien n'est plus valable")
+    if user.email_verified_at is None:
+        user.email_verified_at = datetime.now(UTC)
+    session.commit()
+
+
+@router.post("/accounts/verify/resend", status_code=202)
+def resend_verification(data: EmailIn, session: SessionDep) -> Message:
+    email = data.email.lower()
+    throttle(session, "resend", email, limit=3, window=timedelta(hours=1))
+    user = find_user(session, email)
+    if user is not None and user.email_verified_at is None:
+        token = issue_token(session, user, "verify")
+        session.commit()
+        emails.send_email(user.email, *verification_email(token))
+    else:
+        session.commit()
+    return Message(detail=RESEND_SENT)
