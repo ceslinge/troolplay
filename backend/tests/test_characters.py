@@ -10,22 +10,6 @@ from backend.characters.models import Character, CharacterHangout
 from backend.servers.models import GameServer
 
 
-@pytest.fixture
-def user(session: Session) -> User:
-    user = User(email="joueur.test@example.com", password_hash="pas-un-vrai-hash")
-    session.add(user)
-    session.flush()
-    return user
-
-
-@pytest.fixture
-def server(session: Session) -> GameServer:
-    server = GameServer(game="dofus", name="Serveur de test")
-    session.add(server)
-    session.flush()
-    return server
-
-
 def test_a_player_character_is_saved_with_its_defaults(
     session: Session, user: User, server: GameServer
 ) -> None:

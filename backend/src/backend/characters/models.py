@@ -13,9 +13,10 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.db import Base
+from backend.servers.models import GameServer
 
 
 class Character(Base):
@@ -75,6 +76,11 @@ class Character(Base):
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    server: Mapped[GameServer | None] = relationship()
+    hangouts: Mapped[list["CharacterHangout"]] = relationship(
+        order_by="CharacterHangout.id", passive_deletes=True
     )
 
 
