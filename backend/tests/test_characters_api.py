@@ -18,7 +18,7 @@ def add_character(session: Session, user: User, server: GameServer, **fields) ->
 def test_a_character_is_read_with_its_server_and_hangouts(
     session: Session, client: TestClient, user: User, server: GameServer
 ) -> None:
-    character_id = add_character(session, user, server, class_="Crâ", level=142)
+    character_id = add_character(session, user, server, class_="cra", level=142)
     session.add(CharacterHangout(character_id=character_id, area="Astrub", x=5, y=-18))
     session.flush()
 
@@ -27,7 +27,7 @@ def test_a_character_is_read_with_its_server_and_hangouts(
     assert response.status_code == 200
     body = response.json()
     assert body["name"] == "Maëlis"
-    assert body["class"] == "Crâ"
+    assert body["class"] == "cra"
     assert body["server"]["name"] == "Serveur de test"
     assert body["hangouts"][0]["area"] == "Astrub"
     assert body["inactive"] is False

@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field
 
+from backend.characters.classes import CharacterClass
 from backend.servers.schemas import ServerOut
 
 
@@ -27,7 +28,7 @@ class CharacterOut(BaseModel):
     name: str
     gender: str
     ingame_name: str | None
-    class_: str | None = Field(serialization_alias="class")
+    class_: CharacterClass | None = Field(serialization_alias="class")
     level: int | None
     avatar: str | None
     seal: str | None
