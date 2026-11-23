@@ -29,7 +29,7 @@ function MyCharacters() {
             </button>
           )}
           {count >= MAX_CHARACTERS ? (
-            <span className={styles.lead}>{MAX_CHARACTERS} personnages, c'est le maximum.</span>
+            <span className={styles.lead}>Pas de nouveau personnage possible ({MAX_CHARACTERS} au plus).</span>
           ) : (
             <Link to="/personnages/nouveau">Présenter un nouveau personnage</Link>
           )}

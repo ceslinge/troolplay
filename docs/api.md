@@ -152,7 +152,7 @@ Erreurs : 404 si elle n'existe pas, ou si elle est masquée et qu'on n'est ni so
 
 Pour la barre de mes personnages. Il faut être connecté.
 
-Réponse 200 : `{"items": […]}`, les résumés de tous mes personnages, en retrait et masqués compris, avec `hidden` et `is_mine`. Ils sont dans l'ordre que j'ai choisi ; un nouveau personnage se range au bout.
+Réponse 200 : `{"items": […]}`, les résumés de tous mes personnages, en retrait et masqués compris, avec `hidden` et `is_mine`. Ils sont dans l'ordre que j'ai choisi ; un nouveau personnage se range au bout. Ceux en retrait ou masqués passent après les autres, dans mon ordre eux aussi.
 
 Erreurs : 401.
 

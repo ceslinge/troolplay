@@ -39,6 +39,12 @@
   white-space: nowrap;
 }
 
+.state {
+  font-family: var(--texte);
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
 .move {
   width: 2.75rem;
   height: 2.75rem;

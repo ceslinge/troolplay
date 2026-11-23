@@ -257,7 +257,13 @@ def my_characters(session: Session, user: User) -> MyCharacters:
         select(Character)
         .where(Character.user_id == user.id)
         .options(selectinload(Character.server))
-        .order_by(Character.position, Character.name, Character.id)
+        # Ceux qu'on ne joue pas en ce moment (en retrait, ou masqués) passent à la fin.
+        .order_by(
+            or_(Character.inactive_at.is_not(None), Character.hidden_at.is_not(None)),
+            Character.position,
+            Character.name,
+            Character.id,
+        )
     )
     return MyCharacters(
         items=[CharacterOwnedSummary.model_validate(c) for c in characters]

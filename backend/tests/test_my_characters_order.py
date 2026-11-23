@@ -86,3 +86,20 @@ def test_the_limit_is_per_account(
         create(me, server, f"Personnage {number}")
 
     create(stranger, server, "Bruyère")
+
+
+def test_characters_in_retreat_come_last_in_their_own_order(
+    me: TestClient, server: GameServer
+) -> None:
+    ids = [
+        create(me, server, name)
+        for name in ["Aldegonde", "Bruyère", "Cendre", "Dorian"]
+    ]
+    me.patch(f"/characters/{ids[0]}", json={"inactive": True})
+    me.patch(f"/characters/{ids[2]}", json={"inactive": True})
+
+    assert my_names(me) == ["Bruyère", "Dorian", "Aldegonde", "Cendre"]
+
+    me.patch(f"/characters/{ids[0]}", json={"inactive": False})
+
+    assert my_names(me) == ["Aldegonde", "Bruyère", "Dorian", "Cendre"]
