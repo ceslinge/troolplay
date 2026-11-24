@@ -17,7 +17,7 @@ from backend.config import settings
 
 log = logging.getLogger(__name__)
 
-SENDER_NAME = "TroolPlay"
+SENDER_NAME = "tRoolPlay"
 
 
 def build_message(to: str, subject: str, body: str) -> EmailMessage:

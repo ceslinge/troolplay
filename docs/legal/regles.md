@@ -2,7 +2,7 @@
 
 > Brouillon. Les passages entre crochets restent à compléter avant la mise en ligne.
 
-TroolPlay est fait pour les rôlistes de Dofus : présenter ses personnages, raconter leurs histoires et savoir où se croiser en jeu. Ces règles tiennent en une idée : on joue ensemble, alors on se respecte.
+tRoolPlay est fait pour les rôlistes de Dofus : présenter ses personnages, raconter leurs histoires et savoir où se croiser en jeu. Ces règles tiennent en une idée : on joue ensemble, alors on se respecte.
 
 ## Ton compte
 

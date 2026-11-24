@@ -722,7 +722,7 @@ def change_role(
     tell(
         background,
         user,
-        f"Tu es maintenant {ROLE_NAMES[data.role]} sur TroolPlay",
+        f"Tu es maintenant {ROLE_NAMES[data.role]} sur tRoolPlay",
         f"Ton rôle change : {ROLE_NAMES[before]} → {ROLE_NAMES[data.role]}.\n\n"
         f"Le mot de l'équipe : {data.reason.strip()}",
         contestable=False,

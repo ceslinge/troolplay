@@ -2,7 +2,7 @@
 
 > Brouillon. Les passages entre crochets restent à compléter avant la mise en ligne.
 
-Cette page dit comment l'équipe de TroolPlay décide, pour que chacun sache à quoi s'attendre. Elle engage les modérateurs autant que les joueurs.
+Cette page dit comment l'équipe de tRoolPlay décide, pour que chacun sache à quoi s'attendre. Elle engage les modérateurs autant que les joueurs.
 
 ## Ce que fait l'équipe
 

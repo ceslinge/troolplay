@@ -22,7 +22,7 @@ function Layout() {
       <header className={styles.header}>
         <div className={styles.inner}>
           {/* Le R et le P tracés à la plume : le RP se lit dans le nom (#108). */}
-          <Link to="/" className={styles.brand} aria-label="TroolPlay, accueil">
+          <Link to="/" className={styles.brand} aria-label="tRoolPlay, accueil">
             <Wordmark />
           </Link>
           <nav className={styles.nav} aria-label="Principale">
