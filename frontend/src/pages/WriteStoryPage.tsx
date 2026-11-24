@@ -255,6 +255,8 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
       queryClient.setQueryData(['story', story.id], story)
       void queryClient.invalidateQueries({ queryKey: ['stories'] })
       toast.show('Histoire publiée : les membres peuvent la lire.', 'success')
+      // On la découvre telle que les autres la liront.
+      navigate(`/histoires/${story.id}`)
     },
     onError: (error) => setFailure(errorOf(error)),
   })
