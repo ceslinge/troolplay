@@ -1,6 +1,8 @@
 services:
   db:
     image: postgres:18-alpine
+    # Repart seule au démarrage de la machine.
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
