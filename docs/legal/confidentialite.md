@@ -16,7 +16,7 @@ Le responsable des données est l'éditeur du site, joignable à [ADRESSE EMAIL 
 | Ton mot de passe | te connecter. On n'en garde qu'une empreinte, impossible à retransformer en mot de passe, même pour nous | tant que ton compte existe |
 | Tes personnages, histoires et brouillons | les afficher, c'est le but du site | jusqu'à ce que tu les supprimes, ou ton compte |
 | Les signalements | permettre la modération | jusqu'à leur traitement. La copie du contenu signalé est alors effacée |
-| Ton adresse IP, dans les journaux du serveur | protéger le site contre les abus | [DURÉE, par exemple 30 jours] |
+| Ton adresse IP, dans les journaux du serveur | protéger le site contre les abus | 30 jours |
 
 On ne vend rien, on ne fait pas de publicité et on ne suit pas ce que tu fais sur d'autres sites.
 

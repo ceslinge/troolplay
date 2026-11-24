@@ -51,7 +51,15 @@
   text-decoration: none;
 }
 
+/* Le pied de page reste en bas, même sur une page courte. */
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .body {
+  flex: 1;
   display: flex;
   align-items: flex-start;
 }
@@ -91,6 +99,31 @@
 }
 
 /* Sur le bois sombre, le contour par défaut du navigateur se voit mal : un contour laiton. */
+.footer {
+  margin-top: 3rem;
+  background: var(--bois);
+  color: #eadfcf;
+  font-size: 0.875rem;
+}
+
+.fan {
+  margin: 0;
+}
+
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footerLinks .link {
+  display: inline-block;
+  padding: 0.5rem 0;
+}
+
 .brand:focus-visible,
 .link:focus-visible,
 .cta:focus-visible {
