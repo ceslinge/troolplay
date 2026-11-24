@@ -20,6 +20,15 @@ class Settings(BaseSettings):
     allowed_origins: list[str] = ["http://localhost:5173"]
     site_url: str = "http://localhost:5173"
 
+    # Les emails. Sans SMTP_HOST, ils s'affichent dans le terminal (développement).
+    # Port 465 : la connexion est chiffrée dès le départ (SMTPS).
+    smtp_host: str = ""
+    smtp_port: int = 465
+    smtp_user: str = ""
+    smtp_password: str = ""
+    # L'expéditeur affiché. Par défaut, le compte SMTP lui-même.
+    mail_from: str = ""
+
     @property
     def database_url(self) -> URL:
         return URL.create(
