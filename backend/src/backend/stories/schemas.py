@@ -29,6 +29,7 @@ Title = Annotated[str, Field(min_length=1, max_length=120)]
 Body = Annotated[str, Field(max_length=50_000)]
 Warnings = Annotated[list[Warning], AfterValidator(no_duplicates)]
 Note = Annotated[str | None, Field(max_length=200)]
+AuthorNote = Annotated[str | None, Field(max_length=1000)]
 
 EXCERPT_LENGTH = 200
 
@@ -54,6 +55,7 @@ class StoryFields(BaseModel):
     body: Body | None = None
     content_warnings: Warnings | None = None
     content_note: Note = None
+    author_note: AuthorNote = None
 
 
 class StoryCreate(StoryFields):
@@ -126,6 +128,7 @@ class StoryOut(BaseModel):
     character: StoryCharacter | None
     content_warnings: list[str]
     content_note: str | None
+    author_note: str | None
     published_at: datetime | None
     updated_at: datetime
     is_mine: bool = False

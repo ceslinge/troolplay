@@ -4,6 +4,7 @@ import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-route
 import type { MyCharacter } from '../api/characters'
 import { ApiError } from '../api/client'
 import {
+  AUTHOR_NOTE_MAX,
   BODY_MAX,
   type ContentWarning,
   createStory,
@@ -11,6 +12,7 @@ import {
   fetchStory,
   NOTE_MAX,
   publishStory,
+  SHORT_STORY,
   type Story,
   type StoryFields,
   TITLE_MAX,
@@ -38,6 +40,7 @@ type Draft = {
   body: string
   content_warnings: ContentWarning[]
   content_note: string
+  author_note: string
 }
 
 // Ce qui se passe en ce moment. « Pas encore enregistré » se déduit : le texte diffère du dernier envoi.
@@ -55,6 +58,7 @@ function fromStory(story: Story): Draft {
     body: story.body,
     content_warnings: story.content_warnings,
     content_note: story.content_note ?? '',
+    author_note: story.author_note ?? '',
   }
 }
 
@@ -65,6 +69,7 @@ function toFields(draft: Draft): StoryFields {
     body: draft.body,
     content_warnings: draft.content_warnings,
     content_note: draft.content_note.trim() || null,
+    author_note: draft.author_note.trim() || null,
   }
 }
 
@@ -77,7 +82,11 @@ const backupKey = (id: number | null) => `troolplay:histoire:${id ?? 'nouvelle'}
 function readBackup(id: number | null): Backup | null {
   try {
     const raw = localStorage.getItem(backupKey(id))
-    return raw ? (JSON.parse(raw) as Backup) : null
+    if (!raw) return null
+    const backup = JSON.parse(raw) as { draft: Partial<Draft>; at: number }
+    // Une copie gardée avant l'arrivée d'un champ ne l'a pas : on le complète à vide.
+    const defaults = { character_id: 0, title: '', body: '', content_warnings: [], content_note: '', author_note: '' }
+    return { at: backup.at, draft: { ...defaults, ...backup.draft } }
   } catch {
     return null
   }
@@ -125,7 +134,14 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
   const queryClient = useQueryClient()
   const toast = useToast()
 
-  const empty: Draft = { character_id: defaultCharacter, title: '', body: '', content_warnings: [], content_note: '' }
+  const empty: Draft = {
+    character_id: defaultCharacter,
+    title: '',
+    body: '',
+    content_warnings: [],
+    content_note: '',
+    author_note: '',
+  }
   const start = initial ? fromStory(initial) : empty
   const [draft, setDraft] = useState<Draft>(start)
   const [saved, setSaved] = useState<Draft>(start)
@@ -135,6 +151,7 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
   const [savedAt, setSavedAt] = useState<Date | null>(null)
   const [failure, setFailure] = useState<ApiError | null>(null)
   const [preview, setPreview] = useState(false)
+  const [confirmShort, setConfirmShort] = useState(false)
   // Une version plus récente gardée sur cet appareil, qu'on propose de reprendre.
   const [offer, setOffer] = useState<Backup | null>(() => {
     const backup = readBackup(initial?.id ?? null)
@@ -409,6 +426,17 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
           error={errors.content_note}
         />
 
+        <Field
+          label="Mot de l'auteur (HRP)"
+          name="author_note"
+          value={draft.author_note}
+          onChange={(v) => set('author_note', v)}
+          rows={3}
+          maxLength={AUTHOR_NOTE_MAX}
+          hint="Hors RP, affiché à part de ton histoire : remercier un joueur croisé en jeu, situer la scène, annoncer une suite."
+          error={errors.author_note}
+        />
+
         <div className={styles.footer}>
           <p className={styles.status} aria-live="polite">
             {statusText(status, published, savedAt)}
@@ -430,9 +458,31 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
                     Réessayer
                   </Button>
                 )}
-                <Button busy={publish.isPending} disabled={!canSave || !draft.body.trim()} onClick={() => publish.mutate()}>
-                  Publier
-                </Button>
+                {confirmShort ? (
+                  <>
+                    <span className={styles.status}>Ton histoire est très courte. La publier quand même ?</span>
+                    <Button variant="secondary" onClick={() => setConfirmShort(false)}>
+                      Non, je continue
+                    </Button>
+                    <Button
+                      busy={publish.isPending}
+                      onClick={() => {
+                        setConfirmShort(false)
+                        publish.mutate()
+                      }}
+                    >
+                      Oui, publier
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    busy={publish.isPending}
+                    disabled={!canSave || !draft.body.trim()}
+                    onClick={() => (draft.body.trim().length < SHORT_STORY ? setConfirmShort(true) : publish.mutate())}
+                  >
+                    Publier
+                  </Button>
+                )}
               </>
             )}
           </div>

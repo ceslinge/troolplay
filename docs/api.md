@@ -307,6 +307,7 @@ Une histoire appartient à un compte et est signée par un de ses personnages (s
   "character": { "id": 42, "name": "Maëlis", "gender": "feminine", "class": "cra", "avatar": null, "seal": null, "server": { "id": 3, "game": "dofus", "name": "Ombre", "is_active": true } },
   "content_warnings": ["death", "violence"],
   "content_note": "Mort d'un personnage aimé",
+  "author_note": "Suite de la soirée du 12 à la taverne. Merci à Tobias !",
   "published": true,
   "published_at": "2026-11-24T20:00:00Z",
   "updated_at": "2026-11-24T21:12:00Z",
@@ -332,6 +333,7 @@ Le titre, le personnage, les avertissements, `published_at`, et `excerpt` : les 
 | `character_id` | un de mes personnages, en retrait ou non. Obligatoire |
 | `content_warnings` | parmi `violence`, `death`, `torture`, `sexual_themes`, `abuse`, `self_harm`, `addiction`, `phobia`, chacun une fois |
 | `content_note` | 200 caractères au plus : une précision libre sur ce qui attend le lecteur |
+| `author_note` | 1 000 caractères au plus : le mot de l'auteur, hors RP, affiché à part du texte. Absent des résumés |
 
 `sexual_themes` prévient d'un thème, jamais d'une scène explicite : celles-ci restent interdites (règles d'usage).
 

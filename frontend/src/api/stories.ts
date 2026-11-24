@@ -31,6 +31,7 @@ export type Story = {
   character: StoryCharacter | null
   content_warnings: ContentWarning[]
   content_note: string | null
+  author_note: string | null
   published: boolean
   published_at: string | null
   updated_at: string
@@ -56,12 +57,16 @@ export type StoryFields = {
   body: string
   content_warnings: ContentWarning[]
   content_note: string | null
+  author_note: string | null
 }
 
 // Les limites du serveur (docs/api.md, « Les histoires »).
 export const TITLE_MAX = 120
 export const BODY_MAX = 50_000
 export const NOTE_MAX = 200
+export const AUTHOR_NOTE_MAX = 1000
+/** En dessous, on demande confirmation avant de publier : un mystère tient en une ligne, un « test » aussi. */
+export const SHORT_STORY = 200
 export const MAX_DRAFTS = 30
 
 export const fetchStory = (id: number) => apiFetch<Story>(`/stories/${id}`)

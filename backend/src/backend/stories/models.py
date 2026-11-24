@@ -60,6 +60,8 @@ class Story(Base):
         ARRAY(String(20)), server_default=text("'{}'")
     )
     content_note: Mapped[str | None] = mapped_column(String(200))
+    # Le mot de l'auteur, hors RP : affiché à part, le texte de l'histoire reste tout entier en jeu.
+    author_note: Mapped[str | None] = mapped_column(String(1000))
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     hidden_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
