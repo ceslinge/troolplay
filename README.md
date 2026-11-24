@@ -1,4 +1,4 @@
-# TroolPlay (nom de code)
+# tRoolPlay
 
 Un lieu où les rôlistes de Dofus présentent leurs personnages, racontent leurs histoires et découvrent où se croiser en jeu.
 

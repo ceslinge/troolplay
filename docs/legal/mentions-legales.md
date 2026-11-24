@@ -4,7 +4,7 @@
 
 ## Le site
 
-TroolPlay est un projet de fan, personnel, non officiel et non commercial. Il n'a aucun lien avec Ankama.
+tRoolPlay est un projet de fan, personnel, non officiel et non commercial. Il n'a aucun lien avec Ankama.
 
 Dofus et les noms, lieux et classes de son univers appartiennent à Ankama. Ils sont cités ici seulement pour décrire les personnages des joueurs.
 

@@ -1,6 +1,6 @@
 # Frontend
 
-Interface web de TroolPlay, en React, TypeScript et Vite.
+Interface web de tRoolPlay, en React, TypeScript et Vite.
 
 ## Lancer en local
 

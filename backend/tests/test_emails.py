@@ -69,7 +69,7 @@ def test_with_smtp_the_email_leaves_signed_in(smtp: type[FakeSMTP]) -> None:
     (message,) = server.sent
     assert message["To"] == "joueur@example.com"
     assert message["Subject"] == "Bonjour"
-    assert message["From"] == "TroolPlay <contact@exemple.test>"
+    assert message["From"] == "tRoolPlay <contact@exemple.test>"
     assert message["Date"] and message["Message-ID"].endswith("@exemple.test>")
     assert message.get_content().strip() == "Le corps."
 
@@ -82,7 +82,7 @@ def test_the_sender_can_differ_from_the_smtp_account(
     emails.send_email("joueur@example.com", "Bonjour", "Le corps.")
 
     assert smtp.instances[0].sent[0]["From"] == (
-        "TroolPlay <ne-pas-repondre@exemple.test>"
+        "tRoolPlay <ne-pas-repondre@exemple.test>"
     )
 
 
