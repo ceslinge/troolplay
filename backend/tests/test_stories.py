@@ -9,7 +9,7 @@ from backend.characters.models import Character
 from backend.main import app
 from backend.servers.models import GameServer
 from backend.stories.models import Story
-from backend.stories.routes import PUBLISH_LIMIT
+from backend.stories.routes import CREATE_LIMIT, MAX_DRAFTS, PUBLISH_LIMIT
 
 TEXT = "Le vent tournait. *Encore une nuit sans sommeil*, pensa-t-elle."
 
@@ -387,3 +387,41 @@ def test_no_story_response_carries_a_user_id(
     ]
 
     assert all("user_id" not in str(r) for r in responses)
+
+
+# Contre le remplissage à coups de script
+
+
+def test_at_most_thirty_drafts_at_once(
+    session: Session, me: TestClient, owner, mine: int
+) -> None:
+    for n in range(MAX_DRAFTS):
+        session.add(Story(user_id=owner.id, character_id=mine, title=f"{n}"))
+    session.flush()
+
+    response = me.post("/stories", json={"character_id": mine, "title": "De trop"})
+
+    assert response.status_code == 409
+    assert "brouillons" in response.json()["detail"]
+
+
+def test_unpublishing_counts_towards_the_drafts(
+    session: Session, me: TestClient, owner, mine: int, published: int
+) -> None:
+    for n in range(MAX_DRAFTS):
+        session.add(Story(user_id=owner.id, character_id=mine, title=f"{n}"))
+    session.flush()
+
+    assert me.post(f"/stories/{published}/unpublish").status_code == 409
+    assert me.get(f"/stories/{published}").json()["published"] is True
+
+
+def test_at_most_thirty_stories_created_an_hour(me: TestClient, mine: int) -> None:
+    statuses = []
+    for n in range(CREATE_LIMIT + 1):
+        response = me.post("/stories", json={"character_id": mine, "title": f"{n}"})
+        statuses.append(response.status_code)
+        if response.status_code == 201:
+            me.delete(f"/stories/{response.json()['id']}")
+
+    assert statuses == [201] * CREATE_LIMIT + [429]

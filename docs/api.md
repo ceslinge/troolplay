@@ -359,7 +359,7 @@ Seulement les histoires publiées, ni masquées ni sans signature, de personnage
 
 `POST /api/stories` avec `character_id`, `title`, et au besoin `body`, `content_warnings`, `content_note`. Elle naît brouillon. Réponse 201 avec l'histoire complète.
 
-Erreurs : 422 si le personnage n'est pas à moi.
+Erreurs : 422 si le personnage n'est pas à moi. 409 au-delà de 30 brouillons : il faut en publier ou en supprimer un. 429 au-delà de 30 créations en une heure, contre les scripts.
 
 ### Modifier une histoire
 
@@ -368,7 +368,7 @@ Erreurs : 422 si le personnage n'est pas à moi.
 ### Publier, retirer
 
 - `POST /api/stories/{id}/publish` : la rend lisible par les membres. 422 si son texte est vide ou si elle n'a plus de signature. 10 publications par jour au plus (429 au-delà), contre le spam (décision 28). Republier une histoire déjà publiée ne change rien.
-- `POST /api/stories/{id}/unpublish` : elle redevient brouillon.
+- `POST /api/stories/{id}/unpublish` : elle redevient brouillon. 409 si j'ai déjà 30 brouillons.
 
 Réponse 200 avec l'histoire complète. Son auteur seulement.
 
@@ -420,6 +420,9 @@ En développement, les emails ne partent pas : ils s'affichent dans le terminal 
 | Connexion | 5 essais ratés en 15 minutes pour une adresse, 20 pour une IP (une IP peut être partagée) | 429 |
 | Inscription | 5 en 1 heure, par IP | 429 |
 | Mot de passe oublié, renvoi de vérification | 3 en 1 heure, par adresse | 429, sans le dire à l'écran |
+| Écrire une histoire | 30 créations en 1 heure, et 30 brouillons à la fois, par compte | 429, ou 409 pour les brouillons |
+| Publier une histoire | 10 en 1 jour, par compte | 429 |
+| Taille d'une requête | 1 Mo, pour toute l'API (Caddy) | 413 |
 
 Une réponse 429 porte l'en-tête `Retry-After`, en secondes.
 

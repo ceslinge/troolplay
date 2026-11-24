@@ -30,6 +30,10 @@ me_router = APIRouter(prefix="/me", tags=["stories"])
 # Écrire beaucoup n'est pas un tort : la limite ne vise que le spam (décision 28).
 PUBLISH_LIMIT = 10
 PUBLISH_WINDOW = timedelta(days=1)
+# Assez pour plusieurs histoires en chantier, pas pour remplir le disque à coups de script.
+MAX_DRAFTS = 30
+CREATE_LIMIT = 30
+CREATE_WINDOW = timedelta(hours=1)
 
 WITH_CHARACTER = selectinload(Story.character).selectinload(Character.server)
 
@@ -62,6 +66,19 @@ def present(story: Story, viewer: User) -> StoryOwnedOut | StoryOut:
     if mine or can(viewer, Capability.SEE_HIDDEN):
         return StoryOwnedOut.model_validate(story).model_copy(update={"is_mine": mine})
     return StoryOut.model_validate(story)
+
+
+def check_room_for_a_draft(session: Session, user: User) -> None:
+    drafts = session.scalar(
+        select(func.count()).where(
+            Story.user_id == user.id, Story.published_at.is_(None)
+        )
+    )
+    if drafts is not None and drafts >= MAX_DRAFTS:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Tu as déjà {MAX_DRAFTS} brouillons : publie ou supprime-en un d'abord.",
+        )
 
 
 def check_signature(session: Session, character_id: int, user: User) -> None:
@@ -122,6 +139,8 @@ def create_story(
     data: StoryCreate, user: CurrentUser, session: SessionDep
 ) -> StoryOwnedOut | StoryOut:
     check_signature(session, data.character_id, user)
+    check_room_for_a_draft(session, user)
+    throttle(session, "story", str(user.id), limit=CREATE_LIMIT, window=CREATE_WINDOW)
     story = Story(user_id=user.id, **data.model_dump())
     session.add(story)
     session.commit()
@@ -173,6 +192,8 @@ def unpublish_story(
     story_id: int, user: CurrentUser, session: SessionDep
 ) -> StoryOwnedOut | StoryOut:
     story = load_mine(session, story_id, user)
+    if story.published_at is not None:
+        check_room_for_a_draft(session, user)
     story.published_at = None
     session.commit()
     return present(load_story(session, story.id, user), user)
