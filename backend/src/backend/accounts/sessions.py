@@ -83,7 +83,7 @@ def current_user(
     if found is None:
         raise HTTPException(status_code=401, detail="Il faut être connecté")
     user_session, user = found
-    if user.banned_at is not None:
+    if user.suspended(now):
         raise HTTPException(status_code=401, detail="Il faut être connecté")
     if now - user_session.last_seen_at > REFRESH_AFTER:
         user_session.last_seen_at = now

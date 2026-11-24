@@ -13,7 +13,9 @@ Les capacités de chaque rôle sont écrites une seule fois, dans `backend/src/b
 | Supprimer un contenu | non | non | oui | non | oui |
 | Signaler | non | oui | non | oui | oui |
 | Masquer, traiter un signalement | non | non | non | oui | oui |
-| Bannir | non | non | non | oui | oui |
+| Suspendre, bannir | non | non | non | oui | oui |
+| Retirer le droit de signaler | non | non | non | oui | oui |
+| Lire le journal de modération | non | non | non | oui | oui |
 | Savoir quel compte possède un personnage | non | non | oui | oui | oui |
 | Gérer les PNJ | non | non | non | non | oui |
 | Gérer les serveurs | non | non | non | non | oui |

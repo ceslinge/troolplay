@@ -400,7 +400,34 @@ Réponse 202 : `{"detail": "Merci : c'est transmis à l'équipe, qui va regarder
 - 10 signalements par heure au plus (429).
 - Le signalement garde une copie du contenu tel qu'on le lit à ce moment-là. Elle sera effacée une fois le signalement traité (#51).
 
-Sans compte, on signale par l'adresse de contact des mentions légales.
+Sans compte, on signale par l'adresse de contact des mentions légales. Un compte à qui la modération a retiré le droit de signaler reçoit 403, avec la même indication.
+
+## La modération
+
+Pour l'équipe seulement : capacité `moderate`, et `ban` pour suspendre (401 sans session, 403 sans la capacité). Un compte s'y désigne par son numéro, jamais par son adresse email. C'est le seul endroit où l'on voit à quel compte appartient un personnage.
+
+Chaque action demande une raison écrite (`reason`, de 3 à 1 000 caractères), s'inscrit au journal, et la personne concernée la reçoit par email avec le lien vers la charte et le moyen de contester. On n'agit que sur un compte de rang inférieur au sien (403 sinon) ; un PNJ, qui n'a pas de joueur, est aux admins.
+
+### Les dossiers
+
+- `GET /api/moderation/cases?status=open` : un dossier par contenu signalé, avec `open_reports`, `total_reports`, les motifs en attente (`reasons`) et `last_reported_at`. Les dossiers ouverts les plus signalés d'abord. `status=closed` : ceux qui n'ont plus rien en attente.
+- `GET /api/moderation/cases/{character|story}/{id}` : le dossier, le compte propriétaire, et chaque signalement avec son motif, sa précision, la copie du contenu (tant qu'il n'est pas tranché) et son auteur : numéro de compte, signalements envoyés, jugés fondés, jugés abusifs.
+- `POST /api/moderation/cases/{character|story}/{id}/decide` avec `{"decision": "founded" | "no_action" | "abusive", "reason": "…"}` : tranche tout ce qui attend. Les copies sont effacées. 409 si rien n'attend.
+
+### Masquer, rétablir
+
+`POST /api/moderation/characters/{id}/hide`, `…/unhide`, et de même pour `stories`, avec `{"reason": "…"}`. Masqué, le contenu disparaît pour les autres ; son auteur le voit et le modifie toujours. 409 si c'est déjà le cas.
+
+### Les comptes
+
+- `GET /api/moderation/accounts/{id}` : rôle, création, adresse vérifiée ou non, suspension, droit de signaler, personnages, signalements reçus et envoyés.
+- `POST /api/moderation/accounts/{id}/suspend` avec `{"duration": "day" | "week" | "month" | "forever", "reason": "…"}` (capacité `ban`) : les connexions en cours s'arrêtent, la connexion est refusée jusqu'au terme, puis la suspension se lève seule. Les personnages et les histoires restent en ligne.
+- `POST /api/moderation/accounts/{id}/reinstate` avec `{"reason": "…"}` : lève la suspension.
+- `POST /api/moderation/accounts/{id}/reporting` avec `{"allowed": false, "reason": "…"}` : retire le droit de signaler, ou le rend avec `true`. Le compte ne change pas autrement.
+
+### Le journal
+
+`GET /api/moderation/journal`, filtrable par `action`, `actor_id`, `target_user_id` : qui, quoi, sur quoi, quand, pourquoi, le plus récent d'abord. Aucune route ne le modifie ni ne l'efface.
 
 ## Les comptes
 
@@ -551,4 +578,3 @@ Après ce contrat :
 - l'export de ses données ;
 - « Qui traîne ici ? » : les lieux d'un serveur et leurs habitués ;
 - les histoires ;
-- la modération : masquer, signaler, voir à qui appartient un personnage.

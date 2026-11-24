@@ -1,6 +1,17 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, String, func, text
+from sqlalchemy import (
+    CheckConstraint,
+    ColumnElement,
+    DateTime,
+    ForeignKey,
+    Index,
+    String,
+    and_,
+    func,
+    or_,
+    text,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.db import Base
@@ -18,10 +29,30 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(String(10), server_default="user")
     email_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Suspendu depuis banned_at, jusqu'à banned_until ; sans fin, c'est un bannissement.
     banned_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    banned_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Le droit de signaler, retiré par la modération à qui en abuse.
+    report_banned_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+    def suspended(self, now: datetime | None = None) -> bool:
+        """Suspendu en ce moment. Une suspension se lève toute seule à son terme."""
+        if self.banned_at is None:
+            return False
+        return self.banned_until is None or self.banned_until > (
+            now or datetime.now(UTC)
+        )
+
+    @staticmethod
+    def active(now: datetime) -> ColumnElement[bool]:
+        """La même règle, pour une requête : les comptes qui ne sont pas suspendus."""
+        return or_(
+            User.banned_at.is_(None),
+            and_(User.banned_until.is_not(None), User.banned_until <= now),
+        )
 
 
 class UserSession(Base):

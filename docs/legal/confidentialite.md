@@ -17,6 +17,7 @@ Le responsable des données est l'éditeur du site, joignable à [ADRESSE EMAIL 
 | Tes personnages, histoires et brouillons | les afficher, c'est le but du site | jusqu'à ce que tu les supprimes, ou ton compte |
 | Les signalements | permettre la modération | jusqu'à leur traitement. La copie du contenu signalé est alors effacée |
 | Ton adresse IP, dans les journaux du serveur | protéger le site contre les abus | 30 jours |
+| Les décisions de la modération qui te concernent (masquage, suspension), avec leur raison | garder la trace, et pouvoir relire une contestation | sans ton adresse email ; le lien avec toi disparaît avec ton compte |
 | Les sauvegardes de la base, qui contiennent tout ce qui précède sauf les journaux | retrouver le site après une panne | 35 jours au plus, puis effacées |
 
 On ne vend rien, on ne fait pas de publicité et on ne suit pas ce que tu fais sur d'autres sites.

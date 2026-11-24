@@ -7,6 +7,7 @@ from backend.characters.routes import router as characters_router
 from backend.config import settings
 from backend.home.routes import router as home_router
 from backend.moderation.routes import router as reports_router
+from backend.moderation.team import router as moderation_router
 from backend.servers.places import router as places_router
 from backend.servers.routes import router as servers_router
 from backend.stories.routes import me_router as my_stories_router
@@ -43,6 +44,7 @@ app.include_router(places_router)
 app.include_router(stories_router)
 app.include_router(my_stories_router)
 app.include_router(reports_router)
+app.include_router(moderation_router)
 
 
 @app.get("/health")

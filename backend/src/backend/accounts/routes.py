@@ -1,5 +1,6 @@
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
+from zoneinfo import ZoneInfo
 
 from fastapi import (
     APIRouter,
@@ -38,6 +39,8 @@ from backend.accounts.throttle import throttle
 from backend.accounts.tokens import issue_token, use_token
 from backend.config import settings
 from backend.db import SessionDep
+
+PARIS = ZoneInfo("Europe/Paris")
 
 router = APIRouter(tags=["accounts"])
 
@@ -94,8 +97,13 @@ def log_in(
     # Le mot de passe est bon : on peut dire pourquoi la connexion est refusée.
     if user.email_verified_at is None:
         raise HTTPException(status_code=403, detail="Vérifie d'abord ton adresse email")
-    if user.banned_at is not None:
-        raise HTTPException(status_code=403, detail="Ce compte est suspendu")
+    if user.suspended():
+        until = (
+            f" jusqu'au {user.banned_until.astimezone(PARIS):%d/%m/%Y à %H:%M}"
+            if user.banned_until
+            else ""
+        )
+        raise HTTPException(status_code=403, detail=f"Ce compte est suspendu{until}")
 
     session.execute(delete(LoginFailure).where(LoginFailure.email == email))
     open_session(session, user, response)
@@ -211,7 +219,7 @@ def forgot_password(
     email = data.email.lower()
     throttle(session, "forgot", email, limit=3, window=timedelta(hours=1))
     user = find_user(session, email)
-    if user is not None and user.banned_at is None:
+    if user is not None and not user.suspended():
         token = issue_token(session, user, "reset")
         session.commit()
         link = f"{settings.site_url}/mot-de-passe?jeton={token}"
