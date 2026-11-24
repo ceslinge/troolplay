@@ -8,10 +8,114 @@
 }
 
 .hero {
+  display: grid;
+  gap: 2rem 2.5rem;
+  padding: 2.25rem;
+}
+
+/* Le texte à gauche, les billets à droite ; sur un écran étroit, les billets passent dessous. */
+.withVoices {
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 22rem);
+  align-items: center;
+}
+
+@media (max-width: 52rem) {
+  .withVoices {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Sans billet à montrer, la feuille se resserre sur son texte, au centre. */
+.narrow {
+  align-self: center;
+  width: 100%;
+  max-width: 46rem;
+}
+
+.intro {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 2.25rem;
+  min-width: 0;
+}
+
+.voices {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Un billet punaisé, un peu de travers, comme sur un vrai panneau. */
+.voice {
+  position: relative;
+  padding: 1.375rem 1rem 0.875rem;
+  background: var(--papier);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.15),
+    0 6px 14px rgba(43, 29, 18, 0.18);
+  transform: rotate(-1.2deg);
+}
+
+.voice:nth-child(2) {
+  margin-left: 1.5rem;
+  transform: rotate(1deg);
+}
+
+.voice:nth-child(3) {
+  transform: rotate(-0.4deg);
+}
+
+.voice::before {
+  content: '';
+  position: absolute;
+  top: 0.35rem;
+  left: 50%;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-left: -0.275rem;
+  border: 1px solid var(--punaise-bord);
+  border-radius: 50%;
+  background: var(--punaise);
+}
+
+.voice a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.voice a:hover .voiceHook {
+  text-decoration: underline;
+}
+
+.voice a:focus-visible {
+  outline: 2px solid var(--bois);
+  outline-offset: 4px;
+}
+
+.voiceHook {
+  font-family: var(--titre);
+  font-style: italic;
+  font-size: 1.0625rem;
+  line-height: 1.4;
+}
+
+.voiceWho {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.voiceServer {
+  font-weight: 400;
+  color: var(--encre-douce);
 }
 
 .title {
