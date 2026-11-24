@@ -50,7 +50,9 @@ export type StorySummary = {
   excerpt: string | null
 }
 
-export type StoryFilters = { serverId?: number; characterId?: number; page?: number }
+export type StoryOrder = 'newest' | 'oldest'
+
+export type StoryFilters = { serverId?: number; characterId?: number; page?: number; order?: StoryOrder }
 
 export const STORIES_PAGE_SIZE = 20
 
@@ -78,13 +80,14 @@ export const fetchStory = (id: number) => apiFetch<Story>(`/stories/${id}`)
 
 /** Les histoires publiées d'un serveur, ou d'un personnage, les plus récentes d'abord. */
 export function fetchStories(
-  { serverId, characterId, page = 1 }: StoryFilters,
+  { serverId, characterId, page = 1, order }: StoryFilters,
   pageSize = STORIES_PAGE_SIZE,
   offset = (page - 1) * pageSize,
 ) {
   const params = new URLSearchParams({ limit: String(pageSize), offset: String(offset) })
   if (serverId !== undefined) params.set('server_id', String(serverId))
   if (characterId !== undefined) params.set('character_id', String(characterId))
+  if (order) params.set('order', order)
   return apiFetch<{ items: StorySummary[]; total: number }>(`/stories?${params}`)
 }
 
