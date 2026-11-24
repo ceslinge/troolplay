@@ -79,6 +79,7 @@ ACTIONS = (
     "reinstate",
     "revoke_reporting",
     "restore_reporting",
+    "set_role",
 )
 DECISIONS = ("founded", "no_action", "abusive")
 

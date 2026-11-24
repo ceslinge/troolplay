@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { type Duration, fetchJournal, fetchTeamAccount, reinstate, setReporting, suspend } from '../../api/moderation'
+import { changeRole, type Duration, fetchJournal, fetchTeamAccount, reinstate, type Role, setReporting, suspend } from '../../api/moderation'
 import Button from '../../components/Button'
 import PageTitle from '../../components/PageTitle'
 import ReasonForm from '../../components/ReasonForm'
@@ -12,12 +12,14 @@ import { useCan } from '../../lib/useCan'
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
 
-type Acting = 'suspend' | 'reinstate' | 'reporting' | null
+type Acting = 'suspend' | 'reinstate' | 'reporting' | 'role' | null
 
 function Account({ id }: { id: number }) {
   const queryClient = useQueryClient()
   const toast = useToast()
   const canBan = useCan('ban')
+  const canManageRoles = useCan('manage_roles')
+  const [role, setRole] = useState<Role | null>(null)
   const account = useQuery({ queryKey: ['moderation', 'account', id], queryFn: () => fetchTeamAccount(id) })
   const history = useQuery({ queryKey: ['moderation', 'journal', { targetUserId: id }], queryFn: () => fetchJournal({ targetUserId: id }) })
   const [acting, setActing] = useState<Acting>(null)
@@ -28,12 +30,14 @@ function Account({ id }: { id: number }) {
       const a = account.data!
       if (acting === 'suspend') return suspend(id, duration!, reason)
       if (acting === 'reinstate') return reinstate(id, reason)
+      if (acting === 'role') return changeRole(id, role!, reason)
       return setReporting(id, a.reporting_revoked, reason)
     },
     onSuccess: async () => {
       toast.show('C’est fait, et c’est au journal.', 'success')
       setActing(null)
       setDuration(null)
+      setRole(null)
       await queryClient.invalidateQueries({ queryKey: ['moderation'] })
     },
   })
@@ -106,13 +110,20 @@ function Account({ id }: { id: number }) {
             <Button variant="secondary" onClick={() => setActing('reporting')}>
               {a.reporting_revoked ? 'Rendre le droit de signaler' : 'Retirer le droit de signaler'}
             </Button>
+            {canManageRoles && (
+              <Button variant="secondary" onClick={() => setActing('role')}>
+                Changer le rôle
+              </Button>
+            )}
           </div>
         ) : (
           <ReasonForm
             title={
               acting === 'suspend'
                 ? 'Suspendre ce compte'
-                : acting === 'reinstate'
+                : acting === 'role'
+                  ? 'Changer le rôle'
+                  : acting === 'reinstate'
                   ? 'Lever la suspension'
                   : a.reporting_revoked
                     ? 'Rendre le droit de signaler'
@@ -122,10 +133,23 @@ function Account({ id }: { id: number }) {
             danger={acting === 'suspend'}
             busy={act.isPending}
             error={act.error}
-            ready={acting !== 'suspend' || duration !== null}
+            hint={acting === 'role' ? 'Envoyée à la personne avec son nouveau rôle, et gardée au journal.' : undefined}
+            ready={(acting !== 'suspend' || duration !== null) && (acting !== 'role' || role !== null)}
             onConfirm={(reason) => act.mutate(reason)}
             onCancel={() => setActing(null)}
           >
+            {acting === 'role' && (
+              <fieldset className={styles.choices}>
+                {(Object.keys(ROLE_LABELS) as Role[])
+                  .filter((r) => r !== a.role)
+                  .map((r) => (
+                    <label key={r}>
+                      <input type="radio" name="role" checked={role === r} onChange={() => setRole(r)} />
+                      <span>{ROLE_LABELS[r]}</span>
+                    </label>
+                  ))}
+              </fieldset>
+            )}
             {acting === 'suspend' && (
               <fieldset className={styles.choices}>
                 {(Object.keys(DURATION_LABELS) as Duration[]).map((d) => (

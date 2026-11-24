@@ -211,3 +211,7 @@
   gap: 1rem;
   color: var(--papier);
 }
+
+.end {
+  align-self: flex-end;
+}

@@ -59,6 +59,20 @@ class ReportingIn(WhyIn):
     allowed: bool
 
 
+class RoleIn(WhyIn):
+    role: Literal["user", "moderator", "admin"]
+
+
+class LookupIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    email: Annotated[str, Field(min_length=3, max_length=254)]
+
+
+class AccountRef(BaseModel):
+    id: int
+
+
 # Ce que l'équipe lit. Jamais d'adresse email : un compte s'y désigne par son numéro.
 
 
@@ -133,6 +147,19 @@ class TeamContent(BaseModel):
     hidden: bool
     owner: TeamAccount | None
     open_reports: int
+
+
+class TeamMember(BaseModel):
+    """Un membre de l'équipe, pour la page des rôles."""
+
+    id: int
+    role: str
+    characters: list[str]
+    suspended: bool
+
+
+class TeamList(BaseModel):
+    items: list[TeamMember]
 
 
 class CaseDetail(CaseSummary):
