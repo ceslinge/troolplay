@@ -425,3 +425,23 @@ def test_at_most_thirty_stories_created_an_hour(me: TestClient, mine: int) -> No
             me.delete(f"/stories/{response.json()['id']}")
 
     assert statuses == [201] * CREATE_LIMIT + [429]
+
+
+# Le mot de l'auteur
+
+
+def test_the_author_note_is_kept_apart_and_can_be_erased(
+    me: TestClient, stranger: TestClient, published: int
+) -> None:
+    note = "Suite de la soirée du 12 à la taverne. Merci à Tobias !"
+    me.patch(f"/stories/{published}", json={"author_note": note})
+
+    assert stranger.get(f"/stories/{published}").json()["author_note"] == note
+    erased = me.patch(f"/stories/{published}", json={"author_note": None})
+    assert erased.json()["author_note"] is None
+
+
+def test_the_author_note_has_a_limit(me: TestClient, mine: int) -> None:
+    payload = {"character_id": mine, "title": "La nuit", "author_note": "x" * 1001}
+
+    assert me.post("/stories", json=payload).status_code == 422
