@@ -281,7 +281,14 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
     }
   }
 
-  const options = characters.map((c) => ({ value: c.id, label: c.name, group: c.server?.name }))
+  // Un groupe par serveur, sans répétition : le menu ne titre que des options qui se suivent.
+  // Les serveurs dans l'ordre où ils apparaissent dans la barre, et les personnages dans cet ordre aussi.
+  const servers = [...new Set(characters.map((c) => c.server?.name ?? ''))]
+  const options = servers.flatMap((server) =>
+    characters
+      .filter((c) => (c.server?.name ?? '') === server)
+      .map((c) => ({ value: c.id, label: c.name, group: server || undefined })),
+  )
   const signing = characters.find((c) => c.id === draft.character_id)
   const nearLimit = draft.body.length > BODY_MAX * 0.9
   const blocking = failure && failure.status !== 422 && failure.status !== 0
