@@ -77,8 +77,12 @@ export const MAX_DRAFTS = 30
 export const fetchStory = (id: number) => apiFetch<Story>(`/stories/${id}`)
 
 /** Les histoires publiées d'un serveur, ou d'un personnage, les plus récentes d'abord. */
-export function fetchStories({ serverId, characterId, page = 1 }: StoryFilters, pageSize = STORIES_PAGE_SIZE) {
-  const params = new URLSearchParams({ limit: String(pageSize), offset: String((page - 1) * pageSize) })
+export function fetchStories(
+  { serverId, characterId, page = 1 }: StoryFilters,
+  pageSize = STORIES_PAGE_SIZE,
+  offset = (page - 1) * pageSize,
+) {
+  const params = new URLSearchParams({ limit: String(pageSize), offset: String(offset) })
   if (serverId !== undefined) params.set('server_id', String(serverId))
   if (characterId !== undefined) params.set('character_id', String(characterId))
   return apiFetch<{ items: StorySummary[]; total: number }>(`/stories?${params}`)

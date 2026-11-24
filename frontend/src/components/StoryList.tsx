@@ -93,16 +93,22 @@ function ServerStories({ filters, onPage, empty }: Props) {
   )
 }
 
+// Sur une fiche : quelques histoires d'abord, la fiche ne doit pas devenir un mur ; la suite à la demande.
+const FIRST = 5
+const MORE = 10
+
 /** Les histoires d'un personnage, sur sa fiche : les plus récentes, puis « Voir plus » jusqu'au bout. */
 function CharacterStories({ filters, empty }: Props) {
   const me = useMe()
   const stories = useInfiniteQuery({
     queryKey: ['stories', 'character', filters.characterId],
-    queryFn: ({ pageParam }) => fetchStories({ ...filters, page: pageParam }),
-    initialPageParam: 1,
-    // Une page de plus tant qu'on n'a pas tout : le total dit où s'arrêter.
-    getNextPageParam: (last, all) =>
-      all.reduce((n, page) => n + page.items.length, 0) < last.total ? all.length + 1 : undefined,
+    // pageParam : combien d'histoires sont déjà affichées. Les premières, puis un paquet de plus à chaque clic.
+    queryFn: ({ pageParam }) => fetchStories(filters, pageParam === 0 ? FIRST : MORE, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (last, all) => {
+      const shown = all.reduce((n, page) => n + page.items.length, 0)
+      return shown < last.total ? shown : undefined
+    },
     enabled: Boolean(me.data),
   })
 
@@ -130,7 +136,11 @@ function CharacterStories({ filters, empty }: Props) {
           disabled={stories.isFetchingNextPage}
           onClick={() => void stories.fetchNextPage()}
         >
-          {stories.isFetchingNextPage ? 'Un instant…' : `Voir plus (${total - items.length} de plus)`}
+          {stories.isFetchingNextPage
+            ? 'Un instant…'
+            : Math.min(MORE, total - items.length) === 1
+              ? 'Voir la suivante'
+              : `Voir les ${Math.min(MORE, total - items.length)} suivantes`}
         </button>
       )}
     </>
