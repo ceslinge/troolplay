@@ -378,6 +378,16 @@ Réponse 200 avec l'histoire complète. Son auteur seulement.
 
 `DELETE /api/stories/{id}` : son auteur, ou un admin (capacité `delete_any`). Réponse 204.
 
+## Ignorer un personnage
+
+Pour ne plus croiser un personnage, sans que personne soit sanctionné (#112). Connecté.
+
+- `PUT /api/me/ignored/{id}` : l'ignorer. 204, et le refaire ne change rien. 404 si je ne peux pas le lire, 422 si c'est un des miens.
+- `DELETE /api/me/ignored/{id}` : ne plus l'ignorer. 204.
+- `GET /api/me/ignored` : mes personnages ignorés, résumés, le dernier ignoré d'abord.
+
+Il disparaît alors de mes listes : l'annuaire, « Qui traîne ici ? », les histoires du serveur et l'accueil. Sa fiche et ses histoires restent lisibles par un lien ; sur sa fiche, `ignored: true` me le rappelle, et sa liste d'histoires reste complète. On ignore un personnage, jamais un joueur : tous les personnages d'un compte disparaissant d'un coup diraient qu'ils ont le même joueur (décision 6). Personne d'autre ne sait qui ignore qui.
+
 ## Signaler
 
 `POST /api/reports`, connecté, avec :

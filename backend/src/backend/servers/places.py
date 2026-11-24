@@ -8,9 +8,11 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from backend.accounts.sessions import OptionalUser
 from backend.characters.models import Character, CharacterHangout
 from backend.characters.schemas import CharacterSummary, Period
 from backend.db import SessionDep
+from backend.ignores.filters import not_ignored
 from backend.servers.models import GameServer
 
 router = APIRouter(prefix="/servers", tags=["servers"])
@@ -37,6 +39,7 @@ class PlaceList(BaseModel):
 def list_places(
     server_id: int,
     session: SessionDep,
+    viewer: OptionalUser,
     day: Annotated[int | None, Query(ge=1, le=7)] = None,
     period: Period | None = None,
 ) -> PlaceList:
@@ -50,6 +53,7 @@ def list_places(
             Character.server_id == server_id,
             Character.hidden_at.is_(None),
             Character.inactive_at.is_(None),
+            not_ignored(viewer),
         )
         .options(selectinload(Character.server))
         .order_by(Character.name, Character.id)

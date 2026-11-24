@@ -84,6 +84,8 @@ class CharacterOut(CharacterSummary):
     inactive_note: str | None
     created_at: datetime
     updated_at: datetime
+    # Vrai seulement pour la personne qui l'ignore : personne d'autre ne le sait (#112).
+    ignored: bool = False
 
 
 class CharacterList(BaseModel):

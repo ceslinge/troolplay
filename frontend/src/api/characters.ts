@@ -69,6 +69,8 @@ export type Character = CharacterSummary & {
   updated_at: string
   /** Seulement pour le propriétaire (et la modération). */
   is_mine?: boolean
+  /** Vrai si je l'ignore : seul moi le sais (#112). */
+  ignored?: boolean
   hidden?: boolean
 }
 
@@ -188,3 +190,10 @@ export async function orderMyCharacters(ids: number[]): Promise<MyCharacter[]> {
 /** Pas plus de personnages par compte (le serveur le vérifie aussi). */
 export const MAX_CHARACTERS = 10
 
+
+/** Ignorer un personnage : il quitte mes listes, sans que personne le sache (#112). */
+export const ignoreCharacter = (id: number) => apiFetch<void>(`/me/ignored/${id}`, { method: 'PUT' })
+
+export const unignoreCharacter = (id: number) => apiFetch<void>(`/me/ignored/${id}`, { method: 'DELETE' })
+
+export const fetchIgnored = () => apiFetch<{ items: CharacterSummary[] }>('/me/ignored').then((r) => r.items)

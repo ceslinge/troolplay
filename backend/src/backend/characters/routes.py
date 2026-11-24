@@ -25,6 +25,8 @@ from backend.characters.schemas import (
     Period,
 )
 from backend.db import SessionDep
+from backend.ignores.filters import not_ignored
+from backend.ignores.models import IgnoredCharacter
 from backend.servers.models import GameServer
 
 router = APIRouter(prefix="/characters", tags=["characters"])
@@ -36,6 +38,7 @@ MAX_CHARACTERS = 10
 @router.get("")
 def list_characters(
     session: SessionDep,
+    viewer: OptionalUser,
     server_id: int,
     day: Annotated[int | None, Query(ge=1, le=7)] = None,
     period: Period | None = None,
@@ -48,7 +51,9 @@ def list_characters(
         raise HTTPException(status_code=404, detail="Serveur introuvable")
 
     query = select(Character).where(
-        Character.server_id == server_id, Character.hidden_at.is_(None)
+        Character.server_id == server_id,
+        Character.hidden_at.is_(None),
+        not_ignored(viewer),
     )
     if day is not None:
         query = query.where(Character.play_days.contains([day]))
@@ -162,7 +167,10 @@ def move_to_server(
 def read_character(
     character_id: int, session: SessionDep, viewer: OptionalUser
 ) -> CharacterOwnedOut | CharacterOut:
-    return present(load_character(session, character_id, viewer), viewer)
+    shown = present(load_character(session, character_id, viewer), viewer)
+    if viewer is not None and session.get(IgnoredCharacter, (viewer.id, character_id)):
+        shown = shown.model_copy(update={"ignored": True})
+    return shown
 
 
 @router.post("", status_code=201)

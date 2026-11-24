@@ -32,6 +32,7 @@ erDiagram
 | favorite_characters (après V1) | favori privé | PK (user_id, character_id) | suit les deux |
 | favorite_stories (après V1) | favori privé | PK (user_id, story_id) | suit les deux |
 | character_links (après V1) | source considère cible comme… | PK (source_id, target_id), source différente de cible | suit les deux |
+| ignored_characters | personnage qu'un membre ignore | PK (user_id, character_id) | suit les deux |
 | reports | signalement | une cible au plus, copie du contenu | survit à tout |
 | moderation_actions | journal de modération | jamais modifié ni effacé par le site | survit à tout |
 | sessions | connexion ouverte | token_hash unique | suit le compte |
@@ -54,6 +55,7 @@ erDiagram
 - **throttle_events** : id, action, key, created_at
 - **email_tokens** : id, user_id, purpose, token_hash, expires_at, used_at, created_at
 - **moderation_actions** : id, actor_id, action, target_user_id, target_character_id, target_story_id, detail, reason, created_at
+- **ignored_characters** : user_id, character_id, created_at
 - **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, details, snapshot, decision, handled_by, handled_at, created_at
 
 ## Retrouver un personnage en jeu
