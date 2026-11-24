@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 
 from backend.accounts.sessions import CurrentUser
@@ -24,6 +24,12 @@ THANKS = "Merci : c'est transmis à l'équipe, qui va regarder."
 @router.post("", status_code=202)
 def report(data: ReportIn, user: CurrentUser, session: SessionDep) -> dict[str, str]:
     """Signaler une fiche ou une histoire. On ne signale que ce qu'on peut lire, et pas le sien."""
+    if user.report_banned_at is not None:
+        raise HTTPException(
+            status_code=403,
+            detail="Tu ne peux plus signaler de contenu. Pour prévenir l'équipe, "
+            "écris à l'adresse indiquée dans les mentions légales.",
+        )
     if data.target == "character":
         character = load_character(session, data.target_id, user)
         owner_id = character.user_id

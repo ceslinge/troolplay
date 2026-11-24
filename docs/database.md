@@ -33,13 +33,14 @@ erDiagram
 | favorite_stories (après V1) | favori privé | PK (user_id, story_id) | suit les deux |
 | character_links (après V1) | source considère cible comme… | PK (source_id, target_id), source différente de cible | suit les deux |
 | reports | signalement | une cible au plus, copie du contenu | survit à tout |
+| moderation_actions | journal de modération | jamais modifié ni effacé par le site | survit à tout |
 | sessions | connexion ouverte | token_hash unique | suit le compte |
 | email_tokens | lien envoyé par email | token_hash unique, purpose verify ou reset | suit le compte |
 | login_failures | connexion ratée, pour limiter les essais | index sur email, ip et date | effacée à la connexion réussie |
 | throttle_events | action limitée (inscription, renvoi d'email) | index sur la date | |
 
 ## Colonnes
-- **users** : id, email, password_hash, role, email_verified_at, banned_at, created_at
+- **users** : id, email, password_hash, role, email_verified_at, banned_at, banned_until, report_banned_at, created_at
 - **game_servers** : id, game, name, is_active
 - **characters** : id, user_id, server_id, is_npc, name, gender, ingame_name, class, level, avatar, seal, hook, appearance, personality, backstory, goals, flaws, rumors, ooc_note, play_days, play_periods, inactive_at, inactive_note, hidden_at, position, created_at, updated_at
 - **character_hangouts** : id, character_id, area, x, y, label, habits
@@ -52,6 +53,7 @@ erDiagram
 - **login_failures** : id, email, ip, created_at
 - **throttle_events** : id, action, key, created_at
 - **email_tokens** : id, user_id, purpose, token_hash, expires_at, used_at, created_at
+- **moderation_actions** : id, actor_id, action, target_user_id, target_character_id, target_story_id, detail, reason, created_at
 - **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, details, snapshot, decision, handled_by, handled_at, created_at
 
 ## Retrouver un personnage en jeu
@@ -80,6 +82,11 @@ Tous ces champs sont facultatifs.
 - `snapshot` : `jsonb`, la fiche ou l'histoire telle qu'on la lisait au moment du signalement. Effacée une fois le signalement traité.
 - `reported_user_id` : le propriétaire du contenu à ce moment-là, pour voir ce qui se répète.
 - Toutes les références passent à NULL quand ce qu'elles visent disparaît : le signalement reste.
+
+## La modération
+- `banned_at`, `banned_until` : suspendu depuis, jusqu'à. Sans `banned_until`, c'est sans fin. Une suspension passée ne compte plus, sans qu'il faille l'effacer.
+- `report_banned_at` : le droit de signaler, retiré par la modération.
+- `moderation_actions.action` : decide, hide, unhide, suspend, reinstate, revoke_reporting, restore_reporting. `detail` garde la décision ou la durée. Les références passent à NULL quand ce qu'elles visent disparaît.
 
 ## Avant les histoires à plusieurs mains
 Séparer stories de story_parts, pour que supprimer un compte n'efface pas les suites des autres.

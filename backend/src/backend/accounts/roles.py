@@ -11,6 +11,7 @@ Les modérateurs valent pour tout le site. S'ils deviennent un jour propres à u
 c'est ici que la portée s'ajoutera, sans toucher aux routes qui demandent une capacité.
 """
 
+from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Annotated
 
@@ -63,7 +64,7 @@ RANK = {Role.USER: 0, Role.MODERATOR: 1, Role.ADMIN: 2}
 
 def capabilities(user: User | None) -> frozenset[Capability]:
     """Ce que cette personne peut faire. Un visiteur ou un compte banni : rien."""
-    if user is None or user.banned_at is not None:
+    if user is None or user.suspended():
         return frozenset()
     return CAPABILITIES[Role(user.role)]
 
@@ -95,12 +96,12 @@ class LastAdminError(ValueError):
 def set_role(session: Session, user: User, role: Role) -> None:
     """Change le rôle d'un compte. Le dernier admin ne peut pas être rétrogradé :
     le site ne doit jamais se retrouver sans personne aux commandes."""
-    if user.role == Role.ADMIN and user.banned_at is None and role != Role.ADMIN:
-        # Un admin banni ne tient plus les commandes : il ne compte pas.
+    if user.role == Role.ADMIN and not user.suspended() and role != Role.ADMIN:
+        # Un admin suspendu ne tient plus les commandes : il ne compte pas.
         admins = session.scalar(
             select(func.count())
             .select_from(User)
-            .where(User.role == Role.ADMIN, User.banned_at.is_(None))
+            .where(User.role == Role.ADMIN, User.active(datetime.now(UTC)))
         )
         if admins <= 1:
             raise LastAdminError(

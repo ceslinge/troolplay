@@ -36,6 +36,10 @@ class Report(Base):
             "target_character_id IS NULL OR target_story_id IS NULL", name="one_target"
         ),
         CheckConstraint(f"reason IN ({_REASONS_SQL})", name="reason"),
+        CheckConstraint(
+            "decision IS NULL OR decision IN ('founded', 'no_action', 'abusive')",
+            name="decision",
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -63,4 +67,52 @@ class Report(Base):
     handled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
+    )
+
+
+# Ce que l'équipe peut faire : chaque action laisse une ligne au journal (#82).
+ACTIONS = (
+    "decide",
+    "hide",
+    "unhide",
+    "suspend",
+    "reinstate",
+    "revoke_reporting",
+    "restore_reporting",
+)
+DECISIONS = ("founded", "no_action", "abusive")
+
+
+class ModerationAction(Base):
+    """Une ligne du journal de modération : qui, quoi, sur quoi, quand, pourquoi.
+
+    Le site ne la modifie ni ne l'efface jamais. Elle survit à son auteur et à sa cible.
+    """
+
+    __tablename__ = "moderation_actions"
+    __table_args__ = (
+        CheckConstraint(
+            "action IN (" + ", ".join(f"'{a}'" for a in ACTIONS) + ")", name="action"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    actor_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
+    action: Mapped[str] = mapped_column(String(20), index=True)
+    target_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
+    target_character_id: Mapped[int | None] = mapped_column(
+        ForeignKey("characters.id", ondelete="SET NULL")
+    )
+    target_story_id: Mapped[int | None] = mapped_column(
+        ForeignKey("stories.id", ondelete="SET NULL")
+    )
+    # Une décision, une durée de suspension : ce que l'action a choisi.
+    detail: Mapped[str | None] = mapped_column(String(20))
+    reason: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), index=True
     )
