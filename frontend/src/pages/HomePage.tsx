@@ -7,6 +7,7 @@ import { fetchServers } from '../api/servers'
 import CharacterCard from '../components/CharacterCard'
 import Medallion from '../components/Medallion'
 import Menu from '../components/Menu'
+import Seal from '../components/Seal'
 import Sheet from '../components/Sheet'
 import { serverOptions } from '../lib/games'
 import { useToast } from '../lib/toast'
@@ -106,6 +107,9 @@ function HomePage() {
   // Gardé quelques minutes : sinon la réplique du comptoir changerait à chaque retour sur l'onglet.
   const home = useQuery({ queryKey: ['home', serverId], queryFn: () => fetchHome(serverId), staleTime: 5 * 60_000 })
 
+  // Les phrases d'accroche des fiches récentes, comme des billets punaisés à côté du titre.
+  const voices = (home.data?.recent ?? []).filter((c) => c.hook).slice(0, 3)
+
   function chooseServer(id: number) {
     setServerId(id)
     try {
@@ -118,19 +122,44 @@ function HomePage() {
   return (
     <main className={styles.page}>
       <PageTitle />
-      <Sheet seed="accueil" as="section" contentClassName={styles.hero}>
-        <h1 className={styles.title}>Le panneau où les rôlistes de Dofus épinglent leurs personnages</h1>
-        <p className={styles.lead}>
-          Lis leurs fiches, repère où ils ont leurs habitudes, puis va les croiser en jeu. La suite s'écrit ici.
-        </p>
-        <div className={styles.actions}>
-          <Link to="/communaute" className={styles.primary}>
-            Découvrir la communauté
-          </Link>
-          <Link to="/personnages/nouveau" className={styles.secondary}>
-            Présenter un nouveau personnage
-          </Link>
+      <Sheet
+        seed="accueil"
+        as="section"
+        className={home.data && voices.length === 0 ? styles.narrow : undefined}
+        contentClassName={`${styles.hero} ${voices.length ? styles.withVoices : ''}`}
+      >
+        <div className={styles.intro}>
+          <h1 className={styles.title}>Le panneau où les rôlistes de Dofus épinglent leurs personnages</h1>
+          <p className={styles.lead}>
+            Lis leurs fiches, repère où ils ont leurs habitudes, puis va les croiser en jeu. La suite s'écrit ici.
+          </p>
+          <div className={styles.actions}>
+            <Link to="/communaute" className={styles.primary}>
+              Découvrir la communauté
+            </Link>
+            <Link to="/personnages/nouveau" className={styles.secondary}>
+              Présenter un nouveau personnage
+            </Link>
+          </div>
         </div>
+        {voices.length > 0 && (
+          <ul className={styles.voices} aria-label="Ce qu'ils répondent quand on les aborde">
+            {voices.map((c) => (
+              <li key={c.id} className={styles.voice}>
+                <Link to={`/personnages/${c.id}`}>
+                  <span className={styles.voiceHook}>« {c.hook} »</span>
+                  <span className={styles.voiceWho}>
+                    <Seal name={c.name} />
+                    <span>
+                      {c.name}
+                      {c.server && <span className={styles.voiceServer}>, {c.server.name}</span>}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </Sheet>
 
       {home.isError && <p className={styles.note}>Le panneau est inaccessible pour l'instant.</p>}
