@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router'
 import Layout from './components/Layout'
 import AccountPage from './pages/AccountPage'
@@ -12,6 +13,10 @@ import NotFoundPage from './pages/NotFoundPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import SignupPage from './pages/SignupPage'
 import VerifyPage from './pages/VerifyPage'
+import { LEGAL_PAGES, type LegalPageName } from './lib/legal'
+
+// Lues rarement : chargées à part, avec leur outil de mise en page.
+const LegalPage = lazy(() => import('./pages/LegalPage'))
 
 function App() {
   return (
@@ -31,6 +36,17 @@ function App() {
           <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
           <Route path="/mot-de-passe" element={<ResetPasswordPage />} />
           <Route path="/compte" element={<AccountPage />} />
+          {(Object.keys(LEGAL_PAGES) as LegalPageName[]).map((name) => (
+            <Route
+              key={name}
+              path={LEGAL_PAGES[name].path}
+              element={
+                <Suspense>
+                  <LegalPage name={name} />
+                </Suspense>
+              }
+            />
+          ))}
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

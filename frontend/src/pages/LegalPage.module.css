@@ -1,0 +1,62 @@
+.page {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 2.5rem 1rem 4rem;
+}
+
+.text {
+  padding: 2rem 1.75rem 2.5rem;
+  line-height: 1.6;
+}
+
+.text h1 {
+  margin: 0 0 1rem;
+  font-size: 2rem;
+}
+
+.text h2 {
+  margin: 2rem 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.text p,
+.text ul {
+  margin: 0 0 0.875rem;
+}
+
+.text li + li {
+  margin-top: 0.3rem;
+}
+
+.text a {
+  color: var(--bois);
+}
+
+/* Le bandeau « Brouillon » tant que des passages restent à remplir. */
+.text blockquote {
+  margin: 0 0 1.25rem;
+  padding: 0.5rem 0.875rem;
+  border-left: 3px solid var(--cire);
+  background: var(--papier-sombre);
+  color: var(--encre-douce);
+}
+
+.text blockquote p {
+  margin: 0;
+}
+
+.text table {
+  display: block;
+  overflow-x: auto;
+  margin: 0 0 1rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.text th,
+.text td {
+  padding: 0.5rem 0.625rem;
+  border-bottom: 1px solid var(--filet);
+  text-align: left;
+  vertical-align: top;
+}

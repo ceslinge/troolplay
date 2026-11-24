@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from 'react-router'
 import { useMyCharacters } from '../lib/activeCharacter'
+import { LEGAL_PAGES } from '../lib/legal'
 import { useMe } from '../lib/useMe'
 import CharacterRail from './CharacterRail'
 import styles from './Layout.module.css'
@@ -10,7 +11,7 @@ function Layout() {
   const mine = useMyCharacters()
 
   return (
-    <>
+    <div className={styles.shell}>
       {/* Au clavier, le premier Tab propose de sauter l'en-tête et la barre. */}
       <a href="#contenu" className={styles.skip}>
         Aller au contenu
@@ -52,7 +53,21 @@ function Layout() {
           <Outlet />
         </div>
       </div>
-    </>
+      <footer className={styles.footer}>
+        <nav className={styles.inner} aria-label="Pied de page">
+          <p className={styles.fan}>Un projet de fan, sans lien avec Ankama.</p>
+          <ul className={styles.footerLinks}>
+            {Object.values(LEGAL_PAGES).map((page) => (
+              <li key={page.path}>
+                <Link to={page.path} className={styles.link}>
+                  {page.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </footer>
+    </div>
   )
 }
 

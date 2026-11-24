@@ -29,5 +29,5 @@ Depuis `backend/` :
 - [Base de données](docs/database.md)
 - [Permissions](docs/permissions.md)
 - [Contrat d'API](docs/api.md)
-- Pages légales, brouillons : [mentions](docs/legal/mentions-legales.md), [confidentialité](docs/legal/confidentialite.md), [règles d'usage](docs/legal/regles.md)
+- Pages légales, brouillons : [mentions](docs/legal/mentions-legales.md), [confidentialité](docs/legal/confidentialite.md), [règles d'usage](docs/legal/regles.md), [charte de modération](docs/legal/moderation.md)
 - [Décisions](docs/decisions/README.md)

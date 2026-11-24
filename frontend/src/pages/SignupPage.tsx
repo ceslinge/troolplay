@@ -73,7 +73,8 @@ function SignupPage() {
             <label className={styles.check}>
               <input type="checkbox" checked={acceptRules} onChange={(event) => setAcceptRules(event.target.checked)} />
               <span>
-                J'ai lu et j'accepte les <Link to="/regles">règles d'usage</Link>.
+                J'ai lu et j'accepte les <Link to="/regles">règles d'usage</Link>. Ce qu'on garde de toi est expliqué
+                dans la page <Link to="/confidentialite">confidentialité</Link>.
               </span>
             </label>
             {error?.fields.accept_rules && <span className={styles.error}>{error.fields.accept_rules}</span>}
