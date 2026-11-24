@@ -41,6 +41,7 @@ export const ACTION_LABELS: Record<string, string> = {
   reinstate: 'Suspension levée',
   revoke_reporting: 'Droit de signaler retiré',
   restore_reporting: 'Droit de signaler rendu',
+  set_role: 'Rôle changé',
 }
 
 export const ROLE_LABELS = { user: 'Joueur', moderator: 'Modérateur', admin: 'Admin' } as const
@@ -52,5 +53,10 @@ export function teamDate(iso: string): string {
 /** Ce que garde une ligne du journal : une décision ou une durée, en clair. */
 export function detailLabel(detail: string | null): string | null {
   if (!detail) return null
-  return (DECISION_LABELS as Record<string, string>)[detail] ?? (DURATION_LABELS as Record<string, string>)[detail] ?? detail
+  return (
+    (DECISION_LABELS as Record<string, string>)[detail] ??
+    (DURATION_LABELS as Record<string, string>)[detail] ??
+    (ROLE_LABELS as Record<string, string>)[detail] ??
+    detail
+  )
 }

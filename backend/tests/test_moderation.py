@@ -357,3 +357,111 @@ def test_the_team_sees_who_owns_a_content_from_its_page(
     assert character["open_reports"] == 0
     assert "@" not in str(story)
     assert me.get(f"/moderation/characters/{mine}").status_code == 403
+
+
+# Les rôles (#81)
+
+
+def test_only_admins_manage_roles(
+    owner: User, moderator: TestClient, admin: TestClient
+) -> None:
+    payload = {"role": "moderator", **WHY}
+
+    assert (
+        moderator.post(
+            f"/moderation/accounts/{owner.id}/role", json=payload
+        ).status_code
+        == 403
+    )
+    response = admin.post(f"/moderation/accounts/{owner.id}/role", json=payload)
+    assert response.status_code == 200
+    assert response.json()["role"] == "moderator"
+
+
+def test_a_new_role_is_written_down_and_told(
+    session: Session,
+    owner: User,
+    admin: TestClient,
+    outbox: list[dict[str, str]],
+) -> None:
+    admin.post(
+        f"/moderation/accounts/{owner.id}/role", json={"role": "moderator", **WHY}
+    )
+
+    entry = journal(session)[-1]
+    assert (entry.action, entry.detail, entry.target_user_id) == (
+        "set_role",
+        "moderator",
+        owner.id,
+    )
+    assert "modérateur" in outbox[-1]["subject"]
+    assert "contester" not in outbox[-1]["body"]
+
+
+def test_the_last_admin_stays_admin(session: Session, admin: TestClient) -> None:
+    me = session.scalars(
+        select(User).where(User.email == "admin.test@example.com")
+    ).one()
+    for other in session.scalars(
+        select(User).where(User.role == "admin", User.id != me.id)
+    ):
+        other.role = "user"
+    session.flush()
+
+    response = admin.post(
+        f"/moderation/accounts/{me.id}/role", json={"role": "user", **WHY}
+    )
+
+    assert response.status_code == 409
+    assert "dernier admin" in response.json()["detail"]
+
+
+def test_the_same_role_twice_says_so(owner: User, admin: TestClient) -> None:
+    response = admin.post(
+        f"/moderation/accounts/{owner.id}/role", json={"role": "user", **WHY}
+    )
+
+    assert response.status_code == 409
+
+
+def test_an_admin_finds_an_account_by_its_exact_address(
+    owner: User, moderator: TestClient, admin: TestClient
+) -> None:
+    found = admin.post(
+        "/moderation/accounts/lookup",
+        json={"email": "  Proprietaire.Test@example.com "},
+    )
+
+    assert found.json() == {"id": owner.id}
+    assert (
+        admin.post(
+            "/moderation/accounts/lookup", json={"email": "personne@example.com"}
+        ).status_code
+        == 404
+    )
+    assert (
+        moderator.post(
+            "/moderation/accounts/lookup", json={"email": owner.email}
+        ).status_code
+        == 403
+    )
+
+
+def test_the_team_list_shows_roles_and_characters_never_emails(
+    owner: User, mine: int, admin: TestClient, moderator: TestClient
+) -> None:
+    admin.post(
+        f"/moderation/accounts/{owner.id}/role", json={"role": "moderator", **WHY}
+    )
+
+    items = moderator.get("/moderation/team").json()["items"]
+
+    mine_entry = next(m for m in items if m["id"] == owner.id)
+    assert mine_entry == {
+        "id": owner.id,
+        "role": "moderator",
+        "characters": ["Maëlis"],
+        "suspended": False,
+    }
+    assert items[0]["role"] == "admin"
+    assert "@" not in str(items)

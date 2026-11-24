@@ -429,6 +429,14 @@ Chaque action demande une raison écrite (`reason`, de 3 à 1 000 caractères), 
 - `POST /api/moderation/accounts/{id}/reinstate` avec `{"reason": "…"}` : lève la suspension.
 - `POST /api/moderation/accounts/{id}/reporting` avec `{"allowed": false, "reason": "…"}` : retire le droit de signaler, ou le rend avec `true`. Le compte ne change pas autrement.
 
+### Les rôles
+
+Capacité `manage_roles`, donc les admins.
+
+- `GET /api/moderation/team` (capacité `moderate`) : les modérateurs et les admins, avec leurs personnages, les admins d'abord.
+- `POST /api/moderation/accounts/lookup` avec `{"email": "…"}` : le numéro du compte qui a cette adresse exacte, ou 404. En `POST`, pour qu'une adresse ne passe jamais dans une URL que les journaux du serveur gardent. Aucune route ne liste d'adresses.
+- `POST /api/moderation/accounts/{id}/role` avec `{"role": "user" | "moderator" | "admin", "reason": "…"}` : 409 si c'est déjà son rôle, ou si c'est le dernier admin. La personne est prévenue par email. Entre admins, pas de règle de rang : nommer et retirer, c'est le rôle même des admins.
+
 ### Le journal
 
 `GET /api/moderation/journal`, filtrable par `action`, `actor_id`, `target_user_id` : qui, quoi, sur quoi, quand, pourquoi, le plus récent d'abord. Aucune route ne le modifie ni ne l'efface.

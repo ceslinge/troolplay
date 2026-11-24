@@ -15,27 +15,40 @@ from sqlalchemy.orm import Session, selectinload
 
 from backend.accounts import emails
 from backend.accounts.models import User, UserSession
-from backend.accounts.roles import Capability, can, outranks, require
+from backend.accounts.roles import (
+    Capability,
+    LastAdminError,
+    Role,
+    can,
+    outranks,
+    require,
+    set_role,
+)
 from backend.accounts.routes import PARIS
 from backend.characters.models import Character
 from backend.config import settings
 from backend.db import SessionDep
 from backend.moderation.models import ModerationAction, Report
 from backend.moderation.schemas import (
+    AccountRef,
     CaseDetail,
     CaseList,
     CaseSummary,
     DecideIn,
     Journal,
     JournalEntry,
+    LookupIn,
     ReporterOut,
     ReportingIn,
     ReportOut,
+    RoleIn,
     SuspendIn,
     Target,
     TeamAccount,
     TeamCharacter,
     TeamContent,
+    TeamList,
+    TeamMember,
     WhyIn,
 )
 from backend.stories.models import Story
@@ -44,6 +57,7 @@ router = APIRouter(prefix="/moderation", tags=["moderation"])
 
 Moderator = Annotated[User, require(Capability.MODERATE)]
 Banisher = Annotated[User, require(Capability.BAN)]
+RoleKeeper = Annotated[User, require(Capability.MANAGE_ROLES)]
 
 DURATIONS = {
     "day": timedelta(days=1),
@@ -83,7 +97,12 @@ def log(
 
 
 def tell(
-    background: BackgroundTasks, user: User | None, subject: str, body: str
+    background: BackgroundTasks,
+    user: User | None,
+    subject: str,
+    body: str,
+    *,
+    contestable: bool = True,
 ) -> None:
     """Prévenir la personne concernée, après la réponse, comme tous les emails du site."""
     if user is None:
@@ -95,7 +114,9 @@ def tell(
         f"Pour la contester, écris à l'adresse indiquée sur {contact} : "
         "un autre membre de l'équipe relira."
     )
-    background.add_task(emails.send_email, user.email, subject, body + footer)
+    background.add_task(
+        emails.send_email, user.email, subject, body + (footer if contestable else "")
+    )
 
 
 def check_rank(actor: User, target: User | None, *, npc_ok: bool = False) -> None:
@@ -578,6 +599,76 @@ def set_reporting(
             "Si tu vois un jour quelque chose de grave, l'adresse de contact reste "
             f"ouverte.\n\nLa raison : {data.reason.strip()}",
         )
+    return team_account(session, user)
+
+
+# Les rôles (#81) : réservés aux admins.
+
+ROLE_NAMES = {"user": "joueur", "moderator": "modérateur", "admin": "admin"}
+
+
+@router.get("/team")
+def list_team(session: SessionDep, _: Moderator) -> TeamList:
+    """Les modérateurs et les admins, les admins d'abord."""
+    members = session.scalars(
+        select(User).where(User.role != Role.USER).order_by(User.role, User.id)
+    ).all()
+    names: dict[int, list[str]] = {m.id: [] for m in members}
+    for character in session.scalars(
+        select(Character)
+        .where(Character.user_id.in_(names))
+        .order_by(Character.position, Character.name)
+    ):
+        names[character.user_id].append(character.name)
+    return TeamList(
+        items=[
+            TeamMember(
+                id=m.id, role=m.role, characters=names[m.id], suspended=m.suspended()
+            )
+            for m in members
+        ]
+    )
+
+
+@router.post("/accounts/lookup")
+def lookup_account(data: LookupIn, session: SessionDep, _: RoleKeeper) -> AccountRef:
+    """Retrouver un compte par son adresse exacte, pour lui donner un rôle. En POST : une
+    adresse n'a rien à faire dans une URL, que les journaux du serveur gardent."""
+    user = session.scalars(
+        select(User).where(func.lower(User.email) == data.email.strip().lower())
+    ).one_or_none()
+    if user is None:
+        raise HTTPException(status_code=404, detail="Aucun compte avec cette adresse")
+    return AccountRef(id=user.id)
+
+
+@router.post("/accounts/{user_id}/role")
+def change_role(
+    user_id: int,
+    data: RoleIn,
+    session: SessionDep,
+    actor: RoleKeeper,
+    background: BackgroundTasks,
+) -> TeamAccount:
+    """Nommer ou retirer un modérateur ou un admin. Le dernier admin reste admin."""
+    user = load_account(session, user_id)
+    if user.role == data.role:
+        raise HTTPException(status_code=409, detail="C'est déjà son rôle")
+    before = user.role
+    try:
+        set_role(session, user, Role(data.role))
+    except LastAdminError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    log(session, actor, "set_role", data.reason, user_id=user.id, detail=data.role)
+    session.commit()
+    tell(
+        background,
+        user,
+        f"Tu es maintenant {ROLE_NAMES[data.role]} sur TroolPlay",
+        f"Ton rôle change : {ROLE_NAMES[before]} → {ROLE_NAMES[data.role]}.\n\n"
+        f"Le mot de l'équipe : {data.reason.strip()}",
+        contestable=False,
+    )
     return team_account(session, user)
 
 

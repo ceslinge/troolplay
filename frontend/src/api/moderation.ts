@@ -91,3 +91,15 @@ export function fetchJournal(filters: { action?: string; targetUserId?: number; 
   if (filters.targetUserId) params.set('target_user_id', String(filters.targetUserId))
   return apiFetch<{ items: JournalEntry[]; total: number }>(`/moderation/journal?${params}`)
 }
+
+export type Role = 'user' | 'moderator' | 'admin'
+
+export type TeamMember = { id: number; role: Role; characters: string[]; suspended: boolean }
+
+export const fetchTeam = () => apiFetch<{ items: TeamMember[] }>('/moderation/team').then((r) => r.items)
+
+/** Par son adresse exacte, en POST : une adresse n'a rien à faire dans une URL. */
+export const lookupAccount = (email: string) => apiFetch<{ id: number }>('/moderation/accounts/lookup', { method: 'POST', body: { email } })
+
+export const changeRole = (id: number, role: Role, reason: string) =>
+  apiFetch<TeamAccount>(`/moderation/accounts/${id}/role`, { method: 'POST', body: { role, reason } })

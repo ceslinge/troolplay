@@ -54,6 +54,8 @@ uv run python -m backend.admin team
 
 `promote` sert aussi à rétrograder (`--role user`). `team` liste les modérateurs et les admins.
 
+Ensuite, les admins nomment et retirent depuis le site : Espace équipe, « Rôles ». La ligne de commande reste pour le tout premier admin, ou si le site est en panne.
+
 ## Invariants
 - Aucune réponse publique ne contient de user_id.
 - Le serveur vérifie qu'un personnage appartient au compte avant d'agir en son nom.

@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { fetchCases } from '../../api/moderation'
 import PageTitle from '../../components/PageTitle'
 import Sheet from '../../components/Sheet'
+import { useCan } from '../../lib/useCan'
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
 
@@ -10,6 +11,7 @@ import styles from './Team.module.css'
 function TeamHome() {
   const open = useQuery({ queryKey: ['moderation', 'cases', 'open'], queryFn: () => fetchCases('open') })
   const waiting = open.data?.total ?? 0
+  const canManageRoles = useCan('manage_roles')
 
   return (
     <main className={styles.page}>
@@ -38,6 +40,12 @@ function TeamHome() {
             Chaque action de l'équipe, avec son auteur et sa raison. On s'y réfère pour relire une contestation.
           </p>
         </Sheet>
+        {canManageRoles && (
+          <Sheet seed="equipe-roles" contentClassName={`${styles.card} ${styles.tool}`}>
+            <Link to="/equipe/roles">Rôles</Link>
+            <p className={styles.muted}>Qui est modérateur ou admin, et donner un rôle à quelqu'un. Réservé aux admins.</p>
+          </Sheet>
+        )}
         <Sheet seed="equipe-pages" variant="muted" contentClassName={`${styles.card} ${styles.tool}`}>
           <strong>Sur les pages du site</strong>
           <p className={styles.muted}>
