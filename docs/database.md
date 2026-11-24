@@ -43,7 +43,7 @@ erDiagram
 - **game_servers** : id, game, name, is_active
 - **characters** : id, user_id, server_id, is_npc, name, gender, ingame_name, class, level, avatar, seal, hook, appearance, personality, backstory, goals, flaws, rumors, ooc_note, play_days, play_periods, inactive_at, inactive_note, hidden_at, position, created_at, updated_at
 - **character_hangouts** : id, character_id, area, x, y, label, habits
-- **stories** : id, user_id, character_id, title, body, published_at, hidden_at, created_at, updated_at
+- **stories** : id, user_id, character_id, title, body, content_warnings, content_note, published_at, hidden_at, created_at, updated_at
 - **story_characters** : story_id, character_id, accepted_at, created_at
 - **favorite_characters** : user_id, character_id, created_at
 - **favorite_stories** : user_id, story_id, created_at
@@ -68,6 +68,12 @@ Tous ces champs sont facultatifs.
 - `hook` : la réplique d'accroche, ce que le personnage répond quand on l'aborde.
 - `class` : une classe du jeu, en identifiant (`cra`, `xelor`…), ou NULL. Le nom affiché vit dans le frontend.
 - `seal` : sceau prédéfini, forme et couleur de cire, comme l'avatar.
+
+## Les histoires
+- `published_at` : NULL pour un brouillon. Dépublier la remet à NULL.
+- `character_id` : passe à NULL si le personnage est supprimé. L'histoire reste, sans signature, hors des listes, jusqu'à ce que son auteur la signe d'un autre personnage.
+- `content_warnings` : `varchar[]` parmi violence, death, torture, sexual_themes, abuse, self_harm, addiction, phobia. `content_note` précise librement.
+- Le serveur d'une histoire est celui de son personnage : elle le suit s'il déménage (décision 29).
 
 ## Avant les histoires à plusieurs mains
 Séparer stories de story_parts, pour que supprimer un compte n'efface pas les suites des autres.

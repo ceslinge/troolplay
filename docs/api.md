@@ -2,7 +2,7 @@
 
 Ce que le frontend et le backend se promettent. On l'écrit avant de coder une route, et on le met à jour dans la même PR quand elle change.
 
-Ce document couvre les personnages et les comptes. Les histoires, « Qui traîne ici ? » et la modération viendront ensuite.
+Ce document couvre les personnages, les histoires et les comptes. La modération viendra ensuite.
 
 ## Conventions
 
@@ -292,6 +292,89 @@ Réponse 200 :
 - `recent` liste les six dernières fiches, une seule par joueur : la plus récente.
 
 Les fiches masquées, en retrait et les PNJ n'apparaissent dans aucune de ces trois parties, ni les répliques vides. Un `server_id` inconnu ou fermé ne fait pas d'erreur : on retombe sur le premier serveur actif.
+
+## Les histoires
+
+Une histoire appartient à un compte et est signée par un de ses personnages (story 8). Elles se lisent seulement connecté (décision 25) : sans session, toutes ces routes répondent 401.
+
+### L'histoire complète
+
+```json
+{
+  "id": 12,
+  "title": "La nuit où Astrub a brûlé",
+  "body": "Le vent tournait. *Encore une nuit sans sommeil*, pensa-t-elle…",
+  "character": { "id": 42, "name": "Maëlis", "gender": "feminine", "class": "cra", "avatar": null, "seal": null, "server": { "id": 3, "game": "dofus", "name": "Ombre", "is_active": true } },
+  "content_warnings": ["death", "violence"],
+  "content_note": "Mort d'un personnage aimé",
+  "published": true,
+  "published_at": "2026-11-24T20:00:00Z",
+  "updated_at": "2026-11-24T21:12:00Z",
+  "is_mine": false,
+  "hidden": false
+}
+```
+
+- `character` vaut `null` si le personnage qui la signait a été supprimé. Son auteur peut la signer d'un autre de ses personnages.
+- `body` est du texte. Le site y met en forme `*italique*` et `**gras**`, rien d'autre : aucun HTML n'est interprété.
+- `hidden` n'apparaît que pour l'auteur et la modération.
+
+### Résumé, pour les listes
+
+Le titre, le personnage, les avertissements, `published_at`, et `excerpt` : les 200 premiers caractères du texte. `excerpt` vaut `null` quand l'histoire porte un avertissement : on choisit avant de lire.
+
+### Champs et limites
+
+| Champ | Règle |
+|---|---|
+| `title` | de 1 à 120 caractères |
+| `body` | 50 000 caractères au plus. Peut être vide dans un brouillon, pas à la publication |
+| `character_id` | un de mes personnages, en retrait ou non. Obligatoire |
+| `content_warnings` | parmi `violence`, `death`, `torture`, `sexual_themes`, `abuse`, `self_harm`, `addiction`, `phobia`, chacun une fois |
+| `content_note` | 200 caractères au plus : une précision libre sur ce qui attend le lecteur |
+
+`sexual_themes` prévient d'un thème, jamais d'une scène explicite : celles-ci restent interdites (règles d'usage).
+
+### Lister les histoires
+
+`GET /api/stories?server_id=3` ou `GET /api/stories?character_id=42`, l'un des deux.
+
+| Paramètre | |
+|---|---|
+| `server_id` | les histoires des personnages de ce serveur (l'onglet Histoires de la communauté) |
+| `character_id` | celles d'un personnage (le bas de sa fiche) |
+| `limit`, `offset` | 20 par défaut, 100 au plus |
+
+Seulement les histoires publiées, ni masquées ni sans signature, de personnages non masqués. Les plus récentes d'abord. Réponse : `{"items": [...résumés], "total": 37}`.
+
+### Lire une histoire
+
+`GET /api/stories/{id}`. Un brouillon n'est lisible que par son auteur, une histoire masquée par son auteur et la modération : pour les autres, 404.
+
+### Mes histoires
+
+`GET /api/me/stories` : toutes les miennes, brouillons compris, la dernière modifiée d'abord. Chaque résumé y porte aussi `published` et `hidden`.
+
+### Écrire une histoire
+
+`POST /api/stories` avec `character_id`, `title`, et au besoin `body`, `content_warnings`, `content_note`. Elle naît brouillon. Réponse 201 avec l'histoire complète.
+
+Erreurs : 422 si le personnage n'est pas à moi.
+
+### Modifier une histoire
+
+`PATCH /api/stories/{id}` avec les champs à changer, son auteur seulement (403 sinon). Une histoire publiée reste publiée : on peut corriger une faute sans la retirer.
+
+### Publier, retirer
+
+- `POST /api/stories/{id}/publish` : la rend lisible par les membres. 422 si son texte est vide ou si elle n'a plus de signature. 10 publications par jour au plus (429 au-delà), contre le spam (décision 28). Republier une histoire déjà publiée ne change rien.
+- `POST /api/stories/{id}/unpublish` : elle redevient brouillon.
+
+Réponse 200 avec l'histoire complète. Son auteur seulement.
+
+### Supprimer une histoire
+
+`DELETE /api/stories/{id}` : son auteur, ou un admin (capacité `delete_any`). Réponse 204.
 
 ## Les comptes
 
