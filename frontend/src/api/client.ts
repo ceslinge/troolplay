@@ -45,11 +45,17 @@ export async function apiFetch<T = void>(
   path: string,
   options: { method?: string; body?: unknown } = {},
 ): Promise<T> {
-  const response = await fetch(`/api${path}`, {
-    method: options.method ?? 'GET',
-    headers: options.body === undefined ? undefined : { 'Content-Type': 'application/json' },
-    body: options.body === undefined ? undefined : JSON.stringify(options.body),
-  })
+  let response: Response
+  try {
+    response = await fetch(`/api${path}`, {
+      method: options.method ?? 'GET',
+      headers: options.body === undefined ? undefined : { 'Content-Type': 'application/json' },
+      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+    })
+  } catch {
+    // Pas de réponse du tout (serveur éteint, connexion coupée) : une erreur comme les autres, pour que les formulaires l'affichent.
+    throw new ApiError(0, "Le panneau ne répond pas. Vérifie ta connexion, ou réessaie dans un moment.")
+  }
 
   if (response.ok) {
     return response.status === 204 ? (undefined as T) : response.json()

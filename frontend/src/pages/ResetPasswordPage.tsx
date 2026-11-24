@@ -7,6 +7,7 @@ import Button from '../components/Button'
 import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
+import PageTitle from '../components/PageTitle'
 import styles from './AuthPages.module.css'
 
 function ResetPasswordPage() {
@@ -23,6 +24,7 @@ function ResetPasswordPage() {
 
   return (
     <main className={styles.page}>
+      <PageTitle>Choisir un nouveau mot de passe</PageTitle>
       <Sheet seed="nouveau-mot-de-passe" as="section">
         <form className={styles.form} onSubmit={submit} noValidate>
           <h1 className={styles.title}>Choisir un nouveau mot de passe</h1>

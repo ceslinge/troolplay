@@ -1,4 +1,8 @@
 .button {
+  /* Aussi pour un lien qui a l'allure d'un bouton. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 2.75rem;
   padding: 0 1.125rem;
   border: 2px solid transparent;

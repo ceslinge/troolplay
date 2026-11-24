@@ -8,6 +8,7 @@ import EditCharacterPage from './pages/EditCharacterPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import NotFoundPage from './pages/NotFoundPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import SignupPage from './pages/SignupPage'
 import VerifyPage from './pages/VerifyPage'
@@ -30,6 +31,7 @@ function App() {
           <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
           <Route path="/mot-de-passe" element={<ResetPasswordPage />} />
           <Route path="/compte" element={<AccountPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

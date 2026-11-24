@@ -9,6 +9,8 @@ import Medallion from '../components/Medallion'
 import Menu from '../components/Menu'
 import Sheet from '../components/Sheet'
 import { serverOptions } from '../lib/games'
+import { useToast } from '../lib/toast'
+import PageTitle from '../components/PageTitle'
 import styles from './HomePage.module.css'
 
 const DAY_NAMES = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
@@ -74,7 +76,12 @@ function RightNowSheet({ data, onServer }: { data: RightNow; onServer: (id: numb
 
 function OverheardSheet({ first }: { first: Overheard }) {
   const [quote, setQuote] = useState(first)
-  const another = useMutation({ mutationFn: fetchOverheard, onSuccess: (next) => next && setQuote(next) })
+  const toast = useToast()
+  const another = useMutation({
+    mutationFn: fetchOverheard,
+    onSuccess: (next) => next && setQuote(next),
+    onError: (failure) => toast.show(failure.message, 'error'),
+  })
 
   return (
     <Sheet seed="accueil-comptoir" as="section" contentClassName={styles.card}>
@@ -110,6 +117,7 @@ function HomePage() {
 
   return (
     <main className={styles.page}>
+      <PageTitle />
       <Sheet seed="accueil" as="section" contentClassName={styles.hero}>
         <h1 className={styles.title}>Le panneau où les rôlistes de Dofus épinglent leurs personnages</h1>
         <p className={styles.lead}>

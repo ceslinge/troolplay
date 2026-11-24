@@ -11,6 +11,7 @@ import Sheet from '../components/Sheet'
 import { agree } from '../lib/agree'
 import { CLASS_LABELS } from '../lib/classes'
 import { formatSchedule } from '../lib/schedule'
+import PageTitle from '../components/PageTitle'
 import styles from './CharacterPage.module.css'
 
 type SectionData = {
@@ -85,6 +86,7 @@ function CharacterPage() {
         : 'Personne ne répond à ce nom sur le panneau.'
     return (
       <main className={styles.page}>
+        <PageTitle>Fiche introuvable</PageTitle>
         <Sheet>
           <p className={styles.message}>{message}</p>
         </Sheet>
@@ -104,6 +106,7 @@ function CharacterPage() {
 
   return (
     <main className={styles.page}>
+      <PageTitle>{c.name}</PageTitle>
       <Sheet as="section" contentClassName={styles.header} seed={`${c.id}-entete`} age={age}>
         <div className={styles.portrait}>
           <span className={styles.avatar} aria-hidden="true">

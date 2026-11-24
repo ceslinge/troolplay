@@ -68,3 +68,32 @@
     align-items: stretch;
   }
 }
+
+.skip {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: var(--laiton);
+  color: var(--bois);
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+
+.skip:focus {
+  transform: none;
+}
+
+.main:focus {
+  outline: none;
+}
+
+/* Sur le bois sombre, le contour par défaut du navigateur se voit mal : un contour laiton. */
+.brand:focus-visible,
+.link:focus-visible,
+.cta:focus-visible {
+  outline: 2px solid var(--laiton);
+  outline-offset: 3px;
+}
