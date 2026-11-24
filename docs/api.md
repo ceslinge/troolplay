@@ -345,6 +345,7 @@ Le titre, le personnage, les avertissements, `published_at`, `reading_minutes` (
 |---|---|
 | `server_id` | les histoires des personnages de ce serveur (l'onglet Histoires de la communauté) |
 | `character_id` | celles d'un personnage (le bas de sa fiche) |
+| `order` | `newest` (par défaut) ou `oldest` : les plus anciennes d'abord, pour lire un personnage depuis le début |
 | `limit`, `offset` | 20 par défaut, 100 au plus |
 
 Seulement les histoires publiées, ni masquées ni sans signature, de personnages non masqués. Les plus récentes d'abord. Réponse : `{"items": [...résumés], "total": 37}`.

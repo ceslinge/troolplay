@@ -61,3 +61,12 @@
   opacity: 0.5;
   cursor: default;
 }
+
+/* Le nombre d'histoires, et le choix de l'ordre à côté. */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  max-width: 46rem;
+}

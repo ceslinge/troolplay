@@ -480,3 +480,20 @@ def test_an_excerpt_drops_the_formatting_marks(
         excerpt
         == "Le vent. Encore une nuit, pensa-t-elle. Un vrai cri. Un astérisque * seul."
     )
+
+
+def test_a_character_reads_from_the_beginning_on_request(
+    me: TestClient, stranger: TestClient, mine: int
+) -> None:
+    for title in ("Premier", "Deuxième", "Troisième"):
+        story = me.post(
+            "/stories", json={"character_id": mine, "title": title, "body": TEXT}
+        ).json()
+        me.post(f"/stories/{story['id']}/publish")
+
+    newest = stranger.get(f"/stories?character_id={mine}").json()["items"]
+    oldest = stranger.get(f"/stories?character_id={mine}&order=oldest").json()["items"]
+
+    assert [s["title"] for s in newest] == ["Troisième", "Deuxième", "Premier"]
+    assert [s["title"] for s in oldest] == ["Premier", "Deuxième", "Troisième"]
+    assert stranger.get(f"/stories?character_id={mine}&order=random").status_code == 422

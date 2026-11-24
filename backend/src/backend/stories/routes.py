@@ -1,5 +1,5 @@
 from datetime import UTC, datetime, timedelta
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select
@@ -97,6 +97,8 @@ def list_stories(
     character_id: int | None = None,
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
     offset: Annotated[int, Query(ge=0)] = 0,
+    # Les plus anciennes d'abord : lire un personnage depuis le début de son histoire.
+    order: Literal["newest", "oldest"] = "newest",
 ) -> StoryList:
     if (server_id is None) == (character_id is None):
         raise HTTPException(
@@ -120,7 +122,13 @@ def list_stories(
     total = session.scalar(select(func.count()).select_from(query.subquery())) or 0
     stories = session.scalars(
         query.options(WITH_CHARACTER)
-        .order_by(Story.published_at.desc(), Story.id.desc())
+        .order_by(
+            *(
+                (Story.published_at.desc(), Story.id.desc())
+                if order == "newest"
+                else (Story.published_at.asc(), Story.id.asc())
+            )
+        )
         .limit(limit)
         .offset(offset)
     )

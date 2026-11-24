@@ -1,8 +1,9 @@
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { fetchStories, STORIES_PAGE_SIZE, type StoryFilters, type StorySummary } from '../api/stories'
+import { fetchStories, STORIES_PAGE_SIZE, type StoryFilters, type StoryOrder, type StorySummary } from '../api/stories'
 import { useMe } from '../lib/useMe'
 import MembersOnly from './MembersOnly'
+import Menu from './Menu'
 import StoryCard from './StoryCard'
 import styles from './StoryList.module.css'
 
@@ -100,10 +101,11 @@ const MORE = 10
 /** Les histoires d'un personnage, sur sa fiche : les plus récentes, puis « Voir plus » jusqu'au bout. */
 function CharacterStories({ filters, empty }: Props) {
   const me = useMe()
+  const [order, setOrder] = useState<StoryOrder>('newest')
   const stories = useInfiniteQuery({
-    queryKey: ['stories', 'character', filters.characterId],
+    queryKey: ['stories', 'character', filters.characterId, order],
     // pageParam : combien d'histoires sont déjà affichées. Les premières, puis un paquet de plus à chaque clic.
-    queryFn: ({ pageParam }) => fetchStories(filters, pageParam === 0 ? FIRST : MORE, pageParam),
+    queryFn: ({ pageParam }) => fetchStories({ ...filters, order }, pageParam === 0 ? FIRST : MORE, pageParam),
     initialPageParam: 0,
     getNextPageParam: (last, all) => {
       const shown = all.reduce((n, page) => n + page.items.length, 0)
@@ -121,9 +123,24 @@ function CharacterStories({ filters, empty }: Props) {
 
   return (
     <>
-      <p className={styles.count} aria-live="polite">
-        {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : `${total} histoire${total > 1 ? 's' : ''}`}
-      </p>
+      <div className={styles.bar}>
+        <p className={styles.count} aria-live="polite">
+          {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : `${total} histoire${total > 1 ? 's' : ''}`}
+        </p>
+        {total > 1 && (
+          <Menu<StoryOrder>
+            label="Ordre des histoires"
+            hideLabel
+            variant="compact"
+            value={order}
+            options={[
+              { value: 'newest', label: "Les plus récentes d'abord" },
+              { value: 'oldest', label: 'Depuis le début' },
+            ]}
+            onChange={setOrder}
+          />
+        )}
+      </div>
       <div className={styles.list}>
         {items.map((story) => (
           <StoryCard key={story.id} story={story} showCharacter={false} />
