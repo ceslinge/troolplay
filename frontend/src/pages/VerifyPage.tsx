@@ -7,6 +7,7 @@ import Button from '../components/Button'
 import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
+import PageTitle from '../components/PageTitle'
 import styles from './AuthPages.module.css'
 
 /** Demande un nouveau lien de vérification. */
@@ -55,6 +56,7 @@ function VerifyPage() {
 
   return (
     <main className={styles.page}>
+      <PageTitle>Confirmer ton adresse</PageTitle>
       <Sheet seed="verification" as="section">
         {token && !verify.isError ? (
           <div className={styles.form}>

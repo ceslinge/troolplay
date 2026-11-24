@@ -11,6 +11,10 @@ function Layout() {
 
   return (
     <>
+      {/* Au clavier, le premier Tab propose de sauter l'en-tête et la barre. */}
+      <a href="#contenu" className={styles.skip}>
+        Aller au contenu
+      </a>
       <header className={styles.header}>
         <div className={styles.inner}>
           <Link to="/" className={styles.brand}>
@@ -33,7 +37,7 @@ function Layout() {
                 )}
               </>
             ) : (
-              !me.isPending && (
+              me.data === null && (
                 <Link to="/connexion" className={styles.cta}>
                   Se connecter
                 </Link>
@@ -44,7 +48,7 @@ function Layout() {
       </header>
       <div className={styles.body}>
         <CharacterRail />
-        <div className={styles.main}>
+        <div id="contenu" className={styles.main} tabIndex={-1}>
           <Outlet />
         </div>
       </div>

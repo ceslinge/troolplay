@@ -11,6 +11,9 @@ import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
 import { useMe } from '../lib/useMe'
+import PageTitle from '../components/PageTitle'
+import Unreachable from '../components/Unreachable'
+import { useToast } from '../lib/toast'
 import styles from './AuthPages.module.css'
 
 function MyCharacters() {
@@ -145,10 +148,18 @@ function AccountPage() {
     await queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] !== 'me' })
     navigate('/')
   }
-  const logout = useMutation({ mutationFn: logOut, onSuccess: leave })
+  const toast = useToast()
+  const logout = useMutation({
+    mutationFn: logOut,
+    onSuccess: leave,
+    onError: (failure) => toast.show(`Pas déconnecté : ${failure.message}`, 'error'),
+  })
 
   if (me.isPending) {
     return null
+  }
+  if (me.isError) {
+    return <Unreachable />
   }
   if (!me.data) {
     return <Navigate to="/connexion?suite=/compte" replace />
@@ -156,6 +167,7 @@ function AccountPage() {
 
   return (
     <main className={`${styles.page} ${styles.wide}`}>
+      <PageTitle>Mon compte</PageTitle>
       <Sheet seed="compte" as="section">
         <div className={styles.form}>
           <h1 className={styles.title}>Mon compte</h1>

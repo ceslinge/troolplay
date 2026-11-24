@@ -7,6 +7,7 @@ import { fetchServers, type Server } from '../api/servers'
 import Button from '../components/Button'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
+import Unreachable from '../components/Unreachable'
 import { focusFirstError, useToast } from '../lib/toast'
 import { useMe } from '../lib/useMe'
 import { STORY_FIELDS } from './characterFields'
@@ -21,6 +22,7 @@ import {
   withChange,
 } from './characterForm'
 import { setActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
+import PageTitle from '../components/PageTitle'
 import styles from './CreateCharacterPage.module.css'
 
 /**
@@ -72,6 +74,9 @@ function CreateCharacterPage() {
   })
   const errors = create.error instanceof ApiError ? create.error.fields : {}
 
+  if (me.isError || servers.isError) {
+    return <Unreachable />
+  }
   if (me.isPending || servers.isPending) {
     return null
   }
@@ -108,6 +113,7 @@ function CreateCharacterPage() {
   if (mine.length >= MAX_CHARACTERS) {
     return (
       <main className={styles.page}>
+        <PageTitle>Présenter un nouveau personnage</PageTitle>
         <h1 className={styles.title}>Présenter un nouveau personnage</h1>
         <Notice>
           <p>
@@ -122,6 +128,7 @@ function CreateCharacterPage() {
 
   return (
     <main className={styles.page}>
+      <PageTitle>Présenter un nouveau personnage</PageTitle>
       <div className={styles.top}>
         <h1 className={styles.title}>Présenter un nouveau personnage</h1>
         <div className={styles.modes} role="group" aria-label="Façon de remplir">

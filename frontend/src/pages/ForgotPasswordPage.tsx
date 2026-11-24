@@ -7,6 +7,7 @@ import Button from '../components/Button'
 import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
+import PageTitle from '../components/PageTitle'
 import styles from './AuthPages.module.css'
 
 function ForgotPasswordPage() {
@@ -21,6 +22,7 @@ function ForgotPasswordPage() {
 
   return (
     <main className={styles.page}>
+      <PageTitle>Mot de passe oublié</PageTitle>
       <Sheet seed="oubli" as="section">
         <form className={styles.form} onSubmit={submit} noValidate>
           <h1 className={styles.title}>Mot de passe oublié</h1>

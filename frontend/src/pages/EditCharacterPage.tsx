@@ -12,6 +12,7 @@ import Sheet from '../components/Sheet'
 import { focusFirstError, useToast } from '../lib/toast'
 import { STORY_FIELDS } from './characterFields'
 import { type Draft, formParts, fromCharacter, toUpdateRequest, withChange } from './characterForm'
+import PageTitle from '../components/PageTitle'
 import styles from './CreateCharacterPage.module.css'
 
 function toHangoutDrafts(character: Character): HangoutDraft[] {
@@ -216,6 +217,7 @@ function EditCharacterPage() {
 
   return (
     <main className={styles.page}>
+      <PageTitle>{query.data ? `Modifier la fiche de ${query.data.name}` : 'Modifier la fiche'}</PageTitle>
       {/* Le nom enregistré, pas celui en cours de saisie : on sait toujours quelle fiche on modifie. */}
       <h1 className={styles.title}>{query.data ? `Modifier la fiche de ${query.data.name}` : 'Modifier la fiche'}</h1>
       {query.isPending ? null : query.isError ? (

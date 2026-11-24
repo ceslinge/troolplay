@@ -7,6 +7,7 @@ import Button from '../components/Button'
 import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
+import PageTitle from '../components/PageTitle'
 import styles from './AuthPages.module.css'
 
 function LoginPage() {
@@ -33,6 +34,7 @@ function LoginPage() {
 
   return (
     <main className={styles.page}>
+      <PageTitle>Se connecter</PageTitle>
       <Sheet seed="connexion" as="section">
         <form className={styles.form} onSubmit={submit} noValidate>
           <h1 className={styles.title}>Se connecter</h1>

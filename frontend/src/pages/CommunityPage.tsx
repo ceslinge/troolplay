@@ -9,10 +9,12 @@ import Medallion from '../components/Medallion'
 import Menu from '../components/Menu'
 import PlaceCard from '../components/PlaceCard'
 import Sheet from '../components/Sheet'
+import Unreachable from '../components/Unreachable'
 import { useActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
 import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
 import { useMe } from '../lib/useMe'
 import { serverOptions } from '../lib/games'
+import PageTitle from '../components/PageTitle'
 import styles from './CommunityPage.module.css'
 
 /** /communaute tout court : le serveur du personnage actif, ou à défaut le premier. */
@@ -21,6 +23,7 @@ export function CommunityIndex() {
   const me = useMe()
   const mine = useMyCharacters()
   const active = useActiveCharacter()
+  if (servers.isError || me.isError) return <Unreachable />
   // Connecté, on attend ses personnages pour ne pas ouvrir un serveur puis sauter à un autre.
   if (servers.isPending || me.isPending || (me.data && mine === undefined)) return null
   const list = servers.data ?? []
@@ -109,7 +112,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
   }
 
   if (servers.isError) {
-    return <p className={styles.page}>Le panneau est inaccessible pour l'instant.</p>
+    return <Unreachable />
   }
   if (servers.isPending) {
     return null
@@ -123,6 +126,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
 
   return (
     <main className={styles.page}>
+      <PageTitle>{`Communauté de ${server.name}`}</PageTitle>
       <div className={styles.top}>
         <Sheet seed={`${server.id}-titre`} contentClassName={styles.title}>
           <span className={styles.kicker}>Communauté du serveur</span>
