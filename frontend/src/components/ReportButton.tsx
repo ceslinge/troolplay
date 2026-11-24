@@ -73,7 +73,7 @@ function ReportButton({ target, targetId, mine }: Props) {
         <a href="/moderation" target="_blank" rel="noreferrer">
           charte de modération
         </a>
-        . Personne ne saura que c'est toi.
+        . La personne signalée ne saura pas que c'est toi : seule l'équipe le voit.
       </p>
       {error && (
         <Notice tone="error">
