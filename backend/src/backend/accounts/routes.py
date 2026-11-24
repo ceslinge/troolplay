@@ -1,7 +1,14 @@
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, HTTPException, Request, Response
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Cookie,
+    HTTPException,
+    Request,
+    Response,
+)
 from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session
 
@@ -134,7 +141,9 @@ def verification_email(token: str) -> tuple[str, str]:
 
 
 @router.post("/accounts", status_code=202)
-def sign_up(data: SignupIn, request: Request, session: SessionDep) -> Message:
+def sign_up(
+    data: SignupIn, request: Request, session: SessionDep, background: BackgroundTasks
+) -> Message:
     throttle(session, "signup", client_ip(request), limit=5, window=timedelta(hours=1))
     # On hache toujours, même si l'adresse est prise :
     # la réponse prend le même temps, et ne trahit pas qui est inscrit.
@@ -147,14 +156,15 @@ def sign_up(data: SignupIn, request: Request, session: SessionDep) -> Message:
         session.flush()
         token = issue_token(session, user, "verify")
         session.commit()
-        emails.send_email(user.email, *verification_email(token))
+        background.add_task(emails.send_email, user.email, *verification_email(token))
     elif user.email_verified_at is None:
         token = issue_token(session, user, "verify")
         session.commit()
-        emails.send_email(user.email, *verification_email(token))
+        background.add_task(emails.send_email, user.email, *verification_email(token))
     else:
         session.commit()
-        emails.send_email(
+        background.add_task(
+            emails.send_email,
             user.email,
             "Quelqu'un a voulu s'inscrire avec ton adresse",
             "Une inscription vient d'être tentée avec ton adresse, qui a déjà un compte.\n\n"
@@ -176,14 +186,16 @@ def verify_email(data: TokenIn, session: SessionDep) -> None:
 
 
 @router.post("/accounts/verify/resend", status_code=202)
-def resend_verification(data: EmailIn, session: SessionDep) -> Message:
+def resend_verification(
+    data: EmailIn, session: SessionDep, background: BackgroundTasks
+) -> Message:
     email = data.email.lower()
     throttle(session, "resend", email, limit=3, window=timedelta(hours=1))
     user = find_user(session, email)
     if user is not None and user.email_verified_at is None:
         token = issue_token(session, user, "verify")
         session.commit()
-        emails.send_email(user.email, *verification_email(token))
+        background.add_task(emails.send_email, user.email, *verification_email(token))
     else:
         session.commit()
     return Message(detail=RESEND_SENT)
@@ -193,7 +205,9 @@ FORGOT_SENT = "Si cette adresse a un compte, un lien pour changer de mot de pass
 
 
 @router.post("/password/forgot", status_code=202)
-def forgot_password(data: EmailIn, session: SessionDep) -> Message:
+def forgot_password(
+    data: EmailIn, session: SessionDep, background: BackgroundTasks
+) -> Message:
     email = data.email.lower()
     throttle(session, "forgot", email, limit=3, window=timedelta(hours=1))
     user = find_user(session, email)
@@ -201,7 +215,8 @@ def forgot_password(data: EmailIn, session: SessionDep) -> Message:
         token = issue_token(session, user, "reset")
         session.commit()
         link = f"{settings.site_url}/mot-de-passe?jeton={token}"
-        emails.send_email(
+        background.add_task(
+            emails.send_email,
             user.email,
             "Changer ton mot de passe",
             "Pour choisir un nouveau mot de passe, ouvre ce lien dans l'heure :\n\n"
