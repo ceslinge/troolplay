@@ -17,6 +17,7 @@ Le responsable des données est l'éditeur du site, joignable à [ADRESSE EMAIL 
 | Tes personnages, histoires et brouillons | les afficher, c'est le but du site | jusqu'à ce que tu les supprimes, ou ton compte |
 | Les signalements | permettre la modération | jusqu'à leur traitement. La copie du contenu signalé est alors effacée |
 | Ton adresse IP, dans les journaux du serveur | protéger le site contre les abus | 30 jours |
+| Les sauvegardes de la base, qui contiennent tout ce qui précède sauf les journaux | retrouver le site après une panne | 35 jours au plus, puis effacées |
 
 On ne vend rien, on ne fait pas de publicité et on ne suit pas ce que tu fais sur d'autres sites.
 
@@ -37,7 +38,7 @@ Personne d'autre. Le lien entre ton compte et tes personnages n'est jamais affic
 Tu peux à tout moment :
 
 - consulter et corriger tes données depuis ton compte ;
-- supprimer ton compte, ce qui efface tes données ;
+- supprimer ton compte, ce qui efface tes données. Elles disparaissent aussi des sauvegardes au fur et à mesure qu'elles expirent, en 35 jours au plus ;
 - demander une copie de tes données, ou poser une question, à [ADRESSE EMAIL DE CONTACT].
 
 On te répond sous un mois au plus. Si ça ne te convient pas, tu peux saisir la CNIL (cnil.fr).

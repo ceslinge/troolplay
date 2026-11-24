@@ -94,6 +94,56 @@ git pull
 docker compose -f compose.prod.yaml up -d --build
 ```
 
+## Les sauvegardes
+
+Le service `backup` sauvegarde la base chaque nuit à 3 h 30 (UTC), dans `./backups` sur le serveur :
+
+- `backups/jour/` : les 7 derniers jours ;
+- `backups/semaine/` : la sauvegarde du dimanche, sur 4 semaines.
+
+Chaque sauvegarde est relue avant d'être gardée : un fichier illisible n'en est pas une.
+
+### La copie hors du serveur
+
+Si le serveur ou son datacenter disparaît, les sauvegardes posées dessus disparaissent avec. Une copie part donc ailleurs, dans un stockage d'objets OVH (Object Storage), **dans une autre région que le serveur** : par exemple Strasbourg si le serveur est à Roubaix ou Gravelines. Ça reste en France, comme le dit la page de confidentialité.
+
+1. Dans l'espace client OVH, Public Cloud : créer un conteneur Object Storage (S3), dans une autre région que le serveur.
+2. Créer un utilisateur S3 qui y a accès, et noter sa clé d'accès et sa clé secrète.
+3. Dans `.env` : `S3_BUCKET`, `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY` et `S3_SECRET_KEY` (voir `.env.example`), puis `docker compose -f compose.prod.yaml up -d`.
+
+Chaque sauvegarde y est copiée, et y reste 35 jours. À notre taille, ça coûte quelques centimes par an.
+
+### Vérifier
+
+```
+docker compose -f compose.prod.yaml exec backup backup.sh
+```
+
+lance une sauvegarde tout de suite et dit où elle est allée. Les sauvegardes de la nuit laissent leur trace dans `docker compose -f compose.prod.yaml logs backup`.
+
+### Restaurer
+
+Tout ce qui a été écrit depuis la sauvegarde est perdu : à faire seulement si la base est abîmée.
+
+```
+docker compose -f compose.prod.yaml stop backend
+docker compose -f compose.prod.yaml exec backup restore.sh /backups/jour/troolplay-AAAA-MM-JJ.dump
+docker compose -f compose.prod.yaml start backend
+```
+
+La restauration demande d'écrire « oui », et se fait en une transaction : si elle échoue, la base reste telle qu'elle était.
+
+Si le serveur a tout perdu, la sauvegarde se rapatrie d'abord depuis la copie hors du serveur, sur un serveur réinstallé avec ce guide :
+
+```
+docker compose -f compose.prod.yaml exec backup rclone ls horsite:<bucket>
+docker compose -f compose.prod.yaml exec backup rclone copy horsite:<bucket>/troolplay-AAAA-MM-JJ.dump /backups/
+```
+
+puis la restauration ci-dessus, avec `/backups/troolplay-AAAA-MM-JJ.dump`.
+
+Ce chemin complet (sauvegarder, casser la base, restaurer depuis le serveur, puis depuis la copie hors du serveur) a été essayé en local le 2026-11-24, avec un faux stockage S3. À refaire une fois sur le vrai serveur, puis de temps en temps : une sauvegarde jamais restaurée n'est qu'un espoir.
+
 ## Les journaux
 
 - Caddy écrit les accès dans son volume (`/data/logs/access.log`) et les efface au bout de 30 jours, comme promis dans la page de confidentialité.
