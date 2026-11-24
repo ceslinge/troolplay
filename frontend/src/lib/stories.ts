@@ -23,8 +23,17 @@ export const WARNING_OPTIONS: ChipOption<ContentWarning>[] = (Object.keys(WARNIN
   (value) => ({ value, label: WARNING_LABELS[value], title: WARNING_TITLES[value] }),
 )
 
-/** « 12 min de lecture », à 230 mots par minute environ. */
-export function readingTime(body: string): string {
+/** Le temps de lecture d'un texte, à 230 mots par minute, comme le calcule le serveur. */
+export function readingMinutes(body: string): number {
   const words = body.trim() ? body.trim().split(/\s+/).length : 0
-  return `${Math.max(1, Math.round(words / 230))} min de lecture`
+  return Math.max(1, Math.round(words / 230))
+}
+
+export const readingLabel = (minutes: number) => `${minutes} min de lecture`
+
+/** « le 24 novembre », ou avec l'année quand ce n'est pas celle-ci. */
+export function storyDate(iso: string): string {
+  const date = new Date(iso)
+  const sameYear = date.getFullYear() === new Date().getFullYear()
+  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', ...(sameYear ? {} : { year: 'numeric' }) })
 }

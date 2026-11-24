@@ -8,6 +8,7 @@ import RetreatControl from '../components/RetreatControl'
 import Seal from '../components/Seal'
 import Section from '../components/Section'
 import Sheet from '../components/Sheet'
+import StoryList from '../components/StoryList'
 import { agree } from '../lib/agree'
 import { CLASS_LABELS } from '../lib/classes'
 import { formatSchedule } from '../lib/schedule'
@@ -229,6 +230,23 @@ function CharacterPage() {
           )}
         </aside>
       </div>
+
+      <section id="histoires" className={styles.stories} aria-labelledby="histoires-titre">
+        <div className={styles.storiesHead}>
+          <Medallion icon="quill" />
+          <h2 id="histoires-titre">Ses histoires</h2>
+          {c.is_mine && <Link to="/histoires/nouvelle">Écrire une histoire</Link>}
+        </div>
+        <StoryList
+          filters={{ characterId: c.id }}
+          ofCharacter
+          empty={agree(c.gender, {
+            feminine: "Elle n'a encore rien raconté.",
+            masculine: "Il n'a encore rien raconté.",
+            neutral: "Rien de raconté pour l'instant.",
+          })}
+        />
+      </section>
     </main>
   )
 }

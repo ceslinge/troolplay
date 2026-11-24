@@ -322,7 +322,7 @@ Une histoire appartient à un compte et est signée par un de ses personnages (s
 
 ### Résumé, pour les listes
 
-Le titre, le personnage, les avertissements, `published_at`, et `excerpt` : les 200 premiers caractères du texte. `excerpt` vaut `null` quand l'histoire porte un avertissement : on choisit avant de lire.
+Le titre, le personnage, les avertissements, `published_at`, `reading_minutes` (le temps de lecture, à 230 mots par minute, une minute au moins), et `excerpt` : les 200 premiers caractères du texte, sans les astérisques de mise en forme. `excerpt` vaut `null` quand l'histoire porte un avertissement : on choisit avant de lire.
 
 ### Champs et limites
 

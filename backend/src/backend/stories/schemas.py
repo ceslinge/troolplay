@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from typing import Annotated, Literal
 
@@ -32,6 +33,11 @@ Note = Annotated[str | None, Field(max_length=200)]
 AuthorNote = Annotated[str | None, Field(max_length=1000)]
 
 EXCERPT_LENGTH = 200
+# La mise en forme du site (*italique*, **gras**), retirée des extraits : coupé à 200 caractères,
+# un « **gras » pourrait perdre sa fermeture.
+FORMATTING = re.compile(r"\*\*(?=\S)(.+?)(?<=\S)\*\*|\*(?=\S)(.+?)(?<=\S)\*")
+# Une lecture tranquille, à peu près.
+WORDS_PER_MINUTE = 230
 
 
 class StoryCharacter(BaseModel):
@@ -83,11 +89,19 @@ class StorySummary(BaseModel):
     body: str = Field(exclude=True)
 
     @computed_field
+    def reading_minutes(self) -> int:
+        return max(1, round(len(self.body.split()) / WORDS_PER_MINUTE))
+
+    @computed_field
     def excerpt(self) -> str | None:
         # Une histoire avertie ne se dévoile pas avant qu'on choisisse de la lire.
         if self.content_warnings:
             return None
         text = " ".join(self.body.split())
+        text = FORMATTING.sub(lambda m: m.group(1) or m.group(2), text)
+        text = FORMATTING.sub(
+            lambda m: m.group(1) or m.group(2), text
+        )  # le gras qui contenait de l'italique
         if len(text) <= EXCERPT_LENGTH:
             return text
         return text[:EXCERPT_LENGTH].rsplit(" ", 1)[0] + "…"
