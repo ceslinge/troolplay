@@ -150,18 +150,19 @@ function CharacterPage() {
         </div>
       </Sheet>
 
-      {sections.length > 0 && (
-        <nav className={styles.summary} aria-label="Sections de la fiche">
-          {sections.map((section) => (
-            <a key={section.id} href={`#${section.id}`} title={section.title} aria-label={section.title}>
-              <Medallion icon={section.icon} />
-            </a>
-          ))}
-          <a href="#en-jeu" title={findTitle} aria-label={findTitle}>
-            <Medallion icon="pin" />
+      <nav className={styles.summary} aria-label="Sections de la fiche">
+        {sections.map((section) => (
+          <a key={section.id} href={`#${section.id}`} title={section.title} aria-label={section.title}>
+            <Medallion icon={section.icon} />
           </a>
-        </nav>
-      )}
+        ))}
+        <a href="#en-jeu" title={findTitle} aria-label={findTitle}>
+          <Medallion icon="pin" />
+        </a>
+        <a href="#histoires" title="Ses histoires" aria-label="Ses histoires">
+          <Medallion icon="quill" />
+        </a>
+      </nav>
 
       <div className={styles.columns}>
         {sections.length > 0 && (
