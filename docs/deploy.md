@@ -64,6 +64,29 @@ Le premier admin, une fois ton compte créé sur le site :
 docker compose -f compose.prod.yaml exec backend python -m backend.admin promote <ton-adresse> --role admin
 ```
 
+## Les emails
+
+Sans `SMTP_HOST`, rien ne part : les emails s'affichent dans `docker compose -f compose.prod.yaml logs backend`. Pratique pour un tout premier essai, pas pour de vrais joueurs.
+
+Avec la boîte email fournie avec le domaine chez OVH (MX Plan), dans `.env` :
+
+```
+SMTP_HOST=ssl0.ovh.net
+SMTP_PORT=465
+SMTP_USER=contact@<domaine>
+SMTP_PASSWORD=<le mot de passe de la boîte>
+```
+
+Puis `docker compose -f compose.prod.yaml up -d` pour en tenir compte. Le mot de passe ne vit que dans `.env`, sur le serveur, jamais dans le dépôt.
+
+Pour que les emails n'arrivent pas dans les indésirables, le domaine doit dire qui a le droit d'envoyer en son nom. Dans la zone DNS chez OVH :
+
+- **SPF** : un enregistrement TXT `v=spf1 include:mx.ovh.com ~all` (OVH le propose tout fait).
+- **DKIM** : à activer dans l'espace client OVH, rubrique de la boîte email ; OVH ajoute les enregistrements.
+- **DMARC** : un enregistrement TXT sur `_dmarc.<domaine>` : `v=DMARC1; p=none; rua=mailto:contact@<domaine>`. On passera à `p=quarantine` une fois sûrs que tout passe (#59).
+
+Pour vérifier : s'inscrire avec une vraie adresse (Gmail, Outlook…), et regarder que l'email arrive en boîte de réception. Dans Gmail, « Afficher l'original » indique si SPF, DKIM et DMARC sont passés.
+
 ## Mettre à jour
 
 ```
