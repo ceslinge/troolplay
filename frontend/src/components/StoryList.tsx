@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { fetchStories, STORIES_PAGE_SIZE, type StoryFilters, type StorySummary } from '../api/stories'
 import { useMe } from '../lib/useMe'
@@ -48,8 +48,8 @@ type Props = {
   empty: string
 }
 
-/** Les histoires publiées d'un serveur ou d'un personnage, pour les membres seulement. */
-function StoryList({ filters, ofCharacter = false, onPage, empty }: Props) {
+/** Les histoires d'un serveur, page par page, regroupées par personnage. */
+function ServerStories({ filters, onPage, empty }: Props) {
   const me = useMe()
   const stories = useQuery({
     queryKey: ['stories', filters],
@@ -72,9 +72,9 @@ function StoryList({ filters, ofCharacter = false, onPage, empty }: Props) {
         {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : `${total} histoire${total > 1 ? 's' : ''}`}
       </p>
       <div className={styles.list}>
-        {ofCharacter
-          ? stories.data?.items.map((story) => <StoryCard key={story.id} story={story} showCharacter={false} />)
-          : groupByCharacter(stories.data?.items ?? []).map((group) => <StoryGroup key={group.key} group={group} />)}
+        {groupByCharacter(stories.data?.items ?? []).map((group) => (
+          <StoryGroup key={group.key} group={group} />
+        ))}
       </div>
       {pages > 1 && onPage && (
         <nav className={styles.pagination} aria-label="Pages">
@@ -91,6 +91,55 @@ function StoryList({ filters, ofCharacter = false, onPage, empty }: Props) {
       )}
     </>
   )
+}
+
+/** Les histoires d'un personnage, sur sa fiche : les plus récentes, puis « Voir plus » jusqu'au bout. */
+function CharacterStories({ filters, empty }: Props) {
+  const me = useMe()
+  const stories = useInfiniteQuery({
+    queryKey: ['stories', 'character', filters.characterId],
+    queryFn: ({ pageParam }) => fetchStories({ ...filters, page: pageParam }),
+    initialPageParam: 1,
+    // Une page de plus tant qu'on n'a pas tout : le total dit où s'arrêter.
+    getNextPageParam: (last, all) =>
+      all.reduce((n, page) => n + page.items.length, 0) < last.total ? all.length + 1 : undefined,
+    enabled: Boolean(me.data),
+  })
+
+  if (me.isPending) return null
+  if (!me.data) return <MembersOnly />
+  if (stories.isError) return <p className={styles.count}>Impossible de charger les histoires. Réessaie dans un moment.</p>
+
+  const items = stories.data?.pages.flatMap((page) => page.items) ?? []
+  const total = stories.data?.pages[0]?.total ?? 0
+
+  return (
+    <>
+      <p className={styles.count} aria-live="polite">
+        {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : `${total} histoire${total > 1 ? 's' : ''}`}
+      </p>
+      <div className={styles.list}>
+        {items.map((story) => (
+          <StoryCard key={story.id} story={story} showCharacter={false} />
+        ))}
+      </div>
+      {stories.hasNextPage && (
+        <button
+          type="button"
+          className={styles.more}
+          disabled={stories.isFetchingNextPage}
+          onClick={() => void stories.fetchNextPage()}
+        >
+          {stories.isFetchingNextPage ? 'Un instant…' : `Voir plus (${total - items.length} de plus)`}
+        </button>
+      )}
+    </>
+  )
+}
+
+/** Les histoires publiées d'un serveur ou d'un personnage, pour les membres seulement. */
+function StoryList(props: Props) {
+  return props.ofCharacter ? <CharacterStories {...props} /> : <ServerStories {...props} />
 }
 
 export default StoryList
