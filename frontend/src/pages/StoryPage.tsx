@@ -5,6 +5,7 @@ import { ApiError } from '../api/client'
 import { fetchStory, type Story } from '../api/stories'
 import MembersOnly from '../components/MembersOnly'
 import PageTitle from '../components/PageTitle'
+import ReportButton from '../components/ReportButton'
 import Seal from '../components/Seal'
 import Sheet from '../components/Sheet'
 import StoryText from '../components/StoryText'
@@ -101,6 +102,12 @@ function Reading({ story }: { story: Story }) {
             <span className={styles.noteLabel}>Mot de l'auteur, hors RP</span>
             <p>{story.author_note}</p>
           </aside>
+        )}
+
+        {story.published && (
+          <div className={styles.report}>
+            <ReportButton target="story" targetId={story.id} mine={story.is_mine} />
+          </div>
         )}
       </Sheet>
       {c && (

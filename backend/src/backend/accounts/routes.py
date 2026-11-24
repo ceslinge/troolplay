@@ -267,10 +267,13 @@ def delete_account(
     if not verify_password(data.password, user.password_hash):
         raise HTTPException(status_code=403, detail="Mot de passe incorrect")
     email = user.email.lower()
+    user_id = user.id
     # La base supprime en cascade ses personnages, leurs lieux, ses sessions et ses liens.
     session.delete(user)
     # L'adresse reste aussi dans les traces des limites : on les efface avec le compte.
     session.execute(delete(LoginFailure).where(LoginFailure.email == email))
     session.execute(delete(ThrottleEvent).where(ThrottleEvent.key == email))
+    # Les limites comptées par compte (histoires, signalements) partent avec lui.
+    session.execute(delete(ThrottleEvent).where(ThrottleEvent.key == str(user_id)))
     close_session(session, token, response)
     session.commit()

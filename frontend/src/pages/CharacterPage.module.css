@@ -225,3 +225,14 @@
   margin: 0;
   font-size: 1.375rem;
 }
+
+/* Discret, sous la colonne : on le trouve quand on le cherche. */
+.report {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.25rem;
+}
+
+.report > button {
+  color: var(--papier);
+}

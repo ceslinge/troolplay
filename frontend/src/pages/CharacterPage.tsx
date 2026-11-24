@@ -7,6 +7,7 @@ import Medallion from '../components/Medallion'
 import RetreatControl from '../components/RetreatControl'
 import Seal from '../components/Seal'
 import Section from '../components/Section'
+import ReportButton from '../components/ReportButton'
 import Sheet from '../components/Sheet'
 import StoryList from '../components/StoryList'
 import { agree } from '../lib/agree'
@@ -228,6 +229,10 @@ function CharacterPage() {
               <p className={styles.ooc}>{c.ooc_note}</p>
             </Sheet>
           )}
+
+          <div className={styles.report}>
+            <ReportButton target="character" targetId={c.id} mine={c.is_mine ?? false} />
+          </div>
         </aside>
       </div>
 
