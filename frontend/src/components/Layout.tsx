@@ -27,6 +27,12 @@ function Layout() {
             </NavLink>
             {me.data ? (
               <>
+                {/* Pour écrire, il faut un personnage qui signe : sans lui, le bouton du premier personnage suffit. */}
+                {(mine?.length ?? 0) > 0 && (
+                  <NavLink to="/histoires/nouvelle" className={styles.link}>
+                    Écrire
+                  </NavLink>
+                )}
                 <NavLink to="/compte" className={styles.link}>
                   Mon compte
                 </NavLink>

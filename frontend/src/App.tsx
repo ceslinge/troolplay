@@ -13,6 +13,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import SignupPage from './pages/SignupPage'
 import VerifyPage from './pages/VerifyPage'
+import WriteStoryPage from './pages/WriteStoryPage'
 import { LEGAL_PAGES, type LegalPageName } from './lib/legal'
 
 // Lues rarement : chargées à part, avec leur outil de mise en page.
@@ -30,6 +31,8 @@ function App() {
           <Route path="/personnages/nouveau" element={<CreateCharacterPage />} />
           <Route path="/personnages/:id" element={<CharacterPage />} />
           <Route path="/personnages/:id/modifier" element={<EditCharacterPage />} />
+          <Route path="/histoires/nouvelle" element={<WriteStoryPage />} />
+          <Route path="/histoires/:id/modifier" element={<WriteStoryPage />} />
           <Route path="/connexion" element={<LoginPage />} />
           <Route path="/inscription" element={<SignupPage />} />
           <Route path="/verifier" element={<VerifyPage />} />

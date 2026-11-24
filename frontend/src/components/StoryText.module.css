@@ -1,0 +1,17 @@
+/* Comme dans un livre : des lignes pas trop longues, un texte qui respire. */
+.text {
+  max-width: 38rem;
+  font-family: var(--titre);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--encre);
+  overflow-wrap: break-word;
+}
+
+.text p {
+  margin: 0 0 1em;
+}
+
+.text p:last-child {
+  margin-bottom: 0;
+}

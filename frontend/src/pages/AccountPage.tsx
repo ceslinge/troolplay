@@ -5,6 +5,7 @@ import { changePassword, deleteAccount, logOut } from '../api/accounts'
 import { fetchMyCharacters, MAX_CHARACTERS } from '../api/characters'
 import CharacterCard from '../components/CharacterCard'
 import CharacterOrder from '../components/CharacterOrder'
+import MyStories from '../components/MyStories'
 import { ApiError } from '../api/client'
 import Button from '../components/Button'
 import Field from '../components/Field'
@@ -185,6 +186,7 @@ function AccountPage() {
         </div>
       </Sheet>
       <MyCharacters />
+      <MyStories />
       <Sheet seed="compte-mot-de-passe" as="section">
         <ChangePasswordForm />
       </Sheet>
