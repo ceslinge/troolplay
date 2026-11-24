@@ -28,8 +28,7 @@ Le site n'utilise qu'un cookie : celui qui te garde connecté. Il est indispensa
 
 ## Qui d'autre y a accès
 
-- [NOM DE L'HÉBERGEUR], qui héberge le serveur et la base de données, [PAYS] ;
-- [SERVICE D'ENVOI D'EMAILS], seulement pour t'envoyer les emails du site, [PAYS].
+- OVH, qui héberge le serveur et la base de données, et envoie les emails du site, en France.
 
 Personne d'autre. Le lien entre ton compte et tes personnages n'est jamais affiché publiquement. La modération peut le voir pour traiter un signalement.
 
