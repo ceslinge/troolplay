@@ -233,7 +233,7 @@ def test_the_community_lists_published_stories_of_the_server_newest_first(
 
     assert [s["title"] for s in body["items"]] == ["Seconde", "Première"]
     assert body["total"] == 2
-    assert body["items"][0]["excerpt"] == TEXT
+    assert body["items"][0]["excerpt"] == TEXT.replace("*", "")
     assert "body" not in body["items"][0]
 
 
@@ -445,3 +445,38 @@ def test_the_author_note_has_a_limit(me: TestClient, mine: int) -> None:
     payload = {"character_id": mine, "title": "La nuit", "author_note": "x" * 1001}
 
     assert me.post("/stories", json=payload).status_code == 422
+
+
+def test_lists_give_a_reading_time(
+    me: TestClient, mine: int, server: GameServer
+) -> None:
+    for title, words in (("Courte", 10), ("Longue", 2300)):
+        story = me.post(
+            "/stories",
+            json={"character_id": mine, "title": title, "body": "mot " * words},
+        ).json()
+        me.post(f"/stories/{story['id']}/publish")
+
+    items = me.get(f"/stories?server_id={server.id}").json()["items"]
+
+    assert {s["title"]: s["reading_minutes"] for s in items} == {
+        "Longue": 10,
+        "Courte": 1,
+    }
+
+
+def test_an_excerpt_drops_the_formatting_marks(
+    me: TestClient, mine: int, server: GameServer
+) -> None:
+    body = "Le vent. *Encore une nuit*, pensa-t-elle. **Un *vrai* cri.** Un astérisque * seul."
+    story = me.post(
+        "/stories", json={"character_id": mine, "title": "Marques", "body": body}
+    ).json()
+    me.post(f"/stories/{story['id']}/publish")
+
+    excerpt = me.get(f"/stories?server_id={server.id}").json()["items"][0]["excerpt"]
+
+    assert (
+        excerpt
+        == "Le vent. Encore une nuit, pensa-t-elle. Un vrai cri. Un astérisque * seul."
+    )

@@ -46,8 +46,13 @@ export type StorySummary = {
   content_warnings: ContentWarning[]
   content_note: string | null
   published_at: string | null
+  reading_minutes: number
   excerpt: string | null
 }
+
+export type StoryFilters = { serverId?: number; characterId?: number; page?: number }
+
+export const STORIES_PAGE_SIZE = 20
 
 export type MyStorySummary = StorySummary & { updated_at: string; published: boolean; hidden: boolean }
 
@@ -70,6 +75,14 @@ export const SHORT_STORY = 200
 export const MAX_DRAFTS = 30
 
 export const fetchStory = (id: number) => apiFetch<Story>(`/stories/${id}`)
+
+/** Les histoires publiées d'un serveur, ou d'un personnage, les plus récentes d'abord. */
+export function fetchStories({ serverId, characterId, page = 1 }: StoryFilters, pageSize = STORIES_PAGE_SIZE) {
+  const params = new URLSearchParams({ limit: String(pageSize), offset: String((page - 1) * pageSize) })
+  if (serverId !== undefined) params.set('server_id', String(serverId))
+  if (characterId !== undefined) params.set('character_id', String(characterId))
+  return apiFetch<{ items: StorySummary[]; total: number }>(`/stories?${params}`)
+}
 
 export const fetchMyStories = () => apiFetch<{ items: MyStorySummary[] }>('/me/stories').then((r) => r.items)
 

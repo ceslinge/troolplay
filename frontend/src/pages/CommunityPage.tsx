@@ -9,6 +9,7 @@ import Medallion from '../components/Medallion'
 import Menu from '../components/Menu'
 import PlaceCard from '../components/PlaceCard'
 import Sheet from '../components/Sheet'
+import StoryList from '../components/StoryList'
 import Unreachable from '../components/Unreachable'
 import { useActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
 import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
@@ -32,7 +33,7 @@ export function CommunityIndex() {
   return target ? <Navigate to={`/communaute/${target.id}`} replace /> : <p>Aucun serveur pour l'instant.</p>
 }
 
-type Tab = 'lieux' | 'personnages'
+type Tab = 'lieux' | 'personnages' | 'histoires'
 
 function CommunityPage({ tab }: { tab: Tab }) {
   const { serverId = '' } = useParams()
@@ -68,12 +69,13 @@ function CommunityPage({ tab }: { tab: Tab }) {
   /** L'adresse d'un onglet : jour et créneau suivent, nom et retrait ne valent que pour l'annuaire. */
   function tabLink(target: Tab, id: number | string = serverId) {
     const kept = new URLSearchParams()
-    for (const key of target === 'lieux' ? ['day', 'period'] : ['day', 'period', 'q', 'retrait']) {
+    const keys = { lieux: ['day', 'period'], personnages: ['day', 'period', 'q', 'retrait'], histoires: [] }[target]
+    for (const key of keys) {
       const value = params.get(key)
       if (value) kept.set(key, value)
     }
     const query = kept.size ? `?${kept}` : ''
-    return `/communaute/${id}${target === 'lieux' ? '/lieux' : ''}${query}`
+    return `/communaute/${id}${target === 'personnages' ? '' : `/${target}`}${query}`
   }
 
   function setFilter(key: string, value: string | undefined, options?: { replace?: boolean }) {
@@ -155,52 +157,64 @@ function CommunityPage({ tab }: { tab: Tab }) {
           >
             <Medallion icon="eye" tone={tab === 'personnages' ? 'dark' : 'light'} /> Personnages
           </Link>
-          <span className={styles.tab} aria-disabled="true" title="Bientôt">
-            <Medallion icon="quill" /> Histoires
-          </span>
+          <Link
+            to={tabLink('histoires')}
+            className={`${styles.tab} ${tab === 'histoires' ? styles.current : ''}`}
+            aria-current={tab === 'histoires' ? 'page' : undefined}
+          >
+            <Medallion icon="quill" tone={tab === 'histoires' ? 'dark' : 'light'} /> Histoires
+          </Link>
         </nav>
       </div>
 
-      <Sheet edge="straight" contentClassName={styles.filters}>
-        <Chips
-          legend="Joue le"
-          options={DAY_OPTIONS}
-          value={filters.day}
-          onChange={(day) => setFilter('day', day ? String(day) : undefined)}
-        />
-        <Chips
-          legend="Plutôt"
-          options={PERIOD_OPTIONS}
-          value={filters.period}
-          onChange={(period) => setFilter('period', period)}
-        />
-        {tab === 'personnages' && (
-          <>
-            <label className={styles.field}>
-              <span>Chercher un nom</span>
-              <input
-                type="search"
-                value={typed}
-                onChange={(event) => search(event.target.value)}
-                placeholder="Maëlis, ou son nom en jeu…"
-                maxLength={60}
-                autoComplete="off"
-                spellCheck={false}
-              />
-            </label>
-            <label className={styles.check}>
-              <input
-                type="checkbox"
-                checked={filters.includeInactive}
-                onChange={(event) => setFilter('retrait', event.target.checked ? 'oui' : undefined)}
-              />
-              Inclure ceux en retrait
-            </label>
-          </>
-        )}
-      </Sheet>
+      {tab !== 'histoires' && (
+        <Sheet edge="straight" contentClassName={styles.filters}>
+          <Chips
+            legend="Joue le"
+            options={DAY_OPTIONS}
+            value={filters.day}
+            onChange={(day) => setFilter('day', day ? String(day) : undefined)}
+          />
+          <Chips
+            legend="Plutôt"
+            options={PERIOD_OPTIONS}
+            value={filters.period}
+            onChange={(period) => setFilter('period', period)}
+          />
+          {tab === 'personnages' && (
+            <>
+              <label className={styles.field}>
+                <span>Chercher un nom</span>
+                <input
+                  type="search"
+                  value={typed}
+                  onChange={(event) => search(event.target.value)}
+                  placeholder="Maëlis, ou son nom en jeu…"
+                  maxLength={60}
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+              </label>
+              <label className={styles.check}>
+                <input
+                  type="checkbox"
+                  checked={filters.includeInactive}
+                  onChange={(event) => setFilter('retrait', event.target.checked ? 'oui' : undefined)}
+                />
+                Inclure ceux en retrait
+              </label>
+            </>
+          )}
+        </Sheet>
+      )}
 
-      {tab === 'lieux' ? (
+      {tab === 'histoires' ? (
+        <StoryList
+          filters={{ serverId: Number(serverId), page: Number(params.get('page')) || 1 }}
+          onPage={goToPage}
+          empty={`Aucune histoire sur ${server.name} pour l'instant. La première attend peut-être la tienne.`}
+        />
+      ) : tab === 'lieux' ? (
         <>
           <p className={styles.count} aria-live="polite">
             {places.isPending
