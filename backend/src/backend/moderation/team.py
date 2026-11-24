@@ -28,6 +28,7 @@ from backend.accounts.routes import PARIS
 from backend.characters.models import Character
 from backend.config import settings
 from backend.db import SessionDep
+from backend.moderation.auto import was_auto_hidden
 from backend.moderation.models import ModerationAction, Report
 from backend.moderation.schemas import (
     AccountRef,
@@ -224,18 +225,43 @@ def label_of(content: Character | Story | None, reports: list[Report]) -> str:
 
 
 def summarize(
-    target: Target, target_id: int, content, reports: list[Report]
+    target: Target,
+    target_id: int,
+    content: Character | Story | None,
+    reports: list[Report],
+    session: Session | None = None,
 ) -> CaseSummary:
+    hidden = content is not None and content.hidden_at is not None
     return CaseSummary(
         target=target,
         target_id=target_id,
         label=label_of(content, reports),
         exists=content is not None,
-        hidden=content is not None and content.hidden_at is not None,
+        hidden=hidden,
+        auto_hidden=hidden
+        and session is not None
+        and auto_hidden(session, target, target_id),
         open_reports=sum(1 for r in reports if r.handled_at is None),
         total_reports=len(reports),
         reasons=dict(Counter(r.reason for r in reports if r.handled_at is None)),
         last_reported_at=max(r.created_at for r in reports),
+    )
+
+
+def auto_hidden(session: Session, target: Target, target_id: int) -> bool:
+    return was_auto_hidden(
+        session,
+        target_id if target == "character" else None,
+        target_id if target == "story" else None,
+    )
+
+
+def on(target: Target, target_id: int) -> dict[str, int]:
+    """La cible d'une ligne du journal, selon le genre de contenu."""
+    return (
+        {"character_id": target_id}
+        if target == "character"
+        else {"story_id": target_id}
     )
 
 
@@ -259,12 +285,18 @@ def list_cases(
         cases.setdefault(key, []).append(report)
 
     summaries = [
-        summarize(target, target_id, content_of(session, target, target_id), reports)
+        summarize(
+            target, target_id, content_of(session, target, target_id), reports, session
+        )
         for (target, target_id), reports in cases.items()
     ]
     if status == "open":
         summaries = [s for s in summaries if s.open_reports > 0]
-        summaries.sort(key=lambda s: (s.open_reports, s.last_reported_at), reverse=True)
+        # Masqués automatiquement d'abord : un contenu attend, caché, qu'on le regarde.
+        summaries.sort(
+            key=lambda s: (s.auto_hidden, s.open_reports, s.last_reported_at),
+            reverse=True,
+        )
     else:
         summaries = [s for s in summaries if s.open_reports == 0]
         summaries.sort(key=lambda s: s.last_reported_at, reverse=True)
@@ -293,7 +325,7 @@ def read_case(
     owner = session.get(User, owner_id) if owner_id else None
     stats = reporter_stats(session, {r.reporter_id for r in reports if r.reporter_id})
     return CaseDetail(
-        **summarize(target, target_id, content, reports).model_dump(),
+        **summarize(target, target_id, content, reports, session).model_dump(),
         owner=team_account(session, owner) if owner else None,
         reports=[
             ReportOut(
@@ -318,6 +350,7 @@ def decide(
     data: DecideIn,
     session: SessionDep,
     actor: Moderator,
+    background: BackgroundTasks,
 ) -> CaseDetail:
     """Trancher les signalements en attente d'un contenu. Leurs copies sont alors effacées."""
     pending = [
@@ -327,6 +360,14 @@ def decide(
         raise HTTPException(
             status_code=409, detail="Ce dossier n'a plus rien en attente"
         )
+    content = content_of(session, target, target_id)
+    # Masqué automatiquement, et finalement rien à reprocher : rétabli dans la foulée.
+    restore = (
+        data.decision in ("no_action", "abusive")
+        and content is not None
+        and content.hidden_at is not None
+        and auto_hidden(session, target, target_id)
+    )
     now = datetime.now(UTC)
     for report in pending:
         report.decision = data.decision
@@ -340,12 +381,29 @@ def decide(
         data.reason,
         user_id=pending[-1].reported_user_id,
         detail=data.decision,
-        **(
-            {"character_id": target_id}
-            if target == "character"
-            else {"story_id": target_id}
-        ),
+        **on(target, target_id),
     )
+    if restore and content is not None:
+        content.hidden_at = None
+        log(
+            session,
+            actor,
+            "unhide",
+            data.reason,
+            user_id=content.user_id,
+            **on(target, target_id),
+        )
+        owner = session.get(User, content.user_id) if content.user_id else None
+        name = content.name if isinstance(content, Character) else content.title
+        what = "Ta fiche" if target == "character" else "Ton histoire"
+        tell(
+            background,
+            owner,
+            f"{what} « {name} » est de nouveau visible",
+            "Un modérateur a regardé les signalements : rien à reprocher à "
+            f"{what.lower()} « {name} », de nouveau visible de tous.",
+            contestable=False,
+        )
     session.commit()
     return read_case(target, target_id, session, actor)
 

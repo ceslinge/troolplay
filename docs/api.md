@@ -399,6 +399,7 @@ Réponse 202 : `{"detail": "Merci : c'est transmis à l'équipe, qui va regarder
 - Signaler encore le même contenu tant que le premier signalement attend : même réponse, rien de plus n'est enregistré.
 - 10 signalements par heure au plus (429).
 - Le signalement garde une copie du contenu tel qu'on le lit à ce moment-là. Elle sera effacée une fois le signalement traité (#51).
+- **Masquage automatique** : quand des signalements en attente sur un même contenu viennent d'au moins 3 membres distincts et fiables (adresse vérifiée, compte de plus de 3 jours, droit de signaler intact, aucun signalement jamais jugé abusif), le contenu est caché en attendant un modérateur. Son auteur le voit toujours et est prévenu par email ; l'équipe est alertée. Les deux seuils se règlent par `AUTO_HIDE_REPORTERS` et `AUTO_HIDE_MIN_ACCOUNT_DAYS`, pour l'essayer en local.
 
 Sans compte, on signale par l'adresse de contact des mentions légales. Un compte à qui la modération a retiré le droit de signaler reçoit 403, avec la même indication.
 
@@ -410,9 +411,9 @@ Chaque action demande une raison écrite (`reason`, de 3 à 1 000 caractères), 
 
 ### Les dossiers
 
-- `GET /api/moderation/cases?status=open` : un dossier par contenu signalé, avec `open_reports`, `total_reports`, les motifs en attente (`reasons`) et `last_reported_at`. Les dossiers ouverts les plus signalés d'abord. `status=closed` : ceux qui n'ont plus rien en attente.
+- `GET /api/moderation/cases?status=open` : un dossier par contenu signalé, avec `open_reports`, `total_reports`, les motifs en attente (`reasons`), `last_reported_at` et `auto_hidden`. Les dossiers masqués automatiquement d'abord, puis les plus signalés. `status=closed` : ceux qui n'ont plus rien en attente.
 - `GET /api/moderation/cases/{character|story}/{id}` : le dossier, le compte propriétaire, et chaque signalement avec son motif, sa précision, la copie du contenu (tant qu'il n'est pas tranché) et son auteur : numéro de compte, signalements envoyés, jugés fondés, jugés abusifs.
-- `POST /api/moderation/cases/{character|story}/{id}/decide` avec `{"decision": "founded" | "no_action" | "abusive", "reason": "…"}` : tranche tout ce qui attend. Les copies sont effacées. 409 si rien n'attend.
+- `POST /api/moderation/cases/{character|story}/{id}/decide` avec `{"decision": "founded" | "no_action" | "abusive", "reason": "…"}` : tranche tout ce qui attend. Les copies sont effacées. Un contenu masqué automatiquement est rétabli par « sans suite » ou « abusif », et son auteur prévenu ; « fondé » le laisse masqué. 409 si rien n'attend.
 
 ### Depuis la page d'un contenu
 

@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     # L'expéditeur affiché. Par défaut, le compte SMTP lui-même.
     mail_from: str = ""
 
+    # Le masquage automatique (charte de modération) : combien de signaleurs distincts et
+    # fiables, et depuis combien de jours leur compte existe. À baisser en local pour l'essayer.
+    auto_hide_reporters: int = 3
+    auto_hide_min_account_days: int = 3
+
     @property
     def database_url(self) -> URL:
         return URL.create(

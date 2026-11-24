@@ -85,7 +85,7 @@ function Case({ target, id }: { target: Target; id: number }) {
               <>
                 {' · '}
                 <Link to={contentLink(c)}>l'ouvrir sur le site</Link>
-                {c.hidden && ' · masqué'}
+                {c.hidden && (c.auto_hidden ? ' · masqué automatiquement' : ' · masqué')}
               </>
             ) : (
               ', supprimée depuis : seules les copies restent'
@@ -118,6 +118,12 @@ function Case({ target, id }: { target: Target; id: number }) {
             )}
             {pending.length > 0 && <Button onClick={() => setActing('decide')}>Trancher le dossier</Button>}
           </div>
+        )}
+        {c.auto_hidden && acting === null && (
+          <p className={styles.muted}>
+            Plusieurs membres fiables l'ont signalé : il est caché en attendant ta décision. « Sans suite » ou « Abusif » le
+            rétablit tout seul et prévient son auteur ; « Fondé » le laisse masqué.
+          </p>
         )}
         {acting === 'hide' && (
           <ReasonForm

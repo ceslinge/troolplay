@@ -1,15 +1,18 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from sqlalchemy import select
 
 from backend.accounts.sessions import CurrentUser
 from backend.accounts.throttle import throttle
+from backend.characters.models import Character
 from backend.characters.routes import field_error, load_character
 from backend.characters.schemas import CharacterOut
 from backend.db import SessionDep
+from backend.moderation.auto import maybe_hide
 from backend.moderation.models import Report
 from backend.moderation.schemas import ReportIn
+from backend.stories.models import Story
 from backend.stories.routes import load_story
 from backend.stories.schemas import StoryOut
 
@@ -22,7 +25,12 @@ THANKS = "Merci : c'est transmis à l'équipe, qui va regarder."
 
 
 @router.post("", status_code=202)
-def report(data: ReportIn, user: CurrentUser, session: SessionDep) -> dict[str, str]:
+def report(
+    data: ReportIn,
+    user: CurrentUser,
+    session: SessionDep,
+    background: BackgroundTasks,
+) -> dict[str, str]:
     """Signaler une fiche ou une histoire. On ne signale que ce qu'on peut lire, et pas le sien."""
     if user.report_banned_at is not None:
         raise HTTPException(
@@ -32,12 +40,14 @@ def report(data: ReportIn, user: CurrentUser, session: SessionDep) -> dict[str, 
         )
     if data.target == "character":
         character = load_character(session, data.target_id, user)
+        content: Character | Story = character
         owner_id = character.user_id
         snapshot = CharacterOut.model_validate(character).model_dump(mode="json")
         target = {"target_character_id": character.id}
         mine_message = "Tu ne peux pas signaler ton propre personnage"
     else:
         story = load_story(session, data.target_id, user)
+        content = story
         owner_id = story.user_id
         snapshot = StoryOut.model_validate(story).model_dump(
             mode="json", exclude={"is_mine"}
@@ -70,5 +80,8 @@ def report(data: ReportIn, user: CurrentUser, session: SessionDep) -> dict[str, 
                 **target,
             )
         )
+        session.flush()
+        # Assez de membres fiables l'ont signalé : caché en attendant un modérateur.
+        maybe_hide(session, content, background)
     session.commit()
     return {"detail": THANKS}

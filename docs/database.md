@@ -86,7 +86,7 @@ Tous ces champs sont facultatifs.
 ## La modération
 - `banned_at`, `banned_until` : suspendu depuis, jusqu'à. Sans `banned_until`, c'est sans fin. Une suspension passée ne compte plus, sans qu'il faille l'effacer.
 - `report_banned_at` : le droit de signaler, retiré par la modération.
-- `moderation_actions.action` : decide, hide, unhide, suspend, reinstate, revoke_reporting, restore_reporting, set_role. `detail` garde la décision, la durée ou le nouveau rôle. Les références passent à NULL quand ce qu'elles visent disparaît.
+- `moderation_actions.action` : decide, hide, unhide, suspend, reinstate, revoke_reporting, restore_reporting, set_role, auto_hide (sans auteur : `actor_id` vide). `detail` garde la décision, la durée ou le nouveau rôle. Les références passent à NULL quand ce qu'elles visent disparaît.
 
 ## Avant les histoires à plusieurs mains
 Séparer stories de story_parts, pour que supprimer un compte n'efface pas les suites des autres.
