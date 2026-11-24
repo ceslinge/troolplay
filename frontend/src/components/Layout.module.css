@@ -14,12 +14,12 @@
   gap: 0.5rem 2rem;
 }
 
+/* La hauteur du logo comprend ses jambages (le y, le p) : il en faut un peu plus que pour du texte. */
 .brand {
-  font-family: var(--titre);
-  font-size: 1.5rem;
-  font-weight: 800;
+  display: block;
+  padding: 0.125rem 0;
+  font-size: 2.75rem;
   color: var(--papier);
-  text-decoration: none;
 }
 
 .nav {
