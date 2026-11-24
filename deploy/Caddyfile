@@ -14,6 +14,11 @@
 
 	# L'API, sans son préfixe : le backend ne connaît que /characters, /me…
 	handle_path /api/* {
+		# Une histoire au plus long pèse environ 50 Ko : au-delà d'1 Mo, la requête
+		# est refusée ici, avant d'occuper l'API.
+		request_body {
+			max_size 1MB
+		}
 		reverse_proxy backend:8000
 	}
 
