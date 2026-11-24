@@ -378,6 +378,30 @@ Réponse 200 avec l'histoire complète. Son auteur seulement.
 
 `DELETE /api/stories/{id}` : son auteur, ou un admin (capacité `delete_any`). Réponse 204.
 
+## Signaler
+
+`POST /api/reports`, connecté, avec :
+
+```json
+{"target": "story", "target_id": 12, "reason": "disrespect", "details": "Vise un joueur précis."}
+```
+
+| Champ | Règle |
+|---|---|
+| `target` | `character` ou `story` |
+| `target_id` | un contenu que je peux lire : 404 sinon, comme pour le lire |
+| `reason` | `off_topic`, `disrespect`, `hate`, `explicit`, `personal_info`, `impersonation`, `spam`, `illegal` ou `other`, d'après la charte de modération |
+| `details` | 1 000 caractères au plus. Obligatoire avec `other` |
+
+Réponse 202 : `{"detail": "Merci : c'est transmis à l'équipe, qui va regarder."}`. On ne dit rien de plus : ni à l'auteur du signalement ce qui sera décidé, ni à la personne signalée qui l'a signalée.
+
+- Signaler son propre contenu : 422.
+- Signaler encore le même contenu tant que le premier signalement attend : même réponse, rien de plus n'est enregistré.
+- 10 signalements par heure au plus (429).
+- Le signalement garde une copie du contenu tel qu'on le lit à ce moment-là. Elle sera effacée une fois le signalement traité (#51).
+
+Sans compte, on signale par l'adresse de contact des mentions légales.
+
 ## Les comptes
 
 Un compte est privé : seul son propriétaire le voit. Il n'est jamais relié publiquement à ses personnages.
@@ -424,6 +448,7 @@ En développement, les emails ne partent pas : ils s'affichent dans le terminal 
 | Mot de passe oublié, renvoi de vérification | 3 en 1 heure, par adresse | 429, sans le dire à l'écran |
 | Écrire une histoire | 30 créations en 1 heure, et 30 brouillons à la fois, par compte | 429, ou 409 pour les brouillons |
 | Publier une histoire | 10 en 1 jour, par compte | 429 |
+| Signaler | 10 en 1 heure, par compte | 429 |
 | Taille d'une requête | 1 Mo, pour toute l'API (Caddy) | 413 |
 
 Une réponse 429 porte l'en-tête `Retry-After`, en secondes.

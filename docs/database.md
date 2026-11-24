@@ -52,7 +52,7 @@ erDiagram
 - **login_failures** : id, email, ip, created_at
 - **throttle_events** : id, action, key, created_at
 - **email_tokens** : id, user_id, purpose, token_hash, expires_at, used_at, created_at
-- **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, snapshot, decision, handled_by, handled_at, created_at
+- **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, details, snapshot, decision, handled_by, handled_at, created_at
 
 ## Retrouver un personnage en jeu
 Tous ces champs sont facultatifs.
@@ -74,6 +74,12 @@ Tous ces champs sont facultatifs.
 - `character_id` : passe à NULL si le personnage est supprimé. L'histoire reste, sans signature, hors des listes, jusqu'à ce que son auteur la signe d'un autre personnage.
 - `content_warnings` : `varchar[]` parmi violence, death, torture, sexual_themes, abuse, self_harm, addiction, phobia. `content_note` précise librement.
 - Le serveur d'une histoire est celui de son personnage : elle le suit s'il déménage (décision 29).
+
+## Les signalements
+- `reason` : un motif de la charte de modération (off_topic, disrespect, hate, explicit, personal_info, impersonation, spam, illegal, other). `details` précise, obligatoire avec other.
+- `snapshot` : `jsonb`, la fiche ou l'histoire telle qu'on la lisait au moment du signalement. Effacée une fois le signalement traité.
+- `reported_user_id` : le propriétaire du contenu à ce moment-là, pour voir ce qui se répète.
+- Toutes les références passent à NULL quand ce qu'elles visent disparaît : le signalement reste.
 
 ## Avant les histoires à plusieurs mains
 Séparer stories de story_parts, pour que supprimer un compte n'efface pas les suites des autres.

@@ -30,7 +30,8 @@
 .header,
 .warning,
 .text,
-.note {
+.note,
+.report {
   width: 100%;
   max-width: 38rem;
 }
@@ -164,4 +165,9 @@
   .progress {
     transition: transform 80ms linear;
   }
+}
+
+.report {
+  display: flex;
+  flex-direction: column;
 }
