@@ -21,6 +21,7 @@ Depuis `backend/` :
 - `uv run alembic upgrade head` : met la base à jour.
 - `uv run python -m backend.servers.sync` : ajoute les serveurs officiels qui manquent (liste dans `src/backend/servers/catalog.py`). On peut le relancer sans risque ; à lancer après chaque mise à jour de la liste, et à chaque déploiement.
 - `uv run python -m backend.demo` : ajoute des personnages de démo, pour le développement seulement.
+- `uv run python -m backend.admin promote <adresse> --role admin` : nomme un admin (ou `moderator`, ou `user` pour retirer un rôle). Le dernier admin ne peut pas être rétrogradé. `uv run python -m backend.admin team` liste l'équipe.
 
 ## Documentation
 - [Cadrage](docs/CADRAGE.md)

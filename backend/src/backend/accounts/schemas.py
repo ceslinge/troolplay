@@ -18,6 +18,7 @@ class MeOut(BaseModel):
     email: str
     role: str
     created_at: datetime
+    capabilities: list[str]
 
 
 class SignupIn(BaseModel):

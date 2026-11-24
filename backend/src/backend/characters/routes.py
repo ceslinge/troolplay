@@ -6,6 +6,7 @@ from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from backend.accounts.models import User
+from backend.accounts.roles import Capability, can
 from backend.accounts.sessions import CurrentUser, OptionalUser
 from backend.characters.classes import is_available
 from backend.characters.models import Character, CharacterHangout
@@ -89,14 +90,10 @@ def field_error(field: str, message: str) -> HTTPException:
     )
 
 
-def is_staff(user: User | None) -> bool:
-    return user is not None and user.role in ("moderator", "admin")
-
-
 def can_edit(user: User, character: Character) -> bool:
-    """Le propriétaire modifie sa fiche. Un PNJ, n'appartenant à personne, est aux admins."""
+    """Le propriétaire modifie sa fiche. Un PNJ, n'appartenant à personne, est à l'équipe qui les gère."""
     if character.is_npc:
-        return user.role == "admin"
+        return can(user, Capability.MANAGE_NPCS)
     return character.user_id == user.id
 
 
@@ -113,7 +110,9 @@ def load_character(
     if character is None:
         raise HTTPException(status_code=404, detail="Personnage introuvable")
     owner = viewer is not None and character.user_id == viewer.id
-    if character.hidden_at is not None and not (owner or is_staff(viewer)):
+    if character.hidden_at is not None and not (
+        owner or can(viewer, Capability.SEE_HIDDEN)
+    ):
         raise HTTPException(status_code=404, detail="Personnage introuvable")
     return character
 
@@ -124,7 +123,7 @@ def present(
     """La fiche telle que cette personne a le droit de la voir."""
     if viewer is not None and character.user_id == viewer.id:
         return CharacterOwnedOut.model_validate(character)
-    if is_staff(viewer):
+    if can(viewer, Capability.SEE_OWNER):
         return CharacterOwnedOut.model_validate(character).model_copy(
             update={"is_mine": False}
         )
@@ -170,8 +169,8 @@ def read_character(
 def create_character(
     data: CharacterCreate, user: CurrentUser, session: SessionDep, response: Response
 ) -> CharacterOwnedOut:
-    if data.is_npc and user.role != "admin":
-        raise HTTPException(status_code=403, detail="Seuls les admins créent des PNJ")
+    if data.is_npc and not can(user, Capability.MANAGE_NPCS):
+        raise HTTPException(status_code=403, detail="Seule l'équipe crée des PNJ")
     check_server_and_class(session, data.server_id, data.class_)
 
     values = data.model_dump(exclude_none=True)
@@ -243,7 +242,7 @@ def update_character(
 @router.delete("/{character_id}", status_code=204)
 def delete_character(character_id: int, user: CurrentUser, session: SessionDep) -> None:
     character = load_character(session, character_id, user)
-    if not (can_edit(user, character) or user.role == "admin"):
+    if not (can_edit(user, character) or can(user, Capability.DELETE_ANY)):
         raise HTTPException(status_code=403, detail="Ce n'est pas ton personnage")
     session.delete(character)
     session.commit()
