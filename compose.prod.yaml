@@ -1,0 +1,67 @@
+# La production : la base, l'API et Caddy, qui sert le site en HTTPS.
+#   docker compose -f compose.prod.yaml up -d --build
+# Les secrets et le domaine viennent du fichier .env, à côté (voir .env.example).
+
+x-logging: &logging
+  # Les journaux des conteneurs tournent aussi, pour ne pas garder d'adresses indéfiniment.
+  driver: local
+  options:
+    max-size: 10m
+    max-file: "3"
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: ${POSTGRES_DB:?}
+    # Aucun port publié : la base n'est joignable que par l'API.
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    logging: *logging
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: ${POSTGRES_DB:?}
+      POSTGRES_HOST: db
+      COOKIE_SECURE: "true"
+      SITE_URL: https://${SITE_DOMAIN:?}
+      ALLOWED_ORIGINS: '["https://${SITE_DOMAIN:?}"]'
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
+
+  web:
+    build:
+      context: .
+      dockerfile: deploy/web.Dockerfile
+    restart: unless-stopped
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+      - "${HTTPS_PORT:-443}:443/udp"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - backend
+    logging: *logging
+
+volumes:
+  db-data:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,36 @@
+# SITE_DOMAIN : le nom de domaine du site. Caddy obtient et renouvelle seul le certificat HTTPS.
+{$SITE_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+		-Server
+	}
+
+	# L'API, sans son préfixe : le backend ne connaît que /characters, /me…
+	handle_path /api/* {
+		reverse_proxy backend:8000
+	}
+
+	handle {
+		root * /srv
+		# Les fichiers construits portent leur empreinte dans leur nom : on peut les garder un an.
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		# Une adresse du site (/communaute/3…) n'est pas un fichier : React s'en charge.
+		try_files {path} /index.html
+		file_server
+	}
+
+	# Les adresses IP ne restent que 30 jours (page de confidentialité).
+	log {
+		output file /data/logs/access.log {
+			roll_keep_for 720h
+		}
+	}
+}

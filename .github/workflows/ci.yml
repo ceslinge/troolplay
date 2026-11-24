@@ -57,3 +57,15 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+
+  # Les images de production se construisent : un déploiement ne casse pas par surprise.
+  images:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: troolplay
+      POSTGRES_PASSWORD: ci-only
+      POSTGRES_DB: troolplay
+      SITE_DOMAIN: localhost
+    steps:
+      - uses: actions/checkout@v7
+      - run: docker compose -f compose.prod.yaml build
