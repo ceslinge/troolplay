@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from backend.accounts import emails
 from backend.accounts.models import LoginFailure, ThrottleEvent, User
+from backend.accounts.roles import capabilities
 from backend.accounts.schemas import (
     AccountDeletionIn,
     EmailIn,
@@ -106,7 +107,13 @@ def log_out(
 
 @router.get("/me")
 def read_me(user: CurrentUser) -> MeOut:
-    return MeOut.model_validate(user)
+    return MeOut(
+        email=user.email,
+        role=user.role,
+        created_at=user.created_at,
+        # Pour que le site montre les bons boutons. Chaque route revérifie de son côté.
+        capabilities=sorted(capabilities(user)),
+    )
 
 
 SIGNUP_SENT = "Si cette adresse est libre, un lien de vérification vient de partir."

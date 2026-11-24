@@ -399,8 +399,11 @@ Réponse 204, toujours, même sans session : le cookie est effacé et la session
 Réponse 200 :
 
 ```json
-{"email": "toi@example.com", "role": "user", "created_at": "2026-11-23T10:00:00Z"}
+{"email": "toi@example.com", "role": "moderator", "created_at": "2026-11-23T10:00:00Z",
+ "capabilities": ["ban", "moderate", "see_hidden", "see_owner"]}
 ```
+
+`capabilities` : ce que la personne peut faire en plus d'un joueur, pour que le site montre les bons boutons (vide pour un joueur). Chaque route revérifie de son côté. La liste et ce que chaque rôle reçoit sont dans `accounts/roles.py` et `docs/permissions.md`.
 
 Erreurs : 401.
 

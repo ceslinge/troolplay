@@ -4,7 +4,20 @@ export type Me = {
   email: string
   role: 'user' | 'moderator' | 'admin'
   created_at: string
+  /** Pour montrer les bons boutons. Le serveur revérifie toujours : ce n'est pas une protection. */
+  capabilities: Capability[]
 }
+
+/** Les capacités de backend/accounts/roles.py. */
+export type Capability =
+  | 'see_hidden'
+  | 'see_owner'
+  | 'moderate'
+  | 'ban'
+  | 'delete_any'
+  | 'manage_npcs'
+  | 'manage_servers'
+  | 'manage_roles'
 
 type Message = { detail: string }
 
