@@ -1,0 +1,16 @@
+/* La hauteur suit la taille du texte : 1em de haut, la largeur suit. */
+.mark {
+  display: block;
+  height: 1em;
+  width: auto;
+  overflow: visible;
+}
+
+.plain {
+  fill: currentColor;
+}
+
+/* Le R et le P, en laiton sur le bois de l'en-tête. */
+.marked {
+  fill: var(--laiton);
+}

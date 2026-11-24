@@ -4,6 +4,7 @@ import { LEGAL_PAGES } from '../lib/legal'
 import { useCan } from '../lib/useCan'
 import { useMe } from '../lib/useMe'
 import CharacterRail from './CharacterRail'
+import Wordmark from './Wordmark'
 import styles from './Layout.module.css'
 
 /** Le cadre de toutes les pages : l'en-tête, la barre de ses personnages, puis la page elle-même. */
@@ -20,8 +21,9 @@ function Layout() {
       </a>
       <header className={styles.header}>
         <div className={styles.inner}>
-          <Link to="/" className={styles.brand}>
-            TroolPlay
+          {/* Le R et le P tracés à la plume : le RP se lit dans le nom (#108). */}
+          <Link to="/" className={styles.brand} aria-label="TroolPlay, accueil">
+            <Wordmark />
           </Link>
           <nav className={styles.nav} aria-label="Principale">
             <NavLink to="/communaute" className={styles.link}>
