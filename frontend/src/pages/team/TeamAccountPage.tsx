@@ -6,7 +6,7 @@ import Button from '../../components/Button'
 import PageTitle from '../../components/PageTitle'
 import ReasonForm from '../../components/ReasonForm'
 import Sheet from '../../components/Sheet'
-import { ACTION_LABELS, detailLabel, DURATION_LABELS, ROLE_LABELS, teamDate } from '../../lib/moderation'
+import { ACTION_LABELS, actorLabel, detailLabel, DURATION_LABELS, ROLE_LABELS, teamDate } from '../../lib/moderation'
 import { useToast } from '../../lib/toast'
 import { useCan } from '../../lib/useCan'
 import TeamGuard from './TeamGuard'
@@ -175,7 +175,7 @@ function Account({ id }: { id: number }) {
                   {e.detail && ` (${detailLabel(e.detail)})`} : {e.reason}
                 </span>
                 <span className={styles.muted}>
-                  le {teamDate(e.created_at)}, par le compte n°{e.actor_id ?? '?'}
+                  le {teamDate(e.created_at)}, {actorLabel(e.actor_id, e.action)}
                 </span>
               </li>
             ))}

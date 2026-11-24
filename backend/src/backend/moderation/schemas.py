@@ -106,6 +106,8 @@ class CaseSummary(BaseModel):
     label: str
     exists: bool
     hidden: bool
+    # Caché par le masquage automatique, en attendant qu'un modérateur regarde.
+    auto_hidden: bool = False
     open_reports: int
     total_reports: int
     reasons: dict[str, int]

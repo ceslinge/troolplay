@@ -23,6 +23,12 @@ Le contenu est masqué tout de suite. Selon la gravité, le compte est suspendu 
 
 Contourner une suspension en créant un autre compte mène au bannissement.
 
+## Quand l'équipe n'est pas là
+
+Si plusieurs membres signalent le même contenu, il est caché automatiquement, en attendant qu'un modérateur le regarde. Seuls comptent les signalements de membres inscrits depuis quelques jours, dont l'adresse est vérifiée et dont les signalements n'ont jamais été jugés abusifs.
+
+Ce n'est pas une sanction : son auteur le voit toujours, peut le modifier, et son compte ne change pas. Il est prévenu tout de suite. Si le signalement n'était pas fondé, le contenu est rétabli et son auteur le sait. Ceux qui signalent pour nuire perdent ce poids, puis le droit de signaler.
+
 ## Comment l'équipe décide
 
 - **Toujours une raison.** Chaque décision est expliquée à la personne concernée, par écrit : ce qui pose problème, et ce qu'elle peut faire.

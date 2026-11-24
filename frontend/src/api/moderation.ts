@@ -24,6 +24,8 @@ export type CaseSummary = {
   label: string
   exists: boolean
   hidden: boolean
+  /** Caché par le masquage automatique, en attendant qu'un modérateur regarde. */
+  auto_hidden: boolean
   open_reports: number
   total_reports: number
   reasons: Partial<Record<ReportReason, number>>

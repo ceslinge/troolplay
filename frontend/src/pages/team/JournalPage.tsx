@@ -4,7 +4,7 @@ import { fetchJournal } from '../../api/moderation'
 import Menu from '../../components/Menu'
 import PageTitle from '../../components/PageTitle'
 import Sheet from '../../components/Sheet'
-import { ACTION_LABELS, detailLabel, teamDate } from '../../lib/moderation'
+import { ACTION_LABELS, actorLabel, detailLabel, teamDate } from '../../lib/moderation'
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
 
@@ -60,7 +60,7 @@ function Journal() {
                   <span className={styles.muted}>{e.reason}</span>
                 </span>
                 <span className={styles.muted}>
-                  le {teamDate(e.created_at)}, par le compte n°{e.actor_id ?? '?'}
+                  le {teamDate(e.created_at)}, {actorLabel(e.actor_id, e.action)}
                 </span>
               </li>
             ))}

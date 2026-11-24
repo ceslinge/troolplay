@@ -57,7 +57,11 @@ function Cases() {
                       {c.open_reports} en attente
                     </span>
                   )}
-                  {c.hidden && <span className={styles.badge}>Masqué</span>}
+                  {c.auto_hidden ? (
+                    <span className={`${styles.badge} ${styles.alert}`}>Masqué automatiquement</span>
+                  ) : (
+                    c.hidden && <span className={styles.badge}>Masqué</span>
+                  )}
                   {Object.entries(c.reasons).map(([reason, n]) => (
                     <span key={reason} className={styles.badge}>
                       {REASON_LABELS[reason as keyof typeof REASON_LABELS]}

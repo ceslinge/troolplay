@@ -42,6 +42,7 @@ export const ACTION_LABELS: Record<string, string> = {
   revoke_reporting: 'Droit de signaler retiré',
   restore_reporting: 'Droit de signaler rendu',
   set_role: 'Rôle changé',
+  auto_hide: 'Masqué automatiquement',
 }
 
 export const ROLE_LABELS = { user: 'Joueur', moderator: 'Modérateur', admin: 'Admin' } as const
@@ -60,3 +61,7 @@ export function detailLabel(detail: string | null): string | null {
     detail
   )
 }
+
+/** Qui a agi : un compte de l'équipe, ou le masquage automatique. */
+export const actorLabel = (actorId: number | null, action: string) =>
+  action === 'auto_hide' ? 'automatiquement' : `par le compte n°${actorId ?? '?'}`
