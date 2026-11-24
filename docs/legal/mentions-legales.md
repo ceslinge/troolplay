@@ -16,8 +16,8 @@ Contact : [ADRESSE EMAIL DE CONTACT]
 
 ## Hébergeur
 
-[NOM DE L'HÉBERGEUR]
-[ADRESSE POSTALE]
+OVH SAS
+2 rue Kellermann, 59100 Roubaix, France
 [TÉLÉPHONE]
 
 ## Contenus des joueurs
