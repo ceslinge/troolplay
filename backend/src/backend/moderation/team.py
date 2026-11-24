@@ -35,6 +35,7 @@ from backend.moderation.schemas import (
     Target,
     TeamAccount,
     TeamCharacter,
+    TeamContent,
     WhyIn,
 )
 from backend.stories.models import Story
@@ -326,6 +327,39 @@ def decide(
     )
     session.commit()
     return read_case(target, target_id, session, actor)
+
+
+def team_content(session: Session, target: Target, target_id: int) -> TeamContent:
+    content = content_of(session, target, target_id)
+    if content is None:
+        raise HTTPException(status_code=404, detail="Contenu introuvable")
+    owner = session.get(User, content.user_id) if content.user_id else None
+    return TeamContent(
+        target=target,
+        target_id=target_id,
+        hidden=content.hidden_at is not None,
+        owner=team_account(session, owner) if owner else None,
+        open_reports=session.scalar(
+            select(func.count()).where(
+                TARGET_COLUMN[target] == target_id, Report.handled_at.is_(None)
+            )
+        )
+        or 0,
+    )
+
+
+@router.get("/characters/{target_id}")
+def read_character_for_team(
+    target_id: int, session: SessionDep, _: Moderator
+) -> TeamContent:
+    return team_content(session, "character", target_id)
+
+
+@router.get("/stories/{target_id}")
+def read_story_for_team(
+    target_id: int, session: SessionDep, _: Moderator
+) -> TeamContent:
+    return team_content(session, "story", target_id)
 
 
 # Masquer, rétablir.

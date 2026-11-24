@@ -344,3 +344,16 @@ def test_a_story_hidden_by_the_team_stays_editable_by_its_author(
 
     assert response.status_code == 200
     assert session.get(Story, story).hidden_at is not None
+
+
+def test_the_team_sees_who_owns_a_content_from_its_page(
+    owner: User, me: TestClient, moderator: TestClient, reported: int, mine: int
+) -> None:
+    story = moderator.get(f"/moderation/stories/{reported}").json()
+    character = moderator.get(f"/moderation/characters/{mine}").json()
+
+    assert story["owner"]["id"] == owner.id
+    assert story["open_reports"] == 1
+    assert character["open_reports"] == 0
+    assert "@" not in str(story)
+    assert me.get(f"/moderation/characters/{mine}").status_code == 403

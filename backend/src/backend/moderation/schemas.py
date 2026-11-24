@@ -125,6 +125,16 @@ class TeamAccount(BaseModel):
     reports_sent: int
 
 
+class TeamContent(BaseModel):
+    """Une fiche ou une histoire vue par l'équipe, depuis sa page : à qui elle est, où elle en est."""
+
+    target: Target
+    target_id: int
+    hidden: bool
+    owner: TeamAccount | None
+    open_reports: int
+
+
 class CaseDetail(CaseSummary):
     owner: TeamAccount | None
     reports: list[ReportOut]

@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from 'react-router'
 import { useMyCharacters } from '../lib/activeCharacter'
 import { LEGAL_PAGES } from '../lib/legal'
+import { useCan } from '../lib/useCan'
 import { useMe } from '../lib/useMe'
 import CharacterRail from './CharacterRail'
 import styles from './Layout.module.css'
@@ -9,6 +10,7 @@ import styles from './Layout.module.css'
 function Layout() {
   const me = useMe()
   const mine = useMyCharacters()
+  const team = useCan('moderate')
 
   return (
     <div className={styles.shell}>
@@ -31,6 +33,11 @@ function Layout() {
                 {(mine?.length ?? 0) > 0 && (
                   <NavLink to="/histoires/nouvelle" className={styles.link}>
                     Écrire
+                  </NavLink>
+                )}
+                {team && (
+                  <NavLink to="/equipe" className={styles.link}>
+                    Équipe
                   </NavLink>
                 )}
                 <NavLink to="/compte" className={styles.link}>
