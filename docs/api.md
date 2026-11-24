@@ -414,6 +414,10 @@ Chaque action demande une raison écrite (`reason`, de 3 à 1 000 caractères), 
 - `GET /api/moderation/cases/{character|story}/{id}` : le dossier, le compte propriétaire, et chaque signalement avec son motif, sa précision, la copie du contenu (tant qu'il n'est pas tranché) et son auteur : numéro de compte, signalements envoyés, jugés fondés, jugés abusifs.
 - `POST /api/moderation/cases/{character|story}/{id}/decide` avec `{"decision": "founded" | "no_action" | "abusive", "reason": "…"}` : tranche tout ce qui attend. Les copies sont effacées. 409 si rien n'attend.
 
+### Depuis la page d'un contenu
+
+`GET /api/moderation/characters/{id}` et `GET /api/moderation/stories/{id}` : le compte propriétaire, si c'est masqué, et combien de signalements attendent. De quoi agir sans passer par un dossier.
+
 ### Masquer, rétablir
 
 `POST /api/moderation/characters/{id}/hide`, `…/unhide`, et de même pour `stories`, avec `{"reason": "…"}`. Masqué, le contenu disparaît pour les autres ; son auteur le voit et le modifie toujours. 409 si c'est déjà le cas.

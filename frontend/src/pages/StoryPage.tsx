@@ -8,6 +8,7 @@ import PageTitle from '../components/PageTitle'
 import ReportButton from '../components/ReportButton'
 import Seal from '../components/Seal'
 import Sheet from '../components/Sheet'
+import TeamBox from '../components/TeamBox'
 import StoryText from '../components/StoryText'
 import Unreachable from '../components/Unreachable'
 import { readingLabel, readingMinutes, storyDate, WARNING_LABELS } from '../lib/stories'
@@ -109,6 +110,9 @@ function Reading({ story }: { story: Story }) {
             <ReportButton target="story" targetId={story.id} mine={story.is_mine} />
           </div>
         )}
+        <div className={styles.report}>
+          <TeamBox target="story" id={story.id} />
+        </div>
       </Sheet>
       {c && (
         <p className={styles.back}>

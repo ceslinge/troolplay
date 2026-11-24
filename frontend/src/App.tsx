@@ -19,6 +19,20 @@ import { LEGAL_PAGES, type LegalPageName } from './lib/legal'
 
 // Lues rarement : chargées à part, avec leur outil de mise en page.
 const LegalPage = lazy(() => import('./pages/LegalPage'))
+// L'Espace équipe ne sert qu'à quelques personnes : chargé à part, lui aussi.
+const TeamHomePage = lazy(() => import('./pages/team/TeamHomePage'))
+const CasesPage = lazy(() => import('./pages/team/CasesPage'))
+const CasePage = lazy(() => import('./pages/team/CasePage'))
+const TeamAccountPage = lazy(() => import('./pages/team/TeamAccountPage'))
+const JournalPage = lazy(() => import('./pages/team/JournalPage'))
+
+const TEAM_ROUTES = [
+  { path: '/equipe', element: <TeamHomePage /> },
+  { path: '/equipe/signalements', element: <CasesPage /> },
+  { path: '/equipe/signalements/:kind/:id', element: <CasePage /> },
+  { path: '/equipe/comptes/:id', element: <TeamAccountPage /> },
+  { path: '/equipe/journal', element: <JournalPage /> },
+]
 
 function App() {
   return (
@@ -52,6 +66,9 @@ function App() {
                 </Suspense>
               }
             />
+          ))}
+          {TEAM_ROUTES.map(({ path, element }) => (
+            <Route key={path} path={path} element={<Suspense>{element}</Suspense>} />
           ))}
           <Route path="*" element={<NotFoundPage />} />
         </Route>

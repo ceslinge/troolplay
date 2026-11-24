@@ -10,6 +10,7 @@ import Section from '../components/Section'
 import ReportButton from '../components/ReportButton'
 import Sheet from '../components/Sheet'
 import StoryList from '../components/StoryList'
+import TeamBox from '../components/TeamBox'
 import { agree } from '../lib/agree'
 import { CLASS_LABELS } from '../lib/classes'
 import { formatSchedule } from '../lib/schedule'
@@ -233,6 +234,7 @@ function CharacterPage() {
           <div className={styles.report}>
             <ReportButton target="character" targetId={c.id} mine={c.is_mine ?? false} />
           </div>
+          <TeamBox target="character" id={c.id} />
         </aside>
       </div>
 
