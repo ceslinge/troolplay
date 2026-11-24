@@ -2,11 +2,14 @@ from fastapi import APIRouter
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
+from backend.accounts.models import User
+from backend.accounts.sessions import OptionalUser
 from backend.characters.models import Character, CharacterHangout
 from backend.characters.schemas import CharacterSummary
 from backend.db import SessionDep
 from backend.home import clock
 from backend.home.schemas import HomeOut, Overheard, RightNow
+from backend.ignores.filters import not_ignored
 from backend.servers.models import GameServer
 from backend.servers.schemas import ServerOut
 
@@ -16,16 +19,22 @@ RECENT_COUNT = 6
 TOP_PLACES = 2
 
 
-def visible():
-    """Les fiches qu'on montre à tout le monde : ni masquées, ni en retrait."""
-    return (Character.hidden_at.is_(None), Character.inactive_at.is_(None))
+def visible(viewer: User | None = None):
+    """Les fiches qu'on montre : ni masquées, ni en retrait, ni ignorées par qui regarde."""
+    return (
+        Character.hidden_at.is_(None),
+        Character.inactive_at.is_(None),
+        not_ignored(viewer),
+    )
 
 
-def right_now(session: Session, server: GameServer) -> RightNow:
+def right_now(
+    session: Session, server: GameServer, viewer: User | None = None
+) -> RightNow:
     moment = clock.now_in_paris()
     day, period = moment.isoweekday(), clock.period_of(moment)
     here = select(Character.id).where(
-        *visible(),
+        *visible(viewer),
         Character.server_id == server.id,
         Character.play_days.contains([day]),
         Character.play_periods.contains([period]),
@@ -53,9 +62,9 @@ def owner():
     return func.coalesce(Character.user_id, -Character.id)
 
 
-def overheard(session: Session) -> Overheard | None:
+def overheard(session: Session, viewer: User | None = None) -> Overheard | None:
     # Une réplique faite d'espaces ne dirait rien au comptoir.
-    candidates = (*visible(), func.trim(Character.hook) != "")
+    candidates = (*visible(viewer), func.trim(Character.hook) != "")
     # D'abord un joueur au hasard, puis une de ses répliques : celui qui a dix
     # personnages n'a pas dix fois plus de chances d'être entendu.
     someone = session.scalar(
@@ -83,7 +92,9 @@ def overheard(session: Session) -> Overheard | None:
 
 
 @router.get("/home")
-def home(session: SessionDep, server_id: int | None = None) -> HomeOut:
+def home(
+    session: SessionDep, viewer: OptionalUser, server_id: int | None = None
+) -> HomeOut:
     servers = select(GameServer).where(GameServer.is_active)
     # Un serveur retenu qui a fermé depuis ne doit pas casser l'accueil :
     # on retombe alors sur le premier serveur actif.
@@ -105,7 +116,7 @@ def home(session: SessionDep, server_id: int | None = None) -> HomeOut:
     rank = func.row_number().over(partition_by=Character.user_id, order_by=newest_first)
     latest = (
         select(Character.id, rank.label("rank"))
-        .where(*visible(), Character.is_npc.is_(False))
+        .where(*visible(viewer), Character.is_npc.is_(False))
         .subquery()
     )
     recent = session.scalars(
@@ -117,13 +128,13 @@ def home(session: SessionDep, server_id: int | None = None) -> HomeOut:
         .limit(RECENT_COUNT)
     )
     return HomeOut(
-        right_now=right_now(session, server) if server else None,
-        overheard=overheard(session),
+        right_now=right_now(session, server, viewer) if server else None,
+        overheard=overheard(session, viewer),
         recent=[CharacterSummary.model_validate(c) for c in recent],
     )
 
 
 @router.get("/home/overheard")
-def another_overheard(session: SessionDep) -> Overheard | None:
+def another_overheard(session: SessionDep, viewer: OptionalUser) -> Overheard | None:
     """Une autre réplique, pour le bouton « Une autre »."""
-    return overheard(session)
+    return overheard(session, viewer)

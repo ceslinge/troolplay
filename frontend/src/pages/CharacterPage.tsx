@@ -7,6 +7,7 @@ import Medallion from '../components/Medallion'
 import RetreatControl from '../components/RetreatControl'
 import Seal from '../components/Seal'
 import Section from '../components/Section'
+import { IgnoreButton, IgnoredBanner } from '../components/IgnoreControl'
 import ReportButton from '../components/ReportButton'
 import Sheet from '../components/Sheet'
 import StoryList from '../components/StoryList'
@@ -110,6 +111,7 @@ function CharacterPage() {
   return (
     <main className={styles.page}>
       <PageTitle>{c.name}</PageTitle>
+      <IgnoredBanner character={c} />
       <Sheet as="section" contentClassName={styles.header} seed={`${c.id}-entete`} age={age}>
         <div className={styles.portrait}>
           <span className={styles.avatar} aria-hidden="true">
@@ -233,6 +235,7 @@ function CharacterPage() {
 
           <div className={styles.report}>
             <ReportButton target="character" targetId={c.id} mine={c.is_mine ?? false} />
+            <IgnoreButton character={c} />
           </div>
           <TeamBox target="character" id={c.id} />
         </aside>

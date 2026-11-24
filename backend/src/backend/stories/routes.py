@@ -12,6 +12,7 @@ from backend.accounts.throttle import throttle
 from backend.characters.models import Character
 from backend.characters.routes import field_error
 from backend.db import SessionDep
+from backend.ignores.filters import not_ignored
 from backend.stories.models import Story
 from backend.stories.schemas import (
     MyStories,
@@ -111,7 +112,8 @@ def list_stories(
         )
     )
     if server_id is not None:
-        query = query.where(Character.server_id == server_id)
+        # Les listes du serveur taisent les personnages ignorés ; sur leur fiche, on les a ouverts exprès.
+        query = query.where(Character.server_id == server_id, not_ignored(user))
     else:
         query = query.where(Story.character_id == character_id)
 

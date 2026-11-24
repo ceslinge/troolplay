@@ -1,0 +1,55 @@
+.open {
+  align-self: flex-start;
+  padding: 0.5rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--papier);
+  font: inherit;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.open:focus-visible {
+  outline: 2px solid var(--laiton);
+  outline-offset: 2px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 1rem 1.125rem;
+  background: var(--papier);
+  border: 1px solid var(--filet);
+  border-radius: 4px;
+  font-size: 0.9375rem;
+}
+
+.panel p {
+  margin: 0;
+}
+
+.hint {
+  font-size: 0.875rem;
+  color: var(--encre-douce);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--papier-sombre);
+  border-left: 3px solid var(--bois-clair);
+  border-radius: 2px;
+}

@@ -6,6 +6,7 @@ from backend.characters.routes import me_router as my_characters_router
 from backend.characters.routes import router as characters_router
 from backend.config import settings
 from backend.home.routes import router as home_router
+from backend.ignores.routes import router as ignores_router
 from backend.moderation.routes import router as reports_router
 from backend.moderation.team import router as moderation_router
 from backend.servers.places import router as places_router
@@ -45,6 +46,7 @@ app.include_router(stories_router)
 app.include_router(my_stories_router)
 app.include_router(reports_router)
 app.include_router(moderation_router)
+app.include_router(ignores_router)
 
 
 @app.get("/health")
