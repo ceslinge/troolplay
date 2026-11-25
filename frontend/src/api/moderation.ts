@@ -16,6 +16,8 @@ export type Report = {
   decision: Decision | null
   handled_at: string | null
   reporter: Reporter
+  /** Ouvert par le site lui-même : un doublon de nom en jeu (#122). */
+  automatic: boolean
   snapshot: Record<string, unknown> | null
 }
 

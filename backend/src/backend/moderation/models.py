@@ -1,7 +1,16 @@
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, String, Text, func
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    String,
+    Text,
+    false,
+    func,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -58,6 +67,8 @@ class Report(Base):
     )
     reason: Mapped[str] = mapped_column(String(20))
     details: Mapped[str | None] = mapped_column(Text)
+    # Ouvert par le site lui-même (un doublon de nom en jeu, #122), pas par un membre.
+    automatic: Mapped[bool] = mapped_column(Boolean, server_default=false())
     snapshot: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     # Remplis par la modération (#51).
     decision: Mapped[str | None] = mapped_column(String(20))

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Character, CharacterChanges, CharacterClass, Gender, NewCharacter, Period } from '../api/characters'
+import type { Character, CharacterChanges, CharacterClass, Gender, Namesakes, NewCharacter, Period } from '../api/characters'
 import type { Server } from '../api/servers'
 import Chips, { type ChipOption } from '../components/Chips'
 import Field from '../components/Field'
@@ -134,20 +134,27 @@ export function withChange<K extends keyof Draft>(draft: Draft, key: K, value: D
 
 export type Mode = 'guided' | 'free'
 
+// Le nom RP se partage, comme en jeu ; le nom en jeu, non : l'équipe vérifiera (#122).
+const NAME_TAKEN = 'Une autre fiche porte déjà ce nom sur ce serveur. C’est permis, comme en jeu.'
+const INGAME_TAKEN =
+  'Ce nom en jeu est déjà sur une autre fiche de ce serveur. Ta fiche sera enregistrée ; si c’est ton personnage, signale l’autre fiche : l’équipe vérifiera en jeu.'
+
 type PartsProps = {
   draft: Draft
   set: <K extends keyof Draft>(key: K, value: Draft[K]) => void
   errors: Record<string, string>
+  /** Les noms déjà portés sur le serveur, pendant la saisie (#122). */
+  namesakes?: Namesakes
   servers: Server[]
   server: Server | undefined
   mode: Mode
 }
 
 /** Chaque morceau du formulaire n'est écrit qu'une fois, et sert aux deux pages et aux deux modes. */
-export function formParts({ draft, set, errors, servers, server, mode }: PartsProps): Record<keyof Draft, ReactNode> {
+export function formParts({ draft, set, errors, servers, server, mode, namesakes }: PartsProps): Record<keyof Draft, ReactNode> {
   return {
     name: (
-      <Field label="Nom du personnage" name="name" value={draft.name} onChange={(v) => set('name', v)} required maxLength={40} hint="Tel que les autres l'appelleront." error={errors.name} />
+      <Field label="Nom du personnage" name="name" value={draft.name} onChange={(v) => set('name', v)} required maxLength={40} hint="Tel que les autres l'appelleront." warning={namesakes?.name ? NAME_TAKEN : undefined} error={errors.name} />
     ),
     server_id: (
       // Pas d'option « aucun serveur » : avant le premier choix, le bouton invite simplement à choisir.
@@ -179,7 +186,7 @@ export function formParts({ draft, set, errors, servers, server, mode }: PartsPr
       <Field label="Niveau" name="level" value={draft.level} onChange={(v) => set('level', v.replace(/\D/g, ''))} hint="Facultatif." error={errors.level} />
     ),
     ingame_name: (
-      <Field label="Nom en jeu" name="ingame_name" value={draft.ingame_name} onChange={(v) => set('ingame_name', v)} maxLength={40} hint="Pour le retrouver : les autres pourront le copier." error={errors.ingame_name} />
+      <Field label="Nom en jeu" name="ingame_name" value={draft.ingame_name} onChange={(v) => set('ingame_name', v)} maxLength={40} hint="Pour le retrouver : les autres pourront le copier." warning={namesakes?.ingame_name ? INGAME_TAKEN : undefined} error={errors.ingame_name} />
     ),
     play_days: <MultiChips legend="Joue plutôt le" options={DAY_OPTIONS} value={draft.play_days} onChange={(v) => set('play_days', v)} />,
     play_periods: <MultiChips legend="Plutôt" options={PERIOD_OPTIONS} value={draft.play_periods} onChange={(v) => set('play_periods', v)} />,

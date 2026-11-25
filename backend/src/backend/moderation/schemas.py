@@ -96,6 +96,8 @@ class ReportOut(BaseModel):
     decision: str | None
     handled_at: datetime | None
     reporter: ReporterOut
+    # Ouvert par le site (un doublon de nom en jeu), pas par un membre.
+    automatic: bool = False
     # Le contenu tel qu'on le lisait au moment du signalement, effacé une fois tranché.
     snapshot: dict | None
 

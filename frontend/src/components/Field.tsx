@@ -9,6 +9,8 @@ type Props = {
   onChange: (value: string) => void
   error?: string
   hint?: string
+  /** À savoir, sans bloquer l'envoi : un nom déjà porté (#122). Lu par les lecteurs d'écran. */
+  warning?: string
   autoComplete?: string
   required?: boolean
   /** Un texte sur plusieurs lignes, avec ce nombre de lignes visibles. */
@@ -16,7 +18,7 @@ type Props = {
   maxLength?: number
 }
 
-/** Un champ de formulaire, son étiquette, son aide et son erreur. */
+/** Un champ de formulaire, son étiquette, son aide, un avertissement éventuel et son erreur. */
 function Field({
   label,
   name,
@@ -25,13 +27,14 @@ function Field({
   onChange,
   error,
   hint,
+  warning,
   autoComplete,
   required,
   rows,
   maxLength,
 }: Props) {
   const id = useId()
-  const describedBy = [hint && `${id}-aide`, error && `${id}-erreur`].filter(Boolean).join(' ') || undefined
+  const describedBy = [hint && `${id}-aide`, warning && `${id}-attention`, error && `${id}-erreur`].filter(Boolean).join(' ') || undefined
   return (
     <div className={styles.field}>
       <label htmlFor={id} className={styles.label}>
@@ -68,6 +71,11 @@ function Field({
       {hint && (
         <span id={`${id}-aide`} className={styles.hint}>
           {hint}
+        </span>
+      )}
+      {warning && (
+        <span id={`${id}-attention`} className={styles.warning} role="status">
+          {warning}
         </span>
       )}
       {error && (

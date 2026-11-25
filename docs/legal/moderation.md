@@ -23,6 +23,14 @@ Le contenu est masqué tout de suite. Selon la gravité, le compte est suspendu 
 
 Contourner une suspension en créant un autre compte mène au bannissement.
 
+## Deux fiches, un même nom en jeu
+
+Un nom RP peut se partager, comme en jeu : deux Maëlis peuvent vivre sur le même serveur. Un nom en jeu, non : il est unique sur un serveur du jeu. Deux fiches qui portent le même, c'est le même joueur sur deux comptes, ou quelqu'un qui se fait passer pour un autre.
+
+Le site ne bloque pas la seconde fiche : il ne peut pas savoir qui joue vraiment le personnage, et bloquer donnerait raison au premier arrivé, usurpateur compris. Il prévient celui qui l'écrit, et ouvre un dossier pour l'équipe, sans rien dire à personne d'autre.
+
+**On tranche en jeu.** Un modérateur demande aux deux joueurs de lui parler en jeu, avec ce personnage. Celui qui peut le faire garde sa fiche. L'autre fiche est masquée, avec la raison ; si l'usurpation se répète, c'est l'échelle « Manque de respect » ci-dessus, jusqu'à la suspension. Si c'est le même joueur sur deux comptes, on lui demande de n'en garder qu'un.
+
 ## Quand l'équipe n'est pas là
 
 Si plusieurs membres signalent le même contenu, il est caché automatiquement, en attendant qu'un modérateur le regarde. Seuls comptent les signalements de membres inscrits depuis quelques jours, dont l'adresse est vérifiée et dont les signalements n'ont jamais été jugés abusifs.
