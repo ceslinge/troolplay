@@ -107,6 +107,10 @@ function CommunityPage({ tab }: { tab: Tab }) {
     pending.current = setTimeout(() => setFilter('q', text.trim() || undefined, { replace: true }), 300)
   }
 
+  // Sur téléphone, les filtres se replient derrière « Affiner » ; un filtre déjà choisi les laisse ouverts.
+  const active = [filters.day, filters.period, filters.q, filters.includeInactive || undefined].filter(Boolean).length
+  const [refining, setRefining] = useState(active > 0)
+
   function goToPage(page: number) {
     const next = new URLSearchParams(params)
     next.set('page', String(page))
@@ -168,7 +172,17 @@ function CommunityPage({ tab }: { tab: Tab }) {
       </div>
 
       {tab !== 'histoires' && (
-        <Sheet edge="straight" contentClassName={styles.filters}>
+        <button
+          type="button"
+          className={styles.refine}
+          aria-expanded={refining}
+          onClick={() => setRefining(!refining)}
+        >
+          {refining ? 'Masquer les filtres' : active > 0 ? `Affiner (${active})` : 'Affiner'}
+        </button>
+      )}
+      {tab !== 'histoires' && (
+        <Sheet edge="straight" className={refining ? undefined : styles.folded} contentClassName={styles.filters}>
           <Chips
             legend="Joue le"
             options={DAY_OPTIONS}

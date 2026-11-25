@@ -20,6 +20,7 @@ import {
   updateStory,
 } from '../api/stories'
 import Button from '../components/Button'
+import Disclosure from '../components/Disclosure'
 import Field from '../components/Field'
 import Menu from '../components/Menu'
 import MultiChips from '../components/MultiChips'
@@ -408,36 +409,44 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
           {errors.body && <p className={styles.error}>{errors.body}</p>}
         </div>
 
-        <MultiChips
-          legend="Avertir le lecteur"
-          options={WARNING_OPTIONS}
-          value={draft.content_warnings}
-          onChange={(v) => set('content_warnings', v)}
-        />
-        <p className={styles.hint}>
-          Si ton histoire aborde l'un de ces thèmes, coche-le : le texte restera caché jusqu'à ce que le lecteur choisisse de
-          le lire. Les scènes explicites restent interdites, avertissement ou non.
-        </p>
-        <Field
-          label="Précision, si tu veux"
-          name="content_note"
-          value={draft.content_note}
-          onChange={(v) => set('content_note', v)}
-          maxLength={NOTE_MAX}
-          hint="Par exemple : mort d'un personnage aimé."
-          error={errors.content_note}
-        />
+        {/* Facultatifs : repliés tant qu'ils sont vides, pour que l'écran reste celui d'un texte à écrire. */}
+        <Disclosure
+          label="Avertir le lecteur (facultatif)"
+          open={draft.content_warnings.length > 0 || draft.content_note !== '' || Boolean(errors.content_note)}
+        >
+          <MultiChips
+            legend="Les thèmes que ton histoire aborde"
+            options={WARNING_OPTIONS}
+            value={draft.content_warnings}
+            onChange={(v) => set('content_warnings', v)}
+          />
+          <p className={styles.hint}>
+            Le texte restera caché jusqu'à ce que le lecteur choisisse de le lire. Les scènes explicites restent interdites,
+            avertissement ou non.
+          </p>
+          <Field
+            label="Précision, si tu veux"
+            name="content_note"
+            value={draft.content_note}
+            onChange={(v) => set('content_note', v)}
+            maxLength={NOTE_MAX}
+            hint="Par exemple : mort d'un personnage aimé."
+            error={errors.content_note}
+          />
+        </Disclosure>
 
-        <Field
-          label="Mot de l'auteur (HRP)"
-          name="author_note"
-          value={draft.author_note}
-          onChange={(v) => set('author_note', v)}
-          rows={3}
-          maxLength={AUTHOR_NOTE_MAX}
-          hint="Hors RP, affiché à part de ton histoire : remercier un joueur croisé en jeu, situer la scène, annoncer une suite."
-          error={errors.author_note}
-        />
+        <Disclosure label="Ajouter un mot de l'auteur" open={draft.author_note !== '' || Boolean(errors.author_note)}>
+          <Field
+            label="Mot de l'auteur (HRP)"
+            name="author_note"
+            value={draft.author_note}
+            onChange={(v) => set('author_note', v)}
+            rows={3}
+            maxLength={AUTHOR_NOTE_MAX}
+            hint="Hors RP, affiché à part de ton histoire : remercier un joueur croisé en jeu, situer la scène, annoncer une suite."
+            error={errors.author_note}
+          />
+        </Disclosure>
 
         <div className={styles.footer}>
           <p className={styles.status} aria-live="polite">

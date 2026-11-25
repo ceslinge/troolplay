@@ -42,7 +42,15 @@
 .remove {
   color: var(--cire);
   border-color: transparent;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Un lien d'action : souligné seulement au survol, comme les autres boutons discrets du site. */
+.remove:hover {
   text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
 }
 
 .error {

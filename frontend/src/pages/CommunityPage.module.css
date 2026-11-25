@@ -145,3 +145,34 @@
   align-items: start;
 }
 
+
+/* « Affiner » n'existe que sur téléphone : sur grand écran, les filtres restent toujours visibles. */
+.refine {
+  display: none;
+  align-self: flex-start;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 4px;
+  background: var(--papier);
+  color: var(--bois);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.refine:focus-visible {
+  outline: 2px solid var(--laiton);
+  outline-offset: 2px;
+}
+
+@media (max-width: 48rem) {
+  .refine {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .folded {
+    display: none;
+  }
+}
