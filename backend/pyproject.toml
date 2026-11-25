@@ -28,4 +28,11 @@ build-backend = "uv_build"
 dev = [
     "pytest>=9.2.0",
     "ruff>=0.17.6",
+    "vulture>=2.16",
 ]
+
+# Le code mort (CI). À 80 %, vulture ne signale que ce qui est sûr : les routes FastAPI et
+# les champs Pydantic ou SQLAlchemy, lus par les bibliothèques, ne passent pas pour morts.
+[tool.vulture]
+paths = ["src", "tests", "migrations"]
+min_confidence = 80

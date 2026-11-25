@@ -1,0 +1,13 @@
+{
+  "path": [
+    "src",
+    "../backend/src",
+    "../backend/tests"
+  ],
+  "minTokens": 50,
+  "threshold": 0.8,
+  "reporters": [
+    "console"
+  ],
+  "gitignore": true
+}

@@ -21,7 +21,7 @@ export type Draft = Record<StoryField | 'ooc_note' | 'name' | 'ingame_name' | 'l
   play_periods: Period[]
 }
 
-export const EMPTY: Draft = {
+const EMPTY: Draft = {
   name: '',
   server_id: '',
   gender: 'neutral',
@@ -40,7 +40,7 @@ export const EMPTY: Draft = {
   play_periods: [],
 }
 
-export const GENDERS: ChipOption<Gender>[] = [
+const GENDERS: ChipOption<Gender>[] = [
   { value: 'feminine', label: 'Féminin' },
   { value: 'masculine', label: 'Masculin' },
   { value: 'neutral', label: 'Neutre' },

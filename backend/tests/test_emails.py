@@ -25,7 +25,7 @@ class FakeSMTP:
     def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, *exc) -> None:
+    def __exit__(self, *_exc) -> None:
         pass
 
     def login(self, user: str, password: str) -> None:

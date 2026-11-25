@@ -1,0 +1,8 @@
+// Le code mort du site (CI) : exports, fichiers et dépendances que rien n'utilise.
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // Les polices du logo servent aux scripts Python qui le dessinent (scripts/make-wordmark.py).
+  "ignoreDependencies": ["@fontsource/im-fell-dw-pica", "@fontsource/im-fell-english"],
+  // Un type d'API exporté et utilisé dans son fichier décrit une réponse : on le garde.
+  "ignoreExportsUsedInFile": { "type": true }
+}

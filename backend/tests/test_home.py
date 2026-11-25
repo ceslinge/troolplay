@@ -51,12 +51,12 @@ def test_the_period_follows_the_hour(hour: int, period: str) -> None:
     assert clock.period_of(datetime(2026, 11, 26, hour, tzinfo=clock.PARIS)) == period
 
 
+@pytest.mark.usefixtures("thursday_evening")
 def test_right_now_counts_who_usually_plays_at_this_hour(
     session: Session,
     client: TestClient,
     user: User,
     server: GameServer,
-    thursday_evening: None,
 ) -> None:
     taverne = add(session, user, server, "Ici", play_days=[4], play_periods=["evening"])
     quais = add(
