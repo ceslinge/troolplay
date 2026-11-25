@@ -52,6 +52,7 @@ from backend.moderation.schemas import (
     TeamMember,
     WhyIn,
 )
+from backend.servers.models import GameServer
 from backend.stories.models import Story
 
 router = APIRouter(prefix="/moderation", tags=["moderation"])
@@ -82,6 +83,7 @@ def log(
     user_id: int | None = None,
     character_id: int | None = None,
     story_id: int | None = None,
+    server_id: int | None = None,
     detail: str | None = None,
 ) -> None:
     session.add(
@@ -92,6 +94,7 @@ def log(
             target_user_id=user_id,
             target_character_id=character_id,
             target_story_id=story_id,
+            target_server_id=server_id,
             detail=detail,
         )
     )
@@ -756,4 +759,16 @@ def read_journal(
         .limit(limit)
         .offset(offset)
     )
-    return Journal(items=[JournalEntry.model_validate(e) for e in entries], total=total)
+    items = [JournalEntry.model_validate(e) for e in entries]
+    server_ids = {e.target_server_id for e in items if e.target_server_id is not None}
+    if server_ids:
+        names = {
+            server.id: server.name
+            for server in session.scalars(
+                select(GameServer).where(GameServer.id.in_(server_ids))
+            )
+        }
+        for e in items:
+            if e.target_server_id is not None:
+                e.target_server_name = names.get(e.target_server_id)
+    return Journal(items=items, total=total)

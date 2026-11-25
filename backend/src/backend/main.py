@@ -11,6 +11,7 @@ from backend.moderation.routes import router as reports_router
 from backend.moderation.team import router as moderation_router
 from backend.servers.places import router as places_router
 from backend.servers.routes import router as servers_router
+from backend.servers.team import router as server_team_router
 from backend.stories.routes import me_router as my_stories_router
 from backend.stories.routes import router as stories_router
 
@@ -46,6 +47,7 @@ app.include_router(stories_router)
 app.include_router(my_stories_router)
 app.include_router(reports_router)
 app.include_router(moderation_router)
+app.include_router(server_team_router)
 app.include_router(ignores_router)
 
 

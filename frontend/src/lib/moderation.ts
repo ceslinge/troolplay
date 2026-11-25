@@ -43,6 +43,10 @@ export const ACTION_LABELS: Record<string, string> = {
   restore_reporting: 'Droit de signaler rendu',
   set_role: 'Rôle changé',
   auto_hide: 'Masqué automatiquement',
+  add_server: 'Serveur ajouté',
+  rename_server: 'Serveur renommé',
+  close_server: 'Serveur fermé',
+  reopen_server: 'Serveur rouvert',
 }
 
 export const ROLE_LABELS = { user: 'Joueur', moderator: 'Modérateur', admin: 'Admin' } as const

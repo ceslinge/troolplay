@@ -57,3 +57,17 @@ def test_the_same_name_in_another_game_is_another_server(
     session.flush()
 
     assert sync(session) == [("touch", "Serveur A")]
+
+
+def test_a_server_renamed_on_the_site_does_not_come_back(
+    session: Session, monkeypatch
+) -> None:
+    monkeypatch.setattr(sync_module, "SERVERS", CATALOG)
+    sync(session)
+    renamed = session.scalars(
+        select(GameServer).where(GameServer.name == "Serveur A")
+    ).one()
+    renamed.name = "Serveur A'"
+    session.flush()
+
+    assert sync(session) == []

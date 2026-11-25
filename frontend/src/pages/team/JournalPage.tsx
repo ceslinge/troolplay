@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Link, useSearchParams } from 'react-router'
-import { fetchJournal, fetchTeam, type TeamMember } from '../../api/moderation'
+import { fetchJournal, fetchTeam, type JournalEntry, type TeamMember } from '../../api/moderation'
 import Menu from '../../components/Menu'
 import PageTitle from '../../components/PageTitle'
 import Sheet from '../../components/Sheet'
@@ -8,10 +8,17 @@ import { ACTION_LABELS, actorLabel, detailLabel, teamDate } from '../../lib/mode
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
 
-function what(e: { target_user_id: number | null; target_character_id: number | null; target_story_id: number | null }) {
+function what(e: JournalEntry) {
   if (e.target_story_id) return <Link to={`/histoires/${e.target_story_id}`}>une histoire</Link>
   if (e.target_character_id) return <Link to={`/personnages/${e.target_character_id}`}>une fiche</Link>
+  if (e.target_server_id) return <span>{e.target_server_name ?? 'un serveur'}</span>
   return null
+}
+
+/** Une durée, une décision, un rôle ; pour un serveur renommé, son ancien nom. */
+function detailOf(e: JournalEntry) {
+  if (!e.detail) return null
+  return e.action === 'rename_server' ? `ancien nom : ${e.detail}` : detailLabel(e.detail)
 }
 
 const memberLabel = (m: TeamMember) => `compte n°${m.id}${m.characters.length ? ` (${m.characters.slice(0, 2).join(', ')})` : ''}`
@@ -72,7 +79,7 @@ function Journal() {
               <li key={e.id} className={styles.row}>
                 <span>
                   <strong>{ACTION_LABELS[e.action] ?? e.action}</strong>
-                  {detailLabel(e.detail) && ` (${detailLabel(e.detail)})`}
+                  {detailOf(e) && ` (${detailOf(e)})`}
                   {what(e) && <> · {what(e)}</>}
                   {e.target_user_id && (
                     <>
