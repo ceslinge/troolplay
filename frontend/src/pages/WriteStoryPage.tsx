@@ -345,7 +345,7 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
             placeholder="Choisir un personnage"
             error={errors.character_id}
           />
-          {signing?.inactive && <span className={styles.hint}>En retrait : il peut raconter ses souvenirs, ou ce qu'il fait loin des autres.</span>}
+          {signing?.inactive && <span className="hint">En retrait : il peut raconter ses souvenirs, ou ce qu'il fait loin des autres.</span>}
         </div>
 
         <Field label="Titre" name="title" value={draft.title} onChange={(v) => set('title', v)} maxLength={TITLE_MAX} error={errors.title} />
@@ -373,7 +373,7 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
           </div>
           {preview ? (
             <div className={styles.preview}>
-              {draft.body.trim() ? <StoryText body={draft.body} /> : <p className={styles.hint}>Rien à montrer pour l'instant.</p>}
+              {draft.body.trim() ? <StoryText body={draft.body} /> : <p className="hint">Rien à montrer pour l'instant.</p>}
             </div>
           ) : (
             <textarea
@@ -389,7 +389,7 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
               placeholder="Il était une fois, à Astrub…"
             />
           )}
-          <p id="aide-texte" className={styles.hint}>
+          <p id="aide-texte" className="hint">
             Une ligne vide entre deux paragraphes. *Italique* et **gras** entre astérisques, comme sur Discord.{' '}
             <span className={nearLimit ? styles.limit : undefined}>
               {draft.body.length.toLocaleString('fr-FR')} / {BODY_MAX.toLocaleString('fr-FR')} caractères.
@@ -409,7 +409,7 @@ function Editor({ initial, characters, defaultCharacter, onCreated }: EditorProp
             value={draft.content_warnings}
             onChange={(v) => set('content_warnings', v)}
           />
-          <p className={styles.hint}>
+          <p className="hint">
             Le texte restera caché jusqu'à ce que le lecteur choisisse de le lire. Les scènes explicites restent interdites,
             avertissement ou non.
           </p>

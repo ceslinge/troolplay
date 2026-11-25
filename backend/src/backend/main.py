@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from backend.accounts.export import router as export_router
 from backend.accounts.routes import router as accounts_router
 from backend.characters.routes import me_router as my_characters_router
 from backend.characters.routes import router as characters_router
@@ -59,6 +60,7 @@ app.include_router(server_team_router)
 app.include_router(my_decisions_router)
 app.include_router(contests_router)
 app.include_router(my_conversations_router)
+app.include_router(export_router)
 app.include_router(conversations_router)
 app.include_router(ignores_router)
 

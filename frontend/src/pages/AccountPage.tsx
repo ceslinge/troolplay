@@ -7,6 +7,7 @@ import CharacterCard from '../components/CharacterCard'
 import CharacterOrder from '../components/CharacterOrder'
 import IgnoredList from '../components/IgnoredList'
 import MyConversations from '../components/MyConversations'
+import MyData from '../components/MyData'
 import MyDecisions from '../components/MyDecisions'
 import MyStories from '../components/MyStories'
 import { ApiError } from '../api/client'
@@ -208,6 +209,7 @@ function AccountPage() {
       <MyStories />
       <MyDecisions />
       <MyConversations />
+      <MyData />
       <IgnoredList />
       <Sheet seed="compte-mot-de-passe" as="section">
         <ChangePasswordForm />

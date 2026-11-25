@@ -43,7 +43,8 @@ Tu peux à tout moment :
 
 - consulter et corriger tes données depuis ton compte ;
 - supprimer ton compte, ce qui efface tes données. Elles disparaissent aussi des sauvegardes au fur et à mesure qu'elles expirent, en 35 jours au plus ;
-- demander une copie de tes données, ou poser une question, à [ADRESSE EMAIL DE CONTACT].
+- télécharger une copie de tes données depuis ton compte, rubrique « Mes données », même si ton compte est suspendu. C'est un fichier JSON, lisible par un autre site comme par toi : ton compte (sans ton mot de passe), tes personnages et leurs lieux, tes histoires et brouillons, les personnages que tu ignores, tes signalements, les décisions qui te concernent et tes contestations, tes échanges avec l'équipe. Il ne contient rien sur les autres : ni qui tu as signalé, ni qui, dans l'équipe, a décidé ou répondu ;
+- poser une question sur tes données, depuis ton compte (« Écrire à l'équipe ») ou à [ADRESSE EMAIL DE CONTACT].
 
 On te répond sous un mois au plus. Si ça ne te convient pas, tu peux saisir la CNIL (cnil.fr).
 

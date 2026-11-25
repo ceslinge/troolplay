@@ -54,7 +54,7 @@ function RetreatControl({ character }: { character: Character }) {
 
   return (
     <form className={styles.form} onSubmit={submit}>
-      <p className={styles.hint}>
+      <p className="hint">
         {character.name} quittera les listes, mais sa fiche restera lisible. Un clic suffira pour revenir.
       </p>
       <Field

@@ -29,7 +29,7 @@ function IgnoredList() {
   if (!ignored.data?.length) return null
   return (
     <AccountSection title="Personnages ignorés" seed="compte-ignores">
-      <p className={styles.hint}>Ils n'apparaissent plus dans tes listes. Personne d'autre ne le sait.</p>
+      <p className="hint">Ils n'apparaissent plus dans tes listes. Personne d'autre ne le sait.</p>
       <ul className={styles.list}>
         {ignored.data.map((c) => (
           <Row key={c.id} character={c} />

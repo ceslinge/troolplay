@@ -68,7 +68,7 @@ function ReportButton({ target, targetId, mine }: Props) {
       <h2 id={`${id}-titre`} className={styles.title}>
         Signaler {target === 'story' ? 'cette histoire' : 'ce personnage'}
       </h2>
-      <p className={styles.hint}>
+      <p className="hint">
         L'équipe regarde chaque signalement, d'après la{' '}
         <a href="/moderation" target="_blank" rel="noreferrer">
           charte de modération

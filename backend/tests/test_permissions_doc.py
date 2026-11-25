@@ -117,6 +117,7 @@ CHECKS: dict[str, Callable[[TestClient, World], bool]] = {
     ),
     "Lire le journal de modération": lambda c, w: ok(c.get("/moderation/journal")),
     "Savoir quel compte possède un personnage": owns,
+    "Exporter ses données": lambda c, w: ok(c.get("/me/export")),
     "Gérer les PNJ": lambda c, w: ok(
         c.post(f"/moderation/characters/{w.npc}/hide", json=WHY)
     ),

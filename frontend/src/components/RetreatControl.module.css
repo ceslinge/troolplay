@@ -8,12 +8,6 @@
   border-radius: 4px;
 }
 
-.hint {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--encre-douce);
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;

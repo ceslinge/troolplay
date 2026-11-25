@@ -17,9 +17,10 @@ from backend.accounts.models import User
 from backend.main import app
 
 # Ce qu'un compte suspendu peut faire : se voir, lire les décisions qui le visent,
-# les contester, et se déconnecter. Rien d'autre.
+# les contester, récupérer ses données (#55), et se déconnecter. Rien d'autre.
 OPEN_TO_SUSPENDED = {
     ("GET", "/me"),
+    ("GET", "/me/export"),
     ("GET", "/me/decisions"),
     ("POST", "/me/decisions/{action_id}/contest"),
     ("DELETE", "/session"),
