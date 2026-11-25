@@ -117,7 +117,8 @@ function Reading({ story }: { story: Story }) {
       {c && (
         <p className={styles.back}>
           <Link to={`/personnages/${c.id}`}>Les autres histoires de {c.name}</Link>
-          {c.server && <Link to={`/communaute/${c.server.id}/histoires`}>Les histoires de {c.server.name}</Link>}
+          {/* Un serveur fermé n'a plus de page Communauté. */}
+          {c.server && !c.server.closed && <Link to={`/communaute/${c.server.id}/histoires`}>Les histoires de {c.server.name}</Link>}
         </p>
       )}
     </>

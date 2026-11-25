@@ -1,6 +1,6 @@
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, computed_field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, computed_field
 
 from backend.characters.classes import CLASSES_BY_GAME, CharacterClass
 
@@ -29,7 +29,10 @@ class ServerList(BaseModel):
     items: list[ServerOut]
 
 
-ServerName = Annotated[str, Field(min_length=2, max_length=40)]
+# Les espaces autour ne comptent pas : « ␣␣ » n'est pas un nom.
+ServerName = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=2, max_length=40)
+]
 Why = Annotated[str, Field(min_length=3, max_length=1000)]
 
 

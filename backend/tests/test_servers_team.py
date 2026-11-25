@@ -156,3 +156,15 @@ def test_the_journal_names_the_server(admin: TestClient, server: GameServer) -> 
 
     assert entry["target_server_id"] == server.id
     assert entry["target_server_name"] == server.name
+
+
+def test_a_name_of_spaces_is_no_name(admin: TestClient, server: GameServer) -> None:
+    blank = admin.post(
+        "/moderation/servers", json={"game": "dofus", "name": "    ", **WHY}
+    )
+    renamed = admin.patch(
+        f"/moderation/servers/{server.id}", json={"name": " x ", **WHY}
+    )
+
+    assert blank.status_code == 422
+    assert renamed.status_code == 422
