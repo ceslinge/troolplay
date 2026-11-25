@@ -61,6 +61,7 @@ Ensuite, les admins nomment et retirent depuis le site : Espace équipe, « Rôl
 - Le serveur vérifie qu'un personnage appartient au compte avant d'agir en son nom.
 - Le rôle ne peut pas être choisi à l'inscription.
 - Une route demande une capacité, jamais un nom de rôle.
+- Un compte suspendu n'a aucune capacité. Il ne passe que par les routes `SessionUser` : se voir, lire et contester les décisions qui le visent, se déconnecter (tests/test_suspended.py).
 
 ## Après la V1
 - Les favoris ne sont visibles que de leur propriétaire.

@@ -459,6 +459,17 @@ Capacité `manage_servers`, donc les admins. Chaque geste demande une raison et 
 - `PATCH /api/moderation/servers/{id}` avec `{"name": "…", "reason": "…"}` : renommer. Le journal garde l'ancien nom dans `detail`. Un serveur du catalogue garde son nom d'origine en base (`catalog_name`) : le déploiement suivant ne le recrée pas.
 - `POST /api/moderation/servers/{id}/close` et `/reopen` avec `{"reason": "…"}` : 409 s'il l'est déjà.
 
+### Les contestations (#141)
+
+Une personne visée par une décision (`hide`, `auto_hide`, `suspend`, `revoke_reporting`) peut la contester **une fois** : la base le garantit (une ligne de `contests` par décision).
+
+Un compte suspendu se connecte, mais toutes les routes lui restent fermées (401) sauf celles-ci, qui acceptent `SessionUser` : `GET /api/me`, `GET /api/me/decisions`, `POST /api/me/decisions/{id}/contest`, `DELETE /api/session`. `tests/test_suspended.py` vérifie chaque route de l'API : partout ailleurs, il reçoit la même réponse qu'un visiteur.
+
+- `GET /api/me/decisions` : les décisions qui me visent, les plus récentes d'abord, sans le nom de qui les a prises, chacune avec sa contestation (`contest`, ou `null`).
+- `POST /api/me/decisions/{id}/contest` avec `{"body": "…"}` (10 à 2 000 caractères, espaces autour retirés) : 201. 404 si la décision ne me vise pas ou ne se conteste pas ; 409 si elle est déjà contestée.
+- `GET /api/moderation/contests?status=open|answered` (capacité `moderate`) : en attente (les plus anciennes d'abord) ou traitées. `decided_by_me` signale une décision prise par la personne qui lit, pour qu'une autre relise si possible.
+- `POST /api/moderation/contests/{id}/answer` avec `{"outcome": "upheld" | "lifted", "answer": "…"}` : 409 si déjà répondu, 403 sur un compte de rang égal ou supérieur. `lifted` lève la mesure si elle tient encore (`unhide`, `reinstate` ou `restore_reporting` au journal), puis `answer_contest` va au journal. La personne reçoit la réponse par mail.
+
 ### Le journal
 
 `GET /api/moderation/journal`, filtrable par `action`, `actor_id`, `target_user_id` : qui, quoi, sur quoi, quand, pourquoi, le plus récent d'abord. Une action sur un serveur donne `target_server_id` et son nom actuel, `target_server_name`. Aucune route ne le modifie ni ne l'efface.
@@ -557,7 +568,7 @@ Réponse 204, avec le cookie `session`.
 Erreurs :
 
 - 401 « Email ou mot de passe incorrect », sans préciser lequel ;
-- 403 si l'adresse n'est pas encore vérifiée, ou si le compte est suspendu. Seulement quand le mot de passe est bon, pour ne rien révéler à un inconnu ;
+- 403 si l'adresse n'est pas encore vérifiée. Seulement quand le mot de passe est bon, pour ne rien révéler à un inconnu. Un compte suspendu, lui, se connecte : voir « Contester une décision » ;
 - 429.
 
 ### Se déconnecter
@@ -574,8 +585,11 @@ Réponse 200 :
 
 ```json
 {"email": "toi@example.com", "role": "moderator", "created_at": "2026-11-23T10:00:00Z",
- "capabilities": ["ban", "moderate", "see_hidden", "see_owner"]}
+ "capabilities": ["ban", "moderate", "see_hidden", "see_owner"],
+ "suspended": false, "suspended_until": null}
 ```
+
+`suspended` : le compte est suspendu, jusqu'à `suspended_until` (vide : définitivement). Le site ne lui montre alors que sa suspension, de quoi la contester, et les pages légales.
 
 `capabilities` : ce que la personne peut faire en plus d'un joueur, pour que le site montre les bons boutons (vide pour un joueur). Chaque route revérifie de son côté. La liste et ce que chaque rôle reçoit sont dans `accounts/roles.py` et `docs/permissions.md`.
 

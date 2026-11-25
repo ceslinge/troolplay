@@ -19,6 +19,10 @@ class MeOut(BaseModel):
     role: str
     created_at: datetime
     capabilities: list[str]
+    # Suspendu : le site ne montre que la décision et de quoi la contester (#141).
+    suspended: bool = False
+    # Sans date de fin, la suspension est définitive.
+    suspended_until: datetime | None = None
 
 
 class SignupIn(BaseModel):

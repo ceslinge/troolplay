@@ -29,9 +29,11 @@ function subscribe(onChange: () => void) {
 /** Ses personnages, quand on est connecté. undefined pour un visiteur, ou tant que la liste n'est pas arrivée. */
 export function useMyCharacters(): MyCharacter[] | undefined {
   const me = useMe()
-  const mine = useQuery({ queryKey: ['characters', 'mine'], queryFn: fetchMyCharacters, enabled: Boolean(me.data) })
+  // Un compte suspendu n'a plus accès à ses personnages (#141) : on ne les demande pas.
+  const active = Boolean(me.data && !me.data.suspended)
+  const mine = useQuery({ queryKey: ['characters', 'mine'], queryFn: fetchMyCharacters, enabled: active })
   // Après une déconnexion, l'ancienne liste peut rester en mémoire : on ne la montre qu'à son propriétaire.
-  if (!me.data) return undefined
+  if (!active) return undefined
   // Liste injoignable : on fait comme si elle était vide, plutôt que d'attendre pour rien.
   return mine.isError ? [] : mine.data
 }

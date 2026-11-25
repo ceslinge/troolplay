@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
-import { fetchCases } from '../../api/moderation'
+import { fetchCases, fetchContests } from '../../api/moderation'
 import PageTitle from '../../components/PageTitle'
 import Sheet from '../../components/Sheet'
 import { useCan } from '../../lib/useCan'
@@ -12,6 +12,8 @@ import { plural } from '../../lib/text'
 function TeamHome() {
   const open = useQuery({ queryKey: ['moderation', 'cases', 'open'], queryFn: () => fetchCases('open') })
   const waiting = open.data?.total ?? 0
+  const contests = useQuery({ queryKey: ['moderation', 'contests', 'open'], queryFn: () => fetchContests('open') })
+  const contested = contests.data?.total ?? 0
   const canManageRoles = useCan('manage_roles')
   const canManageServers = useCan('manage_servers')
 
@@ -33,6 +35,17 @@ function TeamHome() {
           {waiting > 0 && (
             <span className={`${styles.badge} ${styles.alert}`}>
               {plural(waiting, 'dossier')} en attente
+            </span>
+          )}
+        </Sheet>
+        <Sheet seed="equipe-contestations" contentClassName={`${styles.card} ${styles.tool}`}>
+          <Link to="/equipe/contestations">Contestations</Link>
+          <p className={styles.muted}>
+            Une personne visée par une décision peut la contester une fois, même suspendue. On relit, on maintient ou on lève.
+          </p>
+          {contested > 0 && (
+            <span className={`${styles.badge} ${styles.alert}`}>
+              {plural(contested, 'contestation')} en attente
             </span>
           )}
         </Sheet>

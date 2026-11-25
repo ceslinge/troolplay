@@ -191,3 +191,62 @@ class JournalEntry(BaseModel):
 class Journal(BaseModel):
     items: list[JournalEntry]
     total: int
+
+
+# Les contestations (#141).
+
+
+class ContestIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    body: filled(10, 2000)
+
+
+class ContestOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    body: str
+    created_at: datetime
+    answer: str | None
+    outcome: Literal["upheld", "lifted"] | None
+    answered_at: datetime | None
+
+
+class MyDecision(BaseModel):
+    """Une décision qui me vise, telle que je la vois : sans le nom de qui l'a prise."""
+
+    id: int
+    action: str
+    detail: str | None
+    reason: str
+    created_at: datetime
+    target_character_id: int | None
+    target_story_id: int | None
+    # Le nom de la fiche ou le titre de l'histoire, s'ils existent encore.
+    target_name: str | None
+    contest: ContestOut | None
+
+
+class MyDecisions(BaseModel):
+    items: list[MyDecision]
+
+
+class AnswerIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    answer: filled(3, 2000)
+    outcome: Literal["upheld", "lifted"]
+
+
+class TeamContest(ContestOut):
+    id: int
+    contester_id: int | None
+    decision: JournalEntry
+    target_name: str | None
+    # Pour qu'une autre personne relise, si possible (affiché, pas imposé).
+    decided_by_me: bool
+
+
+class TeamContests(BaseModel):
+    items: list[TeamContest]
+    total: int

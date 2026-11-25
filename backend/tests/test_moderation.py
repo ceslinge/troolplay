@@ -195,7 +195,7 @@ def test_one_acts_only_on_a_lower_rank(
 # Suspendre
 
 
-def test_a_suspension_ends_the_sessions_and_blocks_login(
+def test_a_suspension_ends_the_sessions_and_closes_the_site(
     session: Session,
     me: TestClient,
     owner: User,
@@ -216,12 +216,18 @@ def test_a_suspension_ends_the_sessions_and_blocks_login(
         ).first()
         is None
     )
+    # On se reconnecte, mais seulement pour lire la décision et la contester (#141).
     login = me.post(
         "/session", json={"email": owner.email, "password": member_password}
     )
-    assert login.status_code == 403
-    assert "jusqu'au" in login.json()["detail"]
+    assert login.status_code == 204
+    mine = me.get("/me").json()
+    assert mine["suspended"] is True
+    assert mine["suspended_until"] is not None
+    assert mine["capabilities"] == []
+    assert me.get("/me/characters").status_code == 401
     assert "suspendu" in outbox[-1]["subject"]
+    assert "/compte#decisions" in outbox[-1]["body"]
     assert journal(session)[-1].detail == "week"
 
 

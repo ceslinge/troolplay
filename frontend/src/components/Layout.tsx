@@ -1,8 +1,9 @@
-import { Link, NavLink, Outlet } from 'react-router'
+import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { useMyCharacters } from '../lib/activeCharacter'
 import { LEGAL_PAGES } from '../lib/legal'
 import { useCan } from '../lib/useCan'
 import { useMe } from '../lib/useMe'
+import SuspendedPage from '../pages/SuspendedPage'
 import CharacterRail from './CharacterRail'
 import Wordmark from './Wordmark'
 import styles from './Layout.module.css'
@@ -12,6 +13,10 @@ function Layout() {
   const me = useMe()
   const mine = useMyCharacters()
   const team = useCan('moderate')
+  const { pathname } = useLocation()
+  // Un compte suspendu ne voit que sa suspension, et les pages légales pour lire les règles (#141).
+  const suspended = me.data?.suspended ? me.data : null
+  const legal = Object.values(LEGAL_PAGES).some((page) => page.path === pathname)
 
   return (
     <div className={styles.shell}>
@@ -26,10 +31,17 @@ function Layout() {
             <Wordmark />
           </Link>
           <nav className={styles.nav} aria-label="Principale">
-            <NavLink to="/communaute" className={styles.link}>
-              Communauté
-            </NavLink>
-            {me.data ? (
+            {/* Suspendu, la Communauté le ramènerait à sa suspension : on ne la propose pas. */}
+            {!suspended && (
+              <NavLink to="/communaute" className={styles.link}>
+                Communauté
+              </NavLink>
+            )}
+            {suspended ? (
+              <NavLink to="/compte" className={styles.link}>
+                Mon compte
+              </NavLink>
+            ) : me.data ? (
               <>
                 {/* Pour écrire, il faut un personnage qui signe : sans lui, le bouton du premier personnage suffit. */}
                 {(mine?.length ?? 0) > 0 && (
@@ -63,9 +75,9 @@ function Layout() {
         </div>
       </header>
       <div className={styles.body}>
-        <CharacterRail />
+        {!suspended && <CharacterRail />}
         <div id="contenu" className={styles.main} tabIndex={-1}>
-          <Outlet />
+          {suspended && !legal ? <SuspendedPage until={suspended.suspended_until} /> : <Outlet />}
         </div>
       </div>
       <footer className={styles.footer}>

@@ -7,6 +7,8 @@ from backend.characters.routes import router as characters_router
 from backend.config import settings
 from backend.home.routes import router as home_router
 from backend.ignores.routes import router as ignores_router
+from backend.moderation.contests import me_router as my_decisions_router
+from backend.moderation.contests import router as contests_router
 from backend.moderation.routes import router as reports_router
 from backend.moderation.team import router as moderation_router
 from backend.servers.places import router as places_router
@@ -48,6 +50,8 @@ app.include_router(my_stories_router)
 app.include_router(reports_router)
 app.include_router(moderation_router)
 app.include_router(server_team_router)
+app.include_router(my_decisions_router)
+app.include_router(contests_router)
 app.include_router(ignores_router)
 
 

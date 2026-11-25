@@ -123,3 +123,40 @@ export const renameServer = (id: number, name: string, reason: string) =>
 
 export const setServerOpen = (id: number, open: boolean, reason: string) =>
   apiFetch<TeamServer>(`/moderation/servers/${id}/${open ? 'reopen' : 'close'}`, { method: 'POST', body: { reason } })
+
+// Les contestations (#141).
+export type Outcome = 'upheld' | 'lifted'
+
+export type Contest = { body: string; created_at: string; answer: string | null; outcome: Outcome | null; answered_at: string | null }
+
+/** Une décision qui me vise, sans le nom de qui l'a prise. */
+export type MyDecision = {
+  id: number
+  action: string
+  detail: string | null
+  reason: string
+  created_at: string
+  target_character_id: number | null
+  target_story_id: number | null
+  target_name: string | null
+  contest: Contest | null
+}
+
+export const fetchMyDecisions = () => apiFetch<{ items: MyDecision[] }>('/me/decisions').then((r) => r.items)
+
+export const contestDecision = (id: number, body: string) =>
+  apiFetch<MyDecision>(`/me/decisions/${id}/contest`, { method: 'POST', body: { body } })
+
+export type TeamContest = Contest & {
+  id: number
+  contester_id: number | null
+  decision: JournalEntry
+  target_name: string | null
+  decided_by_me: boolean
+}
+
+export const fetchContests = (status: 'open' | 'answered') =>
+  apiFetch<{ items: TeamContest[]; total: number }>(`/moderation/contests?status=${status}`)
+
+export const answerContest = (id: number, outcome: Outcome, answer: string) =>
+  apiFetch<TeamContest>(`/moderation/contests/${id}/answer`, { method: 'POST', body: { outcome, answer } })

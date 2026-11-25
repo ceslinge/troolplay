@@ -31,6 +31,7 @@ from backend.accounts.security import hash_password, verify_password
 from backend.accounts.sessions import (
     COOKIE_NAME,
     CurrentUser,
+    SessionUser,
     close_all_sessions,
     close_session,
     open_session,
@@ -97,13 +98,8 @@ def log_in(
     # Le mot de passe est bon : on peut dire pourquoi la connexion est refusée.
     if user.email_verified_at is None:
         raise HTTPException(status_code=403, detail="Vérifie d'abord ton adresse email")
-    if user.suspended():
-        until = (
-            f" jusqu'au {user.banned_until.astimezone(PARIS):%d/%m/%Y à %H:%M}"
-            if user.banned_until
-            else ""
-        )
-        raise HTTPException(status_code=403, detail=f"Ce compte est suspendu{until}")
+    # Un compte suspendu se connecte quand même, pour lire la décision et la contester
+    # (#141) : current_user lui ferme toutes les autres routes.
 
     session.execute(delete(LoginFailure).where(LoginFailure.email == email))
     open_session(session, user, response)
@@ -121,13 +117,16 @@ def log_out(
 
 
 @router.get("/me")
-def read_me(user: CurrentUser) -> MeOut:
+def read_me(user: SessionUser) -> MeOut:
+    suspended = user.suspended()
     return MeOut(
         email=user.email,
         role=user.role,
         created_at=user.created_at,
         # Pour que le site montre les bons boutons. Chaque route revérifie de son côté.
         capabilities=sorted(capabilities(user)),
+        suspended=suspended,
+        suspended_until=user.banned_until if suspended else None,
     )
 
 

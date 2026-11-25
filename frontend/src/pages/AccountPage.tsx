@@ -1,24 +1,24 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { type FormEvent, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router'
-import { changePassword, deleteAccount, logOut } from '../api/accounts'
+import { Link, Navigate } from 'react-router'
+import { changePassword, deleteAccount } from '../api/accounts'
 import { fetchMyCharacters, MAX_CHARACTERS } from '../api/characters'
 import CharacterCard from '../components/CharacterCard'
 import CharacterOrder from '../components/CharacterOrder'
 import IgnoredList from '../components/IgnoredList'
+import MyDecisions from '../components/MyDecisions'
 import MyStories from '../components/MyStories'
 import { ApiError } from '../api/client'
 import Button from '../components/Button'
 import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
-import { clearLocalDrafts } from '../lib/storage'
 import { RESUME_SHEET } from '../lib/next'
 import { useMe } from '../lib/useMe'
 import { pendingDraftName } from './characterForm'
 import PageTitle from '../components/PageTitle'
 import Unreachable from '../components/Unreachable'
-import { useToast } from '../lib/toast'
+import { useLeave, useLogOut } from '../lib/useLeave'
 import styles from './AuthPages.module.css'
 
 function MyCharacters() {
@@ -144,22 +144,8 @@ function DeleteAccountForm({ onDeleted }: { onDeleted: () => void }) {
 
 function AccountPage() {
   const me = useMe()
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
-
-  async function leave() {
-    clearLocalDrafts()
-    queryClient.setQueryData(['me'], null)
-    // Ce qui a été chargé connecté ne doit pas resservir au visiteur qui suit.
-    await queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] !== 'me' })
-    navigate('/')
-  }
-  const toast = useToast()
-  const logout = useMutation({
-    mutationFn: logOut,
-    onSuccess: leave,
-    onError: (failure) => toast.show(`Pas déconnecté : ${failure.message}`, 'error'),
-  })
+  const leave = useLeave()
+  const logout = useLogOut()
   // Une fiche pas encore épinglée disparaîtrait avec la déconnexion : on prévient d'abord.
   const [unpinned, setUnpinned] = useState<string | null>(null)
 
@@ -219,6 +205,7 @@ function AccountPage() {
       </Sheet>
       <MyCharacters />
       <MyStories />
+      <MyDecisions />
       <IgnoredList />
       <Sheet seed="compte-mot-de-passe" as="section">
         <ChangePasswordForm />

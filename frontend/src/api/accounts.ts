@@ -6,6 +6,10 @@ export type Me = {
   created_at: string
   /** Pour montrer les bons boutons. Le serveur revérifie toujours : ce n'est pas une protection. */
   capabilities: Capability[]
+  /** Suspendu : le site ne montre que la décision et de quoi la contester (#141). */
+  suspended: boolean
+  /** null : définitivement, ou pas suspendu. */
+  suspended_until: string | null
 }
 
 /** Les capacités de backend/accounts/roles.py. */
