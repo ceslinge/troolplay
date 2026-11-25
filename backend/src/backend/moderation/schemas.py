@@ -3,6 +3,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from backend.fields import filled
+
 Reason = Literal[
     "off_topic",
     "disrespect",
@@ -19,7 +21,7 @@ Decision = Literal["founded", "no_action", "abusive"]
 Duration = Literal["day", "week", "month", "forever"]
 
 # Une raison écrite, toujours : la charte le promet à la personne concernée.
-Why = Annotated[str, Field(min_length=3, max_length=1000)]
+Why = filled(3, 1000)
 
 
 class ReportIn(BaseModel):
@@ -66,7 +68,7 @@ class RoleIn(WhyIn):
 class LookupIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    email: Annotated[str, Field(min_length=3, max_length=254)]
+    email: filled(3, 254)
 
 
 class AccountRef(BaseModel):
