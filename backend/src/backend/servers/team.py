@@ -88,9 +88,8 @@ def list_servers(session: SessionDep, _: ServerKeeper) -> TeamServerList:
 def add_server(
     data: ServerCreate, session: SessionDep, actor: ServerKeeper
 ) -> TeamServer:
-    name = data.name.strip()
-    check_name_free(session, data.game, name)
-    server = GameServer(game=data.game, name=name)
+    check_name_free(session, data.game, data.name)
+    server = GameServer(game=data.game, name=data.name)
     session.add(server)
     session.flush()
     log(session, actor, "add_server", data.reason, server_id=server.id)
@@ -103,7 +102,7 @@ def rename_server(
     server_id: int, data: ServerRename, session: SessionDep, actor: ServerKeeper
 ) -> TeamServer:
     server = load_server(session, server_id)
-    name = data.name.strip()
+    name = data.name
     if name == server.name:
         raise HTTPException(status_code=409, detail="C'est déjà son nom")
     check_name_free(session, server.game, name, but=server.id)

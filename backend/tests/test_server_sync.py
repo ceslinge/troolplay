@@ -71,3 +71,19 @@ def test_a_server_renamed_on_the_site_does_not_come_back(
     session.flush()
 
     assert sync(session) == []
+
+
+def test_a_server_added_on_the_site_joins_the_catalog_when_it_arrives(
+    session: Session, monkeypatch
+) -> None:
+    monkeypatch.setattr(sync_module, "SERVERS", CATALOG)
+    early = GameServer(game="dofus", name="Serveur B")
+    session.add(early)
+    session.flush()
+    sync(session)
+
+    early.name = "Serveur B'"
+    session.flush()
+
+    assert sync(session) == []
+    assert early.catalog_name == "Serveur B"
