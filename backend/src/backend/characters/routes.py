@@ -11,6 +11,7 @@ from backend.accounts.sessions import CurrentUser, OptionalUser
 from backend.accounts.throttle import throttle
 from backend.characters.classes import is_available
 from backend.characters.models import Character, CharacterHangout
+from backend.characters.namesakes import flag_ingame_twin, namesake
 from backend.characters.schemas import (
     CharacterCreate,
     CharacterList,
@@ -23,6 +24,7 @@ from backend.characters.schemas import (
     HangoutIn,
     HangoutOut,
     MyCharacters,
+    Namesakes,
     Period,
 )
 from backend.db import SessionDep
@@ -160,6 +162,29 @@ def move_to_server(
         raise field_error("server_id", "Un personnage ne change pas de jeu")
 
 
+@router.get("/namesakes")
+def check_namesakes(
+    session: SessionDep,
+    _: OptionalUser,
+    server_id: int,
+    name: Annotated[str | None, Query(max_length=40)] = None,
+    ingame_name: Annotated[str | None, Query(max_length=40)] = None,
+    but: int | None = None,
+) -> Namesakes:
+    """Pendant la saisie : ces noms sont-ils déjà portés sur ce serveur (#122) ?
+
+    Ouvert aux visiteurs, qui remplissent une fiche avant de s'inscrire. Ne dit que oui
+    ou non : jamais quelle fiche, ni à qui elle est.
+    """
+    return Namesakes(
+        name=namesake(session, server_id, Character.name, name, but) is not None,
+        ingame_name=namesake(
+            session, server_id, Character.ingame_name, ingame_name, but
+        )
+        is not None,
+    )
+
+
 @router.get("/{character_id}")
 def read_character(
     character_id: int, session: SessionDep, viewer: OptionalUser
@@ -198,6 +223,8 @@ def create_character(
     )
     character = Character(user_id=None if data.is_npc else user.id, **values)
     session.add(character)
+    session.flush()
+    flag_ingame_twin(session, character)
     session.commit()
     response.headers["Location"] = f"/api/characters/{character.id}"
     return CharacterOwnedOut.model_validate(load_character(session, character.id, user))
@@ -244,6 +271,9 @@ def update_character(
     for field, value in changes.items():
         setattr(character, field, defaults.get(field) if value is None else value)
 
+    if "ingame_name" in changes or "server_id" in changes:
+        session.flush()
+        flag_ingame_twin(session, character)
     session.commit()
     return CharacterOwnedOut.model_validate(load_character(session, character.id, user))
 

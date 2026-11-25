@@ -59,7 +59,7 @@ erDiagram
 - **conversations** : id, user_id (suit le compte), topic (question, problem, bug), created_at, updated_at, waiting_for_team, closed_at. Effacée un an après sa clôture
 - **support_messages** : id, conversation_id, author_id, from_team, body, created_at
 - **contests** : id, action_id (unique : une contestation par décision), user_id, body, created_at, answer, outcome (upheld, lifted), answered_by, answered_at
-- **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, details, snapshot, decision, handled_by, handled_at, created_at
+- **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, details, automatic (ouvert par le site, #122), snapshot, decision, handled_by, handled_at, created_at
 
 ## Retrouver un personnage en jeu
 Tous ces champs sont facultatifs.

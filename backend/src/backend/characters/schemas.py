@@ -186,3 +186,10 @@ class HangoutIn(BaseModel):
     y: Annotated[int, Field(ge=-1000, le=1000)]
     label: text(60) = None
     habits: text(200) = None
+
+
+class Namesakes(BaseModel):
+    """Ces noms sont-ils déjà portés sur le serveur ? Oui ou non, rien de plus (#122)."""
+
+    name: bool
+    ingame_name: bool

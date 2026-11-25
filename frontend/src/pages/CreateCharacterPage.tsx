@@ -27,6 +27,7 @@ import {
 import { setActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
 import PageTitle from '../components/PageTitle'
 import styles from './CreateCharacterPage.module.css'
+import { useNamesakes } from '../lib/useNamesakes'
 
 /**
  * Les étapes du mode guidé, et les champs que chacune remplit. L'essentiel d'abord (qui, où,
@@ -80,6 +81,9 @@ function CreateCharacterPage() {
   })
   const errors = create.error instanceof ApiError ? create.error.fields : {}
 
+  // Avant les retours anticipés : un hook s'appelle à chaque rendu (#122).
+  const namesakes = useNamesakes(draft.server_id, draft.name, draft.ingame_name)
+
   if (me.isError || servers.isError) {
     return <Unreachable />
   }
@@ -108,7 +112,7 @@ function CreateCharacterPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const parts = formParts({ draft, set, errors, servers: servers.data ?? [], server, mode })
+  const parts = formParts({ draft, set, errors, servers: servers.data ?? [], server, mode, namesakes })
 
   const groups: { title: string; fields: (keyof Draft)[] }[] = [
     { title: 'Qui est-ce ?', fields: ['name', 'server_id', 'gender'] },

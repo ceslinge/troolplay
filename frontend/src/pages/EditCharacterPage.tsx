@@ -15,6 +15,7 @@ import { STORY_FIELDS } from './characterFields'
 import { type Draft, formParts, fromCharacter, toUpdateRequest, withChange } from './characterForm'
 import PageTitle from '../components/PageTitle'
 import styles from './CreateCharacterPage.module.css'
+import { useNamesakes } from '../lib/useNamesakes'
 
 function toHangoutDrafts(character: Character): HangoutDraft[] {
   return character.hangouts.map((h) => ({
@@ -104,7 +105,9 @@ function EditForm({ character }: { character: Character }) {
   const known = (places.data ?? []).map((p) => ({ area: p.area, x: p.x, y: p.y, label: p.label, count: p.regulars.length }))
   // On peut déménager, mais seulement vers un serveur ouvert du même jeu (décision 29).
   const sameGame = usable.filter((s) => s.game === character.server?.game)
-  const parts = formParts({ draft, set, errors, servers: sameGame, server, mode: 'free' })
+  // Sa propre fiche ne compte pas : on l'écarte de la recherche.
+  const namesakes = useNamesakes(draft.server_id, draft.name, draft.ingame_name, character.id)
+  const parts = formParts({ draft, set, errors, servers: sameGame, server, mode: 'free', namesakes })
   const groups: { title: string; fields: (keyof Draft)[] }[] = [
     { title: 'Qui est-ce ?', fields: ['name', 'server_id', 'gender'] },
     { title: 'En jeu', fields: ['class', 'level', 'ingame_name', 'play_days', 'play_periods'] },

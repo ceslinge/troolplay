@@ -175,8 +175,8 @@ function Case({ target, id }: { target: Target; id: number }) {
                 {r.decision && <span className={styles.badge}>{DECISION_LABELS[r.decision]}</span>}
                 <span className={styles.muted}>le {teamDate(r.created_at)}</span>
               </span>
-              {r.details && <p>« {r.details} »</p>}
-              <ReporterLine r={r.reporter} />
+              {r.details && <p>{r.automatic ? r.details : `« ${r.details} »`}</p>}
+              {r.automatic ? <span className={styles.muted}>Ouvert par le site : deux fiches, un même nom en jeu</span> : <ReporterLine r={r.reporter} />}
               {r.snapshot && (
                 <details className={styles.snapshot}>
                   <summary>Le contenu tel qu'il était signalé</summary>

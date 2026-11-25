@@ -34,6 +34,15 @@
   color: var(--encre-douce);
 }
 
+/* À savoir, sans bloquer : un filet à gauche, sans la couleur d'une erreur. */
+.warning {
+  padding-left: 0.5rem;
+  border-left: 3px solid var(--medaillon-bord);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--encre);
+}
+
 .error {
   font-size: 0.8125rem;
   font-weight: 600;

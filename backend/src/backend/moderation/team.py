@@ -338,6 +338,7 @@ def read_case(
                 decision=r.decision,
                 handled_at=r.handled_at,
                 reporter=stats.get(r.reporter_id, GONE) if r.reporter_id else GONE,
+                automatic=r.automatic,
                 snapshot=r.snapshot,
             )
             for r in reports

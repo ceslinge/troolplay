@@ -248,6 +248,12 @@ Réponse 204, sans corps. Les lieux partent avec la fiche. Les histoires signée
 
 Erreurs : 401, 403, 404.
 
+### Deux fiches, un même nom (#122)
+
+`GET /api/characters/namesakes?server_id=…&name=…&ingame_name=…&but=…`, ouvert aux visiteurs (ils remplissent une fiche avant de s'inscrire) : `{"name": bool, "ingame_name": bool}`. Les noms sont comparés sans majuscules ni accents, sur le serveur donné, PNJ et la fiche `but` exclus. La réponse ne dit jamais quelle fiche, ni à qui elle est.
+
+Créer ou modifier une fiche dont le nom en jeu est déjà porté sur le serveur ne bloque rien, mais ouvre un dossier pour l'équipe : un signalement `impersonation` avec `automatic: true`, sans auteur, une seule fois par fiche tant qu'il est en attente.
+
 ## Les serveurs
 
 `GET /api/servers`

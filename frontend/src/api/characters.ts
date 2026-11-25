@@ -197,3 +197,14 @@ export const ignoreCharacter = (id: number) => apiFetch<void>(`/me/ignored/${id}
 export const unignoreCharacter = (id: number) => apiFetch<void>(`/me/ignored/${id}`, { method: 'DELETE' })
 
 export const fetchIgnored = () => apiFetch<{ items: CharacterSummary[] }>('/me/ignored').then((r) => r.items)
+
+/** Ces noms sont-ils déjà portés sur ce serveur (#122) ? Oui ou non, jamais quelle fiche. */
+export type Namesakes = { name: boolean; ingame_name: boolean }
+
+export function fetchNamesakes(serverId: number, name: string, ingameName: string, but?: number) {
+  const params = new URLSearchParams({ server_id: String(serverId) })
+  if (name.trim()) params.set('name', name.trim())
+  if (ingameName.trim()) params.set('ingame_name', ingameName.trim())
+  if (but) params.set('but', String(but))
+  return apiFetch<Namesakes>(`/characters/namesakes?${params}`)
+}
