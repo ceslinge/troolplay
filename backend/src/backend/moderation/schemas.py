@@ -178,6 +178,9 @@ class JournalEntry(BaseModel):
     target_user_id: int | None
     target_character_id: int | None
     target_story_id: int | None
+    target_server_id: int | None
+    # Son nom actuel : un id ne parle à personne.
+    target_server_name: str | None = None
     detail: str | None
     reason: str
     created_at: datetime

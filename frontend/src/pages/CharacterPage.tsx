@@ -101,7 +101,7 @@ function CharacterPage() {
   const { character: c, age } = query.data
   const sections = sectionsOf(c)
   const schedule = formatSchedule(c.play_days, c.play_periods)
-  const meta = c.server ? `Sur ${c.server.name}` : null
+  const meta = c.server ? `Sur ${c.server.name}${c.server.closed ? ' (serveur fermé)' : ''}` : null
   const findTitle = agree(c.gender, {
     feminine: 'La retrouver en jeu',
     masculine: 'Le retrouver en jeu',

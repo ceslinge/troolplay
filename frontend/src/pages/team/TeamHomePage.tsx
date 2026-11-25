@@ -12,6 +12,7 @@ function TeamHome() {
   const open = useQuery({ queryKey: ['moderation', 'cases', 'open'], queryFn: () => fetchCases('open') })
   const waiting = open.data?.total ?? 0
   const canManageRoles = useCan('manage_roles')
+  const canManageServers = useCan('manage_servers')
 
   return (
     <main className={styles.page}>
@@ -44,6 +45,12 @@ function TeamHome() {
           <Sheet seed="equipe-roles" contentClassName={`${styles.card} ${styles.tool}`}>
             <Link to="/equipe/roles">Rôles</Link>
             <p className={styles.muted}>Qui est modérateur ou admin, et donner un rôle à quelqu'un. Réservé aux admins.</p>
+          </Sheet>
+        )}
+        {canManageServers && (
+          <Sheet seed="equipe-serveurs" contentClassName={`${styles.card} ${styles.tool}`}>
+            <Link to="/equipe/serveurs">Serveurs</Link>
+            <p className={styles.muted}>Ajouter un serveur qu'Ankama ouvre, en renommer un, fermer ou rouvrir. Réservé aux admins.</p>
           </Sheet>
         )}
         <Sheet seed="equipe-pages" variant="muted" contentClassName={`${styles.card} ${styles.tool}`}>

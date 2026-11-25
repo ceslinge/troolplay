@@ -81,6 +81,10 @@ ACTIONS = (
     "restore_reporting",
     "set_role",
     "auto_hide",
+    "add_server",
+    "rename_server",
+    "close_server",
+    "reopen_server",
 )
 DECISIONS = ("founded", "no_action", "abusive")
 
@@ -112,8 +116,11 @@ class ModerationAction(Base):
     target_story_id: Mapped[int | None] = mapped_column(
         ForeignKey("stories.id", ondelete="SET NULL")
     )
-    # Une décision, une durée de suspension : ce que l'action a choisi.
-    detail: Mapped[str | None] = mapped_column(String(20))
+    target_server_id: Mapped[int | None] = mapped_column(
+        ForeignKey("game_servers.id", ondelete="SET NULL")
+    )
+    # Une décision, une durée de suspension, l'ancien nom d'un serveur : ce que l'action a choisi.
+    detail: Mapped[str | None] = mapped_column(String(40))
     reason: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), index=True

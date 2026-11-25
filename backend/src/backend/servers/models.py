@@ -15,3 +15,5 @@ class GameServer(Base):
     game: Mapped[str] = mapped_column(String(10))
     name: Mapped[str] = mapped_column(String(40))
     is_active: Mapped[bool] = mapped_column(server_default=true())
+    # Son nom dans le catalogue (catalog.py), s'il en vient : renommé sur le site, il y reste reconnu.
+    catalog_name: Mapped[str | None] = mapped_column(String(40))

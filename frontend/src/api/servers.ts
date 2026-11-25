@@ -6,6 +6,8 @@ export type Server = {
   game: 'dofus' | 'retro' | 'touch'
   name: string
   classes: CharacterClass[]
+  /** Fermé par l'équipe : ses fiches restent lisibles, on n'en crée plus. */
+  closed: boolean
 }
 
 export async function fetchServers(): Promise<Server[]> {

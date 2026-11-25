@@ -83,7 +83,7 @@ function EditForm({ character }: { character: Character }) {
       : undefined
 
   function set<K extends keyof Draft>(key: K, value: Draft[K]) {
-    setDraft((current) => withChange(current, key, value, servers.data ?? []))
+    setDraft((current) => withChange(current, key, value, usable))
   }
 
   function submit(event: FormEvent) {
@@ -91,7 +91,9 @@ function EditForm({ character }: { character: Character }) {
     save.mutate()
   }
 
-  const server = servers.data?.find((s) => String(s.id) === draft.server_id)
+  // Un serveur fermé n'est plus dans la liste, mais la fiche qui y vit le garde.
+  const usable = [...(servers.data ?? []), ...(character.server?.closed ? [character.server] : [])]
+  const server = usable.find((s) => String(s.id) === draft.server_id)
   // Les lieux déjà épinglés sur le serveur choisi : la même requête que « Qui traîne ici ? », donc souvent déjà en mémoire.
   const places = useQuery({
     queryKey: ['places', Number(draft.server_id), undefined, undefined],
@@ -100,7 +102,7 @@ function EditForm({ character }: { character: Character }) {
   })
   const known = (places.data ?? []).map((p) => ({ area: p.area, x: p.x, y: p.y, label: p.label, count: p.regulars.length }))
   // On peut déménager, mais seulement vers un serveur ouvert du même jeu (décision 29).
-  const sameGame = (servers.data ?? []).filter((s) => s.game === character.server?.game)
+  const sameGame = usable.filter((s) => s.game === character.server?.game)
   const parts = formParts({ draft, set, errors, servers: sameGame, server, mode: 'free' })
   const groups: { title: string; fields: (keyof Draft)[] }[] = [
     { title: 'Qui est-ce ?', fields: ['name', 'server_id', 'gender'] },

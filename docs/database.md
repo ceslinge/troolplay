@@ -42,7 +42,7 @@ erDiagram
 
 ## Colonnes
 - **users** : id, email, password_hash, role, email_verified_at, banned_at, banned_until, report_banned_at, created_at
-- **game_servers** : id, game, name, is_active
+- **game_servers** : id, game, name, is_active, catalog_name (son nom dans le catalogue, s'il en vient : renommé sur le site, il n'y revient pas en double)
 - **characters** : id, user_id, server_id, is_npc, name, gender, ingame_name, class, level, avatar, seal, hook, appearance, personality, backstory, goals, flaws, rumors, ooc_note, play_days, play_periods, inactive_at, inactive_note, hidden_at, position, created_at, updated_at
 - **character_hangouts** : id, character_id, area, x, y, label, habits
 - **stories** : id, user_id, character_id, title, body, content_warnings, content_note, author_note, published_at, hidden_at, created_at, updated_at
@@ -54,7 +54,7 @@ erDiagram
 - **login_failures** : id, email, ip, created_at
 - **throttle_events** : id, action, key, created_at
 - **email_tokens** : id, user_id, purpose, token_hash, expires_at, used_at, created_at
-- **moderation_actions** : id, actor_id, action, target_user_id, target_character_id, target_story_id, detail, reason, created_at
+- **moderation_actions** : id, actor_id, action, target_user_id, target_character_id, target_story_id, target_server_id, detail, reason, created_at
 - **ignored_characters** : user_id, character_id, created_at
 - **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, details, snapshot, decision, handled_by, handled_at, created_at
 
@@ -88,7 +88,7 @@ Tous ces champs sont facultatifs.
 ## La modération
 - `banned_at`, `banned_until` : suspendu depuis, jusqu'à. Sans `banned_until`, c'est sans fin. Une suspension passée ne compte plus, sans qu'il faille l'effacer.
 - `report_banned_at` : le droit de signaler, retiré par la modération.
-- `moderation_actions.action` : decide, hide, unhide, suspend, reinstate, revoke_reporting, restore_reporting, set_role, auto_hide (sans auteur : `actor_id` vide). `detail` garde la décision, la durée ou le nouveau rôle. Les références passent à NULL quand ce qu'elles visent disparaît.
+- `moderation_actions.action` : decide, hide, unhide, suspend, reinstate, revoke_reporting, restore_reporting, set_role, auto_hide (sans auteur : `actor_id` vide), add_server, rename_server, close_server, reopen_server. `detail` garde la décision, la durée, le nouveau rôle ou l'ancien nom d'un serveur. Les références passent à NULL quand ce qu'elles visent disparaît.
 
 ## Avant les histoires à plusieurs mains
 Séparer stories de story_parts, pour que supprimer un compte n'efface pas les suites des autres.

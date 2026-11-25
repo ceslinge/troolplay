@@ -1,3 +1,4 @@
+import type { Server } from './servers'
 import { apiFetch } from './client'
 import type { ReportReason } from './reports'
 
@@ -56,6 +57,8 @@ export type JournalEntry = {
   target_user_id: number | null
   target_character_id: number | null
   target_story_id: number | null
+  target_server_id: number | null
+  target_server_name: string | null
   detail: string | null
   reason: string
   created_at: string
@@ -106,3 +109,17 @@ export const lookupAccount = (email: string) => apiFetch<{ id: number }>('/moder
 
 export const changeRole = (id: number, role: Role, reason: string) =>
   apiFetch<TeamAccount>(`/moderation/accounts/${id}/role`, { method: 'POST', body: { role, reason } })
+
+// Les serveurs, pour les admins (#81).
+export type TeamServer = Server & { characters: number; stories: number }
+
+export const fetchTeamServers = () => apiFetch<{ items: TeamServer[] }>('/moderation/servers').then((r) => r.items)
+
+export const addServer = (game: Server['game'], name: string, reason: string) =>
+  apiFetch<TeamServer>('/moderation/servers', { method: 'POST', body: { game, name, reason } })
+
+export const renameServer = (id: number, name: string, reason: string) =>
+  apiFetch<TeamServer>(`/moderation/servers/${id}`, { method: 'PATCH', body: { name, reason } })
+
+export const setServerOpen = (id: number, open: boolean, reason: string) =>
+  apiFetch<TeamServer>(`/moderation/servers/${id}/${open ? 'reopen' : 'close'}`, { method: 'POST', body: { reason } })

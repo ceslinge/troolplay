@@ -256,10 +256,10 @@ Pour les listes déroulantes. Accessible sans compte.
 Réponse 200 :
 
 ```json
-{"items": [{"id": 3, "game": "dofus", "name": "Ombrelune", "classes": ["feca", "osamodas", "…"]}]}
+{"items": [{"id": 3, "game": "dofus", "name": "Ombrelune", "classes": ["feca", "osamodas", "…"], "closed": false}]}
 ```
 
-Seuls les serveurs actifs sont listés, triés par jeu puis par nom. `classes` donne les classes jouables dans le jeu du serveur, dans l'ordre du jeu.
+Seuls les serveurs ouverts sont listés, triés par jeu puis par nom. `classes` donne les classes jouables dans le jeu du serveur, dans l'ordre du jeu. Le serveur d'une fiche porte le même format : `closed` à `true` dit qu'il a été fermé par l'équipe. La fiche reste lisible et modifiable ; on ne crée plus de personnage sur ce serveur, et on n'y déménage plus.
 
 ## Qui traîne ici ?
 
@@ -304,7 +304,7 @@ Une histoire appartient à un compte et est signée par un de ses personnages (s
   "id": 12,
   "title": "La nuit où Astrub a brûlé",
   "body": "Le vent tournait. *Encore une nuit sans sommeil*, pensa-t-elle…",
-  "character": { "id": 42, "name": "Maëlis", "gender": "feminine", "class": "cra", "avatar": null, "seal": null, "server": { "id": 3, "game": "dofus", "name": "Ombre", "is_active": true } },
+  "character": { "id": 42, "name": "Maëlis", "gender": "feminine", "class": "cra", "avatar": null, "seal": null, "server": { "id": 3, "game": "dofus", "name": "Ombre", "classes": ["…"], "closed": false } },
   "content_warnings": ["death", "violence"],
   "content_note": "Mort d'un personnage aimé",
   "author_note": "Suite de la soirée du 12 à la taverne. Merci à Tobias !",
@@ -449,9 +449,18 @@ Capacité `manage_roles`, donc les admins.
 - `POST /api/moderation/accounts/lookup` avec `{"email": "…"}` : le numéro du compte qui a cette adresse exacte, ou 404. En `POST`, pour qu'une adresse ne passe jamais dans une URL que les journaux du serveur gardent. Aucune route ne liste d'adresses.
 - `POST /api/moderation/accounts/{id}/role` avec `{"role": "user" | "moderator" | "admin", "reason": "…"}` : 409 si c'est déjà son rôle, ou si c'est le dernier admin. La personne est prévenue par email. Entre admins, pas de règle de rang : nommer et retirer, c'est le rôle même des admins.
 
+### Les serveurs
+
+Capacité `manage_servers`, donc les admins. Chaque geste demande une raison et va au journal ; personne n'est prévenu par email.
+
+- `GET /api/moderation/servers` : tous les serveurs, fermés compris, avec leur nombre de fiches (`characters`) et d'histoires publiées (`stories`).
+- `POST /api/moderation/servers` avec `{"game": "dofus" | "retro" | "touch", "name": "…", "reason": "…"}` : 201, le serveur est ouvert. 422 si un serveur du même jeu porte déjà ce nom (à la casse près).
+- `PATCH /api/moderation/servers/{id}` avec `{"name": "…", "reason": "…"}` : renommer. Le journal garde l'ancien nom dans `detail`. Un serveur du catalogue garde son nom d'origine en base (`catalog_name`) : le déploiement suivant ne le recrée pas.
+- `POST /api/moderation/servers/{id}/close` et `/reopen` avec `{"reason": "…"}` : 409 s'il l'est déjà.
+
 ### Le journal
 
-`GET /api/moderation/journal`, filtrable par `action`, `actor_id`, `target_user_id` : qui, quoi, sur quoi, quand, pourquoi, le plus récent d'abord. Aucune route ne le modifie ni ne l'efface.
+`GET /api/moderation/journal`, filtrable par `action`, `actor_id`, `target_user_id` : qui, quoi, sur quoi, quand, pourquoi, le plus récent d'abord. Une action sur un serveur donne `target_server_id` et son nom actuel, `target_server_name`. Aucune route ne le modifie ni ne l'efface.
 
 ## Les comptes
 
