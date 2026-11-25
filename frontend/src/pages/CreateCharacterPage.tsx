@@ -131,18 +131,14 @@ function CreateCharacterPage() {
       <PageTitle>Présenter un nouveau personnage</PageTitle>
       <div className={styles.top}>
         <h1 className={styles.title}>Présenter un nouveau personnage</h1>
-        <div className={styles.modes} role="group" aria-label="Façon de remplir">
-          <button type="button" aria-pressed={mode === 'guided'} onClick={() => setMode('guided')}>
-            Guidé
-          </button>
-          <button type="button" aria-pressed={mode === 'free'} onClick={() => setMode('free')}>
-            Libre
-          </button>
-        </div>
       </div>
       <p className={styles.lead}>
         Seuls le nom et le serveur sont obligatoires. Ton brouillon est gardé sur cet appareil, tu peux revenir plus tard.
       </p>
+      {/* Une question à la fois par défaut : un nouveau venu n'a pas à choisir avant d'avoir commencé. */}
+      <button type="button" className={styles.switch} onClick={() => setMode(mode === 'guided' ? 'free' : 'guided')}>
+        {mode === 'guided' ? "Je préfère tout voir d'un coup" : 'Revenir aux questions une à une'}
+      </button>
 
       {create.isError && !(create.error instanceof ApiError && create.error.status === 422) && (
         <Notice tone="error">

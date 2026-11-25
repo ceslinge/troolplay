@@ -57,6 +57,21 @@ h3 {
   line-height: 1.2;
 }
 
+/* Un élément caché reste caché, même quand son style lui donne un affichage (flex, grid…). */
+[hidden] {
+  display: none !important;
+}
+
+/* Des liens discrets : un filet fin et décollé, à demi transparent, qui se fonce au survol.
+   Le soulignement reste : c'est lui, et pas seulement la couleur, qui les distingue du texte. */
 a {
   color: var(--cire);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+}
+
+a:hover {
+  text-decoration-color: currentColor;
 }

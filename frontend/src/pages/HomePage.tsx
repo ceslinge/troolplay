@@ -11,6 +11,7 @@ import Seal from '../components/Seal'
 import Sheet from '../components/Sheet'
 import { serverOptions } from '../lib/games'
 import { useToast } from '../lib/toast'
+import { useMe } from '../lib/useMe'
 import PageTitle from '../components/PageTitle'
 import styles from './HomePage.module.css'
 
@@ -42,6 +43,7 @@ function savedServer(): number | undefined {
 
 function RightNowSheet({ data, onServer }: { data: RightNow; onServer: (id: number) => void }) {
   const servers = useQuery({ queryKey: ['servers'], queryFn: fetchServers })
+  const me = useMe()
   const who =
     data.count === 0
       ? `personne n'a encore indiqué jouer à cette heure-ci sur ${data.server.name}.`
@@ -63,14 +65,27 @@ function RightNowSheet({ data, onServer }: { data: RightNow; onServer: (id: numb
           />
         )}
       </div>
-      <p className={styles.big}>
-        {moment(data.day, data.period)}, {who}
-      </p>
-      {data.places.length > 0 && <p>Où les trouver : {data.places.join(', ')}.</p>}
-      {data.count > 0 && (
-        <Link to={`/communaute/${data.server.id}?day=${data.day}&period=${data.period}`}>Voir qui</Link>
+      {data.count > 0 ? (
+        <>
+          <p className={styles.big}>
+            {moment(data.day, data.period)}, {who}
+          </p>
+          {data.places.length > 0 && <p>Où les trouver : {data.places.join(', ')}.</p>}
+          <Link to={`/communaute/${data.server.id}?day=${data.day}&period=${data.period}`}>Voir qui</Link>
+          <p className={styles.note}>D'après les horaires indiqués sur les fiches : ce n'est pas qui est connecté.</p>
+        </>
+      ) : (
+        // Personne pour l'instant : plutôt qu'un panneau vide, une invitation à être le premier.
+        <>
+          <p className={styles.big}>Le panneau de {data.server.name} attend ses premiers habitués.</p>
+          <p>
+            Indique sur ta fiche quand tu joues : on saura à quelle heure te croiser.{' '}
+            <Link to={me.data ? '/compte' : '/personnages/nouveau'}>
+              {me.data ? 'Compléter mes fiches' : 'Présenter mon personnage'}
+            </Link>
+          </p>
+        </>
       )}
-      <p className={styles.note}>D'après les horaires indiqués sur les fiches : ce n'est pas qui est connecté.</p>
     </Sheet>
   )
 }
