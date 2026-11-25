@@ -57,6 +57,11 @@ export function loadDraft(): Draft {
   }
 }
 
+/** Une fiche a été commencée sur cet appareil, sans être épinglée. */
+export function hasPendingDraft(): boolean {
+  return loadDraft().name.trim().length > 0
+}
+
 export function saveDraft(draft: Draft) {
   try {
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))

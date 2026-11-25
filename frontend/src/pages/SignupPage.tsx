@@ -8,6 +8,8 @@ import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
 import PageTitle from '../components/PageTitle'
+import { RESUME_SHEET } from '../lib/next'
+import { hasPendingDraft } from './characterForm'
 import styles from './AuthPages.module.css'
 
 function SignupPage() {
@@ -38,6 +40,14 @@ function SignupPage() {
               Le lien est valable 24 heures. Il peut mettre quelques minutes à arriver : pense à regarder dans les
               indésirables.
             </p>
+            {hasPendingDraft() && (
+              <Notice>
+                <p>
+                  Ta fiche t'attend sur cet appareil. Ouvre le lien de vérification ici, ou reviens sur cet appareil ensuite
+                  pour l'épingler.
+                </p>
+              </Notice>
+            )}
             <Link to="/verifier">Rien reçu ? Demander un nouveau lien</Link>
           </div>
         </Sheet>
@@ -90,7 +100,9 @@ function SignupPage() {
             Créer mon compte
           </Button>
           <div className={styles.links}>
-            <Link to="/connexion">Déjà un compte ? Se connecter</Link>
+            <Link to={hasPendingDraft() ? `/connexion?suite=${encodeURIComponent(RESUME_SHEET)}` : '/connexion'}>
+              Déjà un compte ? Se connecter
+            </Link>
           </div>
         </form>
       </Sheet>

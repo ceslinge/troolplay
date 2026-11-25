@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { safeNext } from '../lib/next'
 import { type FormEvent, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { logIn } from '../api/accounts'
@@ -22,7 +23,7 @@ function LoginPage() {
     onSuccess: async () => {
       // Tout ce qui a été chargé en visiteur peut changer une fois connecté (« Modifier ma fiche »…).
       await queryClient.invalidateQueries()
-      navigate(params.get('suite') ?? '/')
+      navigate(safeNext(params.get('suite')))
     },
   })
   const error = login.error instanceof ApiError ? login.error : null
