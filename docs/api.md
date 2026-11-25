@@ -463,7 +463,7 @@ Capacité `manage_servers`, donc les admins. Chaque geste demande une raison et 
 
 Une personne visée par une décision (`hide`, `auto_hide`, `suspend`, `revoke_reporting`) peut la contester **une fois** : la base le garantit (une ligne de `contests` par décision).
 
-Un compte suspendu se connecte, mais toutes les routes lui restent fermées (401) sauf celles-ci, qui acceptent `SessionUser` : `GET /api/me`, `GET /api/me/decisions`, `POST /api/me/decisions/{id}/contest`, `DELETE /api/session`. `tests/test_suspended.py` vérifie chaque route de l'API : partout ailleurs, il reçoit la même réponse qu'un visiteur.
+Un compte suspendu se connecte, mais toutes les routes lui restent fermées (401) sauf celles-ci, qui acceptent `SessionUser` : `GET /api/me`, `GET /api/me/export`, `GET /api/me/decisions`, `POST /api/me/decisions/{id}/contest`, `DELETE /api/session`. `tests/test_suspended.py` vérifie chaque route de l'API : partout ailleurs, il reçoit la même réponse qu'un visiteur.
 
 - `GET /api/me/decisions` : les décisions qui me visent, les plus récentes d'abord, sans le nom de qui les a prises, chacune avec sa contestation (`contest`, ou `null`).
 - `POST /api/me/decisions/{id}/contest` avec `{"body": "…"}` (10 à 2 000 caractères, espaces autour retirés) : 201. 404 si la décision ne me vise pas ou ne se conteste pas ; 409 si elle est déjà contestée.
@@ -482,6 +482,10 @@ Une conversation entre un membre et l'équipe : question, problème ou bug. La c
 - `POST /api/moderation/conversations/{id}/close` : 409 si déjà close.
 
 Une conversation close s'efface au bout d'un an, au moment où l'on liste les conversations (pas de tâche planifiée) ; toutes partent avec le compte.
+
+### Exporter ses données (#55)
+
+`GET /api/me/export` : un fichier JSON à télécharger (`Content-Disposition: attachment`), avec tout ce que le site garde de la personne : `account`, `characters` (et leurs `hangouts`), `stories` (brouillons compris), `ignored_characters`, `reports_sent`, `decisions_about_me`, `contests`, `requests_to_the_team` (et leurs `messages`). Les colonnes viennent des modèles ; en sont retirés les secrets (`password_hash`) et tout ce qui désigne un autre compte (`actor_id`, `author_id`, `reported_user_id`, la copie du contenu signalé…). Ouvert aussi à un compte suspendu (`SessionUser`). 10 exports par jour au plus.
 
 ### Le journal
 

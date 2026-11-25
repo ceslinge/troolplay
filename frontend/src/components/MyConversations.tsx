@@ -72,7 +72,7 @@ function MyConversations() {
 
   return (
     <AccountSection title="Écrire à l'équipe" seed="compte-demandes" id="demandes" ready={conversations.isSuccess}>
-      <p className={styles.hint}>
+      <p className="hint">
         Une question, un problème avec ton compte, un bug : l'équipe te lit. Pour contester une décision, passe plutôt par
         la décision elle-même.
       </p>
@@ -94,7 +94,7 @@ function MyConversations() {
         <Disclosure key={c.id} label={`${TOPIC_LABELS[c.topic]}, ${conversationState(c)}`} open={!c.closed_at && !c.waiting_for_team}>
           <div className={styles.conversation}>
             <ConversationThread messages={c.messages} />
-            {c.closed_at ? <p className={styles.hint}>Cette demande est close. Pour autre chose, ouvre-en une nouvelle.</p> : <Reply conversation={c} />}
+            {c.closed_at ? <p className="hint">Cette demande est close. Pour autre chose, ouvre-en une nouvelle.</p> : <Reply conversation={c} />}
           </div>
         </Disclosure>
       ))}

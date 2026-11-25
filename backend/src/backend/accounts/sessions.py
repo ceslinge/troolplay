@@ -108,7 +108,7 @@ def session_user(
     """La personne connectée, même suspendue (#141).
 
     Réservé à ce qu'un compte suspendu doit pouvoir faire : se voir, se déconnecter,
-    lire les décisions qui le visent et les contester. tests/test_suspended.py tient la liste.
+    lire les décisions qui le visent, les contester, et récupérer ses données. tests/test_suspended.py tient la liste.
     """
     return find_user(session, token)
 

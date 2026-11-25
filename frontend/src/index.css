@@ -95,3 +95,10 @@ a:hover {
   text-underline-offset: 0.22em;
   text-decoration-color: currentColor;
 }
+
+/* Une note discrète sous un titre ou un bouton : grise, un peu plus petite. */
+.hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--encre-douce);
+}

@@ -17,6 +17,7 @@ Les capacités de chaque rôle sont écrites une seule fois, dans `backend/src/b
 | Retirer le droit de signaler | non | non | non | oui | oui |
 | Lire le journal de modération | non | non | non | oui | oui |
 | Savoir quel compte possède un personnage | non | non | oui | oui | oui |
+| Exporter ses données | non | oui | oui | oui | oui |
 | Gérer les PNJ | non | non | non | non | oui |
 | Gérer les serveurs | non | non | non | non | oui |
 | Nommer modérateurs et admins | non | non | non | non | oui |
@@ -61,7 +62,7 @@ Ensuite, les admins nomment et retirent depuis le site : Espace équipe, « Rôl
 - Le serveur vérifie qu'un personnage appartient au compte avant d'agir en son nom.
 - Le rôle ne peut pas être choisi à l'inscription.
 - Une route demande une capacité, jamais un nom de rôle.
-- Un compte suspendu n'a aucune capacité. Il ne passe que par les routes `SessionUser` : se voir, lire et contester les décisions qui le visent, se déconnecter (tests/test_suspended.py).
+- Un compte suspendu n'a aucune capacité. Il ne passe que par les routes `SessionUser` : se voir, récupérer ses données, lire et contester les décisions qui le visent, se déconnecter (tests/test_suspended.py).
 
 ## Après la V1
 - Les favoris ne sont visibles que de leur propriétaire.

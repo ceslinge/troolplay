@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import Button from '../components/Button'
+import MyData from '../components/MyData'
 import MyDecisions from '../components/MyDecisions'
 import PageTitle from '../components/PageTitle'
 import Sheet from '../components/Sheet'
@@ -35,6 +36,7 @@ function SuspendedPage({ until }: { until: string | null }) {
         </div>
       </Sheet>
       <MyDecisions always />
+      <MyData />
     </main>
   )
 }
