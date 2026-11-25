@@ -1,16 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { type FormEvent, useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router'
-import { ApiError } from '../api/client'
+import { useState } from 'react'
+import { Link } from 'react-router'
 import { contestDecision, fetchMyDecisions, type MyDecision } from '../api/moderation'
 import { DURATION_LABELS, OUTCOME_LABELS } from '../lib/moderation'
 import AccountSection from './AccountSection'
-import Field from './Field'
-import FormActions from './FormActions'
+import MessageForm from './MessageForm'
 import Notice from './Notice'
 import styles from './MyDecisions.module.css'
 
-const CONTEST_MIN = 10
 const CONTEST_MAX = 2000
 
 const longDate = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { dateStyle: 'long' })
@@ -36,18 +33,10 @@ function title(d: MyDecision): string {
 function ContestForm({ decision }: { decision: MyDecision }) {
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
-  const [body, setBody] = useState('')
   const send = useMutation({
-    mutationFn: () => contestDecision(decision.id, body.trim()),
+    mutationFn: (body: string) => contestDecision(decision.id, body),
     onSuccess: (updated) => queryClient.setQueryData<MyDecision[]>(['decisions'], (all) => all?.map((d) => (d.id === updated.id ? updated : d))),
   })
-  const failure = send.error instanceof ApiError ? send.error : null
-  const ready = body.trim().length >= CONTEST_MIN
-
-  function submit(event: FormEvent) {
-    event.preventDefault()
-    if (ready) send.mutate()
-  }
 
   if (!open) {
     return (
@@ -57,24 +46,18 @@ function ContestForm({ decision }: { decision: MyDecision }) {
     )
   }
   return (
-    <form className={styles.form} onSubmit={submit}>
-      <Field
+    <div className={styles.form}>
+      <MessageForm
         label="Ce que tu veux dire à l'équipe"
-        name="contest"
-        value={body}
-        onChange={setBody}
-        rows={5}
-        maxLength={CONTEST_MAX}
+        confirm="Envoyer ma contestation"
         hint="Un seul message par décision : prends le temps de tout dire. Un membre de l'équipe relira et te répondra par mail."
-        error={failure?.fields.body}
+        busy={send.isPending}
+        error={send.error}
+        onSend={(body) => send.mutate(body)}
+        onCancel={() => setOpen(false)}
+        max={CONTEST_MAX}
       />
-      {failure && failure.status !== 422 && (
-        <Notice tone="error">
-          <p>{failure.message}</p>
-        </Notice>
-      )}
-      <FormActions confirm="Envoyer ma contestation" onCancel={() => setOpen(false)} busy={send.isPending} disabled={!ready} />
-    </form>
+    </div>
   )
 }
 
@@ -114,16 +97,9 @@ function Decision({ decision }: { decision: MyDecision }) {
 /** Les décisions de l'équipe qui me visent, chacune contestable une fois (#141). */
 function MyDecisions({ always = false }: { always?: boolean }) {
   const decisions = useQuery({ queryKey: ['decisions'], queryFn: fetchMyDecisions })
-  const { hash } = useLocation()
-  const loaded = decisions.isSuccess
-  // Le lien des mails de décision mène ici : on y descend une fois la liste arrivée.
-  useEffect(() => {
-    if (loaded && hash === '#decisions') document.getElementById('decisions')?.scrollIntoView({ block: 'start' })
-  }, [loaded, hash])
-
   if (!always && !decisions.data?.length) return null
   return (
-    <AccountSection title="Décisions de l'équipe" seed="compte-decisions" id="decisions">
+    <AccountSection title="Décisions de l'équipe" seed="compte-decisions" id="decisions" ready={decisions.isSuccess}>
       {decisions.isError ? (
         <Notice tone="error">
           <p>Impossible de charger les décisions pour l'instant.</p>

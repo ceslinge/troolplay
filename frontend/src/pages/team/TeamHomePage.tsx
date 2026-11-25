@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
 import { fetchCases, fetchContests } from '../../api/moderation'
+import { fetchTeamConversations } from '../../api/support'
 import PageTitle from '../../components/PageTitle'
 import Sheet from '../../components/Sheet'
 import { useCan } from '../../lib/useCan'
@@ -14,6 +15,8 @@ function TeamHome() {
   const waiting = open.data?.total ?? 0
   const contests = useQuery({ queryKey: ['moderation', 'contests', 'open'], queryFn: () => fetchContests('open') })
   const contested = contests.data?.total ?? 0
+  const requests = useQuery({ queryKey: ['moderation', 'conversations', 'waiting'], queryFn: () => fetchTeamConversations('waiting') })
+  const asking = requests.data?.total ?? 0
   const canManageRoles = useCan('manage_roles')
   const canManageServers = useCan('manage_servers')
 
@@ -46,6 +49,15 @@ function TeamHome() {
           {contested > 0 && (
             <span className={`${styles.badge} ${styles.alert}`}>
               {plural(contested, 'contestation')} en attente
+            </span>
+          )}
+        </Sheet>
+        <Sheet seed="equipe-demandes" contentClassName={`${styles.card} ${styles.tool}`}>
+          <Link to="/equipe/demandes">Demandes</Link>
+          <p className={styles.muted}>Ce que les membres écrivent à l'équipe : une question, un problème, un bug. On répond, puis on clôt.</p>
+          {asking > 0 && (
+            <span className={`${styles.badge} ${styles.alert}`}>
+              {plural(asking, 'demande')} à répondre
             </span>
           )}
         </Sheet>

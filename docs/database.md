@@ -56,6 +56,8 @@ erDiagram
 - **email_tokens** : id, user_id, purpose, token_hash, expires_at, used_at, created_at
 - **moderation_actions** : id, actor_id, action, target_user_id, target_character_id, target_story_id, target_server_id, detail, reason, created_at
 - **ignored_characters** : user_id, character_id, created_at
+- **conversations** : id, user_id (suit le compte), topic (question, problem, bug), created_at, updated_at, waiting_for_team, closed_at. Effacée un an après sa clôture
+- **support_messages** : id, conversation_id, author_id, from_team, body, created_at
 - **contests** : id, action_id (unique : une contestation par décision), user_id, body, created_at, answer, outcome (upheld, lifted), answered_by, answered_at
 - **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, details, snapshot, decision, handled_by, handled_at, created_at
 

@@ -16,6 +16,8 @@ from backend.servers.routes import router as servers_router
 from backend.servers.team import router as server_team_router
 from backend.stories.routes import me_router as my_stories_router
 from backend.stories.routes import router as stories_router
+from backend.support.routes import me_router as my_conversations_router
+from backend.support.routes import router as conversations_router
 
 app = FastAPI()
 
@@ -52,6 +54,8 @@ app.include_router(moderation_router)
 app.include_router(server_team_router)
 app.include_router(my_decisions_router)
 app.include_router(contests_router)
+app.include_router(my_conversations_router)
+app.include_router(conversations_router)
 app.include_router(ignores_router)
 
 

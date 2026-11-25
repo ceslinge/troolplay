@@ -28,6 +28,7 @@ const JournalPage = lazy(() => import('./pages/team/JournalPage'))
 const RolesPage = lazy(() => import('./pages/team/RolesPage'))
 const ServersPage = lazy(() => import('./pages/team/ServersPage'))
 const ContestsPage = lazy(() => import('./pages/team/ContestsPage'))
+const RequestsPage = lazy(() => import('./pages/team/RequestsPage'))
 
 const TEAM_ROUTES = [
   { path: '/equipe', element: <TeamHomePage /> },
@@ -38,6 +39,7 @@ const TEAM_ROUTES = [
   { path: '/equipe/roles', element: <RolesPage /> },
   { path: '/equipe/serveurs', element: <ServersPage /> },
   { path: '/equipe/contestations', element: <ContestsPage /> },
+  { path: '/equipe/demandes', element: <RequestsPage /> },
 ]
 
 function App() {

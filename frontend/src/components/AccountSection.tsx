@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import { type ReactNode, useEffect } from 'react'
+import { useLocation } from 'react-router'
 import Sheet from './Sheet'
 import styles from './AccountSection.module.css'
 
@@ -6,13 +7,21 @@ type Props = {
   title: string
   /** La graine du papier : chaque feuille a son grain. */
   seed: string
-  /** Pour un lien direct, comme celui des mails de décision (#decisions). */
+  /** Pour un lien direct, comme celui des mails (#decisions, #demandes). */
   id?: string
+  /** Contenu arrivé : on peut descendre jusqu'ici si l'adresse le demande. */
+  ready?: boolean
   children: ReactNode
 }
 
 /** Une rubrique de Mon compte : son titre sur une étiquette, puis une feuille. */
-function AccountSection({ title, seed, id, children }: Props) {
+function AccountSection({ title, seed, id, ready = true, children }: Props) {
+  const { hash } = useLocation()
+  // Le lien d'un mail mène ici : on y descend une fois le contenu arrivé.
+  useEffect(() => {
+    if (id && ready && hash === `#${id}`) document.getElementById(id)?.scrollIntoView({ block: 'start' })
+  }, [id, ready, hash])
+
   return (
     <section className={styles.section} id={id}>
       <h2 className={styles.title}>{title}</h2>
