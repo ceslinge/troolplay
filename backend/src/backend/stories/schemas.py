@@ -12,6 +12,7 @@ from pydantic import (
 
 from backend.characters.classes import CharacterClass
 from backend.characters.schemas import no_duplicates
+from backend.fields import filled
 from backend.servers.schemas import ServerOut
 
 Warning = Literal[
@@ -26,7 +27,7 @@ Warning = Literal[
 ]
 
 # Les règles des champs, écrites une fois (docs/api.md, « Champs et limites »).
-Title = Annotated[str, Field(min_length=1, max_length=120)]
+Title = filled(1, 120)
 Body = Annotated[str, Field(max_length=50_000)]
 Warnings = Annotated[list[Warning], AfterValidator(no_duplicates)]
 Note = Annotated[str | None, Field(max_length=200)]

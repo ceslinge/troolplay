@@ -11,6 +11,7 @@ from pydantic import (
 )
 
 from backend.characters.classes import CharacterClass
+from backend.fields import filled
 from backend.servers.schemas import ServerOut
 
 Period = Literal["morning", "afternoon", "evening", "night"]
@@ -24,7 +25,7 @@ def no_duplicates(values: list) -> list:
 
 
 # Les règles des champs, écrites une fois (docs/api.md, « Champs et limites »).
-Name = Annotated[str, Field(min_length=2, max_length=40)]
+Name = filled(2, 40)
 Day = Annotated[int, Field(ge=1, le=7)]
 Days = Annotated[list[Day], AfterValidator(no_duplicates)]
 Periods = Annotated[list[Period], AfterValidator(no_duplicates)]
@@ -180,7 +181,7 @@ class HangoutIn(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    area: Annotated[str, Field(min_length=1, max_length=40)]
+    area: filled(1, 40)
     x: Annotated[int, Field(ge=-1000, le=1000)]
     y: Annotated[int, Field(ge=-1000, le=1000)]
     label: text(60) = None

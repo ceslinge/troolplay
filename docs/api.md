@@ -9,6 +9,7 @@ Ce document couvre les personnages, les histoires et les comptes. La modération
 - Les chemins sont ceux qu'appelle le frontend. Le préfixe `/api` est retiré avant d'arriver au backend : `/api/characters` y devient `/characters`.
 - Tout est en JSON, avec des noms en `snake_case`. Les dates sont en ISO 8601, en UTC.
 - Être connecté, c'est avoir un cookie de session valide (décision 8).
+- Un champ texte qui exige un contenu (nom, titre, zone, raison) perd ses espaces autour avant d'être vérifié : des espaces seuls sont refusés (422). Les mots de passe sont pris tels quels.
 - Une erreur renvoie `{"detail": "message lisible"}`. Une erreur de validation renvoie le format de FastAPI, avec la liste des champs fautifs.
 
 | Code | Quand |
