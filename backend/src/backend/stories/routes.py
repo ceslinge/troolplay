@@ -10,8 +10,8 @@ from backend.accounts.roles import Capability, can
 from backend.accounts.sessions import CurrentUser
 from backend.accounts.throttle import throttle
 from backend.characters.models import Character
-from backend.characters.routes import field_error
 from backend.db import SessionDep
+from backend.errors import field_error
 from backend.ignores.filters import not_ignored
 from backend.stories.models import Story
 from backend.stories.schemas import (

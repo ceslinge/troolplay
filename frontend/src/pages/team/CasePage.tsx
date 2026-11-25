@@ -11,6 +11,7 @@ import { useToast } from '../../lib/toast'
 import { DECISION_HINTS, DECISION_LABELS, REASON_LABELS, ROLE_LABELS, teamDate } from '../../lib/moderation'
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
+import { plural } from '../../lib/text'
 
 const SLUG: Record<string, Target> = { personnage: 'character', histoire: 'story' }
 
@@ -23,8 +24,8 @@ function ReporterLine({ r }: { r: CaseDetail['reports'][number]['reporter'] }) {
   if (r.id === null) return <span className={styles.muted}>Compte supprimé depuis</span>
   return (
     <span className={styles.muted}>
-      Par le <Link to={`/equipe/comptes/${r.id}`}>compte n°{r.id}</Link> : {r.reports_sent} signalement
-      {r.reports_sent > 1 ? 's' : ''}, {r.founded} fondé{r.founded > 1 ? 's' : ''}, {r.abusive} abusif{r.abusive > 1 ? 's' : ''}
+      Par le <Link to={`/equipe/comptes/${r.id}`}>compte n°{r.id}</Link> : {plural(r.reports_sent, 'signalement')},{' '}
+      {plural(r.founded, 'fondé')}, {plural(r.abusive, 'abusif')}
       {r.reporting_revoked && ' · droit de signaler retiré'}
     </span>
   )

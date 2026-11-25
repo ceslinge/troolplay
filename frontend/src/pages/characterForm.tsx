@@ -9,6 +9,7 @@ import { CLASS_LABELS } from '../lib/classes'
 import { DAY_OPTIONS, PERIOD_OPTIONS } from '../lib/schedule'
 import { FIELD_TEXTS, STORY_FIELDS, type StoryField } from './characterFields'
 import { serverOptions } from '../lib/games'
+import { CHARACTER_DRAFT_KEY, forget, readStored, store } from '../lib/storage'
 import styles from './CreateCharacterPage.module.css'
 
 /** Ce que partagent la création et la modification d'une fiche. */
@@ -46,11 +47,9 @@ export const GENDERS: ChipOption<Gender>[] = [
 ]
 
 // « On ne perd jamais un texte » : le brouillon vit dans le navigateur jusqu'à l'envoi.
-export const DRAFT_KEY = 'troolplay:brouillon-personnage'
-
 export function loadDraft(): Draft {
   try {
-    const saved = localStorage.getItem(DRAFT_KEY)
+    const saved = readStored(CHARACTER_DRAFT_KEY)
     return saved ? { ...EMPTY, ...JSON.parse(saved) } : EMPTY
   } catch {
     return EMPTY
@@ -66,13 +65,9 @@ export function hasPendingDraft(): boolean {
   return pendingDraftName() !== null
 }
 
-export function saveDraft(draft: Draft) {
-  try {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
-  } catch {
-    // Navigation privée ou stockage plein : tant pis, le formulaire marche quand même.
-  }
-}
+export const saveDraft = (draft: Draft) => store(CHARACTER_DRAFT_KEY, JSON.stringify(draft))
+
+export const dropDraft = () => forget(CHARACTER_DRAFT_KEY)
 
 /** Ce qu'on envoie pour créer : les champs vides restent de côté. */
 export function toCreateRequest(draft: Draft): NewCharacter {

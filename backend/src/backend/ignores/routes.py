@@ -6,9 +6,10 @@ from sqlalchemy.orm import selectinload
 
 from backend.accounts.sessions import CurrentUser
 from backend.characters.models import Character
-from backend.characters.routes import field_error, load_character
+from backend.characters.routes import load_character
 from backend.characters.schemas import CharacterSummary
 from backend.db import SessionDep
+from backend.errors import field_error
 from backend.ignores.models import IgnoredCharacter
 
 router = APIRouter(prefix="/me/ignored", tags=["ignores"])

@@ -12,7 +12,7 @@ import Button from '../components/Button'
 import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
-import { clearLocalDrafts } from '../lib/localDrafts'
+import { clearLocalDrafts } from '../lib/storage'
 import { RESUME_SHEET } from '../lib/next'
 import { useMe } from '../lib/useMe'
 import { pendingDraftName } from './characterForm'
@@ -32,7 +32,7 @@ function MyCharacters() {
         <h2 className={styles.title}>Mes personnages</h2>
         <div className={styles.mineActions}>
           {count > 1 && (
-            <button type="button" className={styles.linkButton} aria-pressed={ordering} onClick={() => setOrdering(!ordering)}>
+            <button type="button" className="action-link" aria-pressed={ordering} onClick={() => setOrdering(!ordering)}>
               {ordering ? 'Terminer' : 'Changer l’ordre'}
             </button>
           )}
@@ -203,7 +203,7 @@ function AccountPage() {
                 <Button variant="secondary" busy={logout.isPending} onClick={() => logout.mutate()}>
                   Se déconnecter quand même
                 </Button>
-                <button type="button" className={styles.linkButton} onClick={() => setUnpinned(null)}>
+                <button type="button" className="action-link" onClick={() => setUnpinned(null)}>
                   Rester connecté
                 </button>
               </div>

@@ -14,6 +14,7 @@ import Sheet from '../../components/Sheet'
 import { GAME_LABELS } from '../../lib/games'
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
+import { plural } from '../../lib/text'
 
 const JOURNAL_ONLY = 'Gardée au journal de l’équipe.'
 const GAMES = Object.entries(GAME_LABELS).map(([value, label]) => ({ value: value as Server['game'], label }))
@@ -22,7 +23,7 @@ type Acting = { server: TeamServer; what: 'rename' | 'close' | 'reopen' }
 
 /** « aucune fiche », « 1 histoire », « 12 fiches » : les deux mots sont féminins. */
 function count(n: number, word: string) {
-  return n === 0 ? `aucune ${word}` : `${n} ${word}${n > 1 ? 's' : ''}`
+  return n === 0 ? `aucune ${word}` : plural(n, word)
 }
 
 /** Le geste en cours sur un serveur : renommer, fermer ou rouvrir, toujours avec une raison. */
@@ -158,12 +159,12 @@ function Servers() {
                         </span>
                         <span className={styles.rowActions}>
                           {s.closed && <span className={styles.badge}>Fermé</span>}
-                          <button type="button" className={styles.linkButton} onClick={() => setActing({ server: s, what: 'rename' })}>
+                          <button type="button" className="action-link" onClick={() => setActing({ server: s, what: 'rename' })}>
                             Renommer
                           </button>
                           <button
                             type="button"
-                            className={styles.linkButton}
+                            className="action-link"
                             onClick={() => setActing({ server: s, what: s.closed ? 'reopen' : 'close' })}
                           >
                             {s.closed ? 'Rouvrir' : 'Fermer'}

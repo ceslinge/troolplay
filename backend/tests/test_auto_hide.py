@@ -26,12 +26,6 @@ def story(me: TestClient, mine: int) -> int:
 
 
 @pytest.fixture
-def moderator(client: TestClient, make_member, log_in_as) -> Iterator[TestClient]:
-    with TestClient(app) as other:
-        yield log_in_as(other, make_member("modo.test@example.com", role="moderator"))
-
-
-@pytest.fixture
 def reporter(
     session: Session, make_member, log_in_as
 ) -> Iterator[Callable[..., TestClient]]:

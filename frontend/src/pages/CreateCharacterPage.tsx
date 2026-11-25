@@ -15,9 +15,9 @@ import { RESUME_SHEET } from '../lib/next'
 import { useMe } from '../lib/useMe'
 import { STORY_FIELDS } from './characterFields'
 import {
-  DRAFT_KEY,
   type Draft,
   formParts,
+  dropDraft,
   loadDraft,
   type Mode,
   saveDraft,
@@ -59,7 +59,7 @@ function CreateCharacterPage() {
   const create = useMutation({
     mutationFn: createCharacter,
     onSuccess: async (character) => {
-      localStorage.removeItem(DRAFT_KEY)
+      dropDraft()
       // Le nouveau venu devient le personnage actif.
       setActiveCharacter(character.id)
       await queryClient.invalidateQueries({ queryKey: ['characters'] })
@@ -185,7 +185,7 @@ function CreateCharacterPage() {
         </Sheet>
       )}
       {/* Une question à la fois par défaut : un nouveau venu n'a pas à choisir avant d'avoir commencé. */}
-      <button type="button" className={styles.switch} onClick={() => setMode(mode === 'guided' ? 'free' : 'guided')}>
+      <button type="button" className={`action-link ${styles.switch}`} onClick={() => setMode(mode === 'guided' ? 'free' : 'guided')}>
         {mode === 'guided' ? "Je préfère tout voir d'un coup" : 'Revenir aux questions une à une'}
       </button>
 
@@ -215,7 +215,7 @@ function CreateCharacterPage() {
             ) : (
               <>
                 {step > 0 && (
-                  <button type="button" className={styles.skip} onClick={() => setStep(step + 1)}>
+                  <button type="button" className={`action-link ${styles.skip}`} onClick={() => setStep(step + 1)}>
                     Passer
                   </button>
                 )}
@@ -224,7 +224,7 @@ function CreateCharacterPage() {
             )}
           </div>
           {step > 0 && firstStepDone && !last && (
-            <button type="button" className={styles.skip} onClick={() => submit()}>
+            <button type="button" className={`action-link ${styles.skip}`} onClick={() => submit()}>
               Épingler tout de suite, je compléterai plus tard
             </button>
           )}

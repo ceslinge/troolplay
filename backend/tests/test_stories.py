@@ -1,4 +1,3 @@
-from collections.abc import Iterator
 from datetime import UTC, datetime
 
 import pytest
@@ -6,7 +5,6 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from backend.characters.models import Character
-from backend.main import app
 from backend.servers.models import GameServer
 from backend.stories.models import Story
 from backend.stories.routes import CREATE_LIMIT, MAX_DRAFTS, PUBLISH_LIMIT
@@ -27,12 +25,6 @@ def draft(me: TestClient, mine: int) -> int:
 def published(me: TestClient, draft: int) -> int:
     assert me.post(f"/stories/{draft}/publish").status_code == 200
     return draft
-
-
-@pytest.fixture
-def moderator(client: TestClient, make_member, log_in_as) -> Iterator[TestClient]:
-    with TestClient(app) as other:
-        yield log_in_as(other, make_member("modo.test@example.com", role="moderator"))
 
 
 # Écrire

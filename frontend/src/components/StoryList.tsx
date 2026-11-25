@@ -6,6 +6,7 @@ import MembersOnly from './MembersOnly'
 import Menu from './Menu'
 import StoryCard from './StoryCard'
 import styles from './StoryList.module.css'
+import { plural } from '../lib/text'
 
 type Group = { key: number; stories: StorySummary[] }
 
@@ -33,7 +34,7 @@ function StoryGroup({ group }: { group: Group }) {
           more.map((story) => <StoryCard key={story.id} story={story} />)
         ) : (
           <button type="button" className={styles.more} onClick={() => setOpen(true)}>
-            Et {more.length} autre{more.length > 1 ? 's' : ''} histoire{more.length > 1 ? 's' : ''} de {name}
+            Et {plural(more.length, 'autre histoire', 'autres histoires')} de {name}
           </button>
         ))}
     </div>
@@ -70,7 +71,7 @@ function ServerStories({ filters, onPage, empty }: Props) {
   return (
     <>
       <p className={styles.count} aria-live="polite">
-        {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : `${total} histoire${total > 1 ? 's' : ''}`}
+        {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : plural(total, 'histoire')}
       </p>
       <div className={styles.list}>
         {groupByCharacter(stories.data?.items ?? []).map((group) => (
@@ -125,7 +126,7 @@ function CharacterStories({ filters, empty }: Props) {
     <>
       <div className={styles.bar}>
         <p className={styles.count} aria-live="polite">
-          {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : `${total} histoire${total > 1 ? 's' : ''}`}
+          {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : plural(total, 'histoire')}
         </p>
         {total > 1 && (
           <Menu<StoryOrder>

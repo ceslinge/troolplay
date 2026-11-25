@@ -13,8 +13,8 @@ from sqlalchemy.orm import Session
 from backend.accounts.models import User
 from backend.accounts.roles import Capability, require
 from backend.characters.models import Character
-from backend.characters.routes import field_error
 from backend.db import SessionDep
+from backend.errors import field_error
 from backend.moderation.team import log
 from backend.servers.models import GameServer
 from backend.servers.schemas import (

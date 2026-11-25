@@ -7,6 +7,7 @@ import { useToast } from '../lib/toast'
 import Button from './Button'
 import ReasonForm from './ReasonForm'
 import styles from './TeamBox.module.css'
+import { plural } from '../lib/text'
 
 /** Sur une fiche ou une histoire, pour l'équipe seulement : agir sans passer par un signalement. */
 function TeamBox({ target, id }: { target: Target; id: number }) {
@@ -38,7 +39,7 @@ function TeamBox({ target, id }: { target: Target; id: number }) {
           <>
             {' · '}
             <Link to={`/equipe/signalements/${slug}/${id}`}>
-              {c.open_reports} signalement{c.open_reports > 1 ? 's' : ''} en attente
+              {plural(c.open_reports, 'signalement')} en attente
             </Link>
           </>
         )}

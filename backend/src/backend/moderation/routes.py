@@ -6,9 +6,10 @@ from sqlalchemy import select
 from backend.accounts.sessions import CurrentUser
 from backend.accounts.throttle import throttle
 from backend.characters.models import Character
-from backend.characters.routes import field_error, load_character
+from backend.characters.routes import load_character
 from backend.characters.schemas import CharacterOut
 from backend.db import SessionDep
+from backend.errors import field_error
 from backend.moderation.auto import maybe_hide
 from backend.moderation.models import Report
 from backend.moderation.schemas import ReportIn

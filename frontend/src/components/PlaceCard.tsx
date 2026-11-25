@@ -7,6 +7,7 @@ import Medallion from './Medallion'
 import styles from './PlaceCard.module.css'
 import Seal from './Seal'
 import Sheet from './Sheet'
+import { plural } from '../lib/text'
 
 /** Un lieu du panneau « Qui traîne ici ? », avec ses habitués. */
 function PlaceCard({ place }: { place: Place }) {
@@ -25,7 +26,7 @@ function PlaceCard({ place }: { place: Place }) {
           </span>
         </div>
         <span className={styles.count}>
-          {count} habitué{count > 1 ? 's' : ''}
+          {plural(count, 'habitué')}
         </span>
       </div>
       <ul className={styles.regulars}>

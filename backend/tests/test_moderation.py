@@ -1,25 +1,19 @@
-from collections.abc import Iterator
 from datetime import UTC, datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from support import journal
 
 from backend.accounts.models import User, UserSession
 from backend.characters.models import Character
 from backend.main import app
-from backend.moderation.models import ModerationAction, Report
+from backend.moderation.models import Report
 from backend.stories.models import Story
 
 TEXT = "Le vent tournait. *Encore une nuit sans sommeil*, pensa-t-elle."
 WHY = {"reason": "Vise un joueur précis, contraire à la charte."}
-
-
-@pytest.fixture
-def moderator(client: TestClient, make_member, log_in_as) -> Iterator[TestClient]:
-    with TestClient(app) as other:
-        yield log_in_as(other, make_member("modo.test@example.com", role="moderator"))
 
 
 @pytest.fixture
@@ -39,10 +33,6 @@ def reported(stranger: TestClient, story: int) -> int:
         json={"target": "story", "target_id": story, "reason": "disrespect"},
     )
     return story
-
-
-def journal(session: Session) -> list[ModerationAction]:
-    return list(session.scalars(select(ModerationAction).order_by(ModerationAction.id)))
 
 
 # Qui y a accès
