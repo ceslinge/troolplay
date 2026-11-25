@@ -9,6 +9,8 @@
   border-radius: 4px;
   font: inherit;
   font-weight: 600;
+  /* Un lien bouton ne prend pas le soulignement des liens du texte. */
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -36,4 +38,9 @@
 .danger {
   background: var(--cire);
   color: var(--papier);
+}
+
+/* Posé directement sur le bois, hors d'une feuille : un fond papier pour rester lisible (#135). */
+.onWood {
+  background: var(--papier);
 }

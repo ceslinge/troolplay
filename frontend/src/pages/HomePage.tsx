@@ -16,6 +16,7 @@ import { useMe } from '../lib/useMe'
 import PageTitle from '../components/PageTitle'
 import styles from './HomePage.module.css'
 import { plural } from '../lib/text'
+import Notice from '../components/Notice'
 
 const DAY_NAMES = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
 
@@ -169,7 +170,11 @@ function HomePage() {
         )}
       </Sheet>
 
-      {home.isError && <p className={styles.note}>Le panneau est inaccessible pour l'instant.</p>}
+      {home.isError && (
+        <Notice tone="error">
+          <p>Le panneau est inaccessible pour l'instant. Réessaie dans un moment.</p>
+        </Notice>
+      )}
 
       {home.data && (
         <>

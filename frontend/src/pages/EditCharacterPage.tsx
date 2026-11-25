@@ -5,6 +5,7 @@ import { type Character, deleteCharacter, fetchCharacter, replaceHangouts, updat
 import { ApiError } from '../api/client'
 import { fetchPlaces, fetchServers } from '../api/servers'
 import Button from '../components/Button'
+import buttons from '../components/Button.module.css'
 import Field from '../components/Field'
 import HangoutsEditor, { type HangoutDraft } from '../components/HangoutsEditor'
 import Notice from '../components/Notice'
@@ -139,7 +140,9 @@ function EditForm({ character }: { character: Character }) {
         <HangoutsEditor value={hangouts} onChange={setHangouts} error={hangoutError} known={known} />
       </Sheet>
       <div className={styles.nav}>
-        <Link to={`/personnages/${character.id}`}>Annuler</Link>
+        <Link to={`/personnages/${character.id}`} className={`${buttons.button} ${buttons.secondary} ${buttons.onWood}`}>
+          Annuler
+        </Link>
         <Button type="submit" busy={save.isPending}>
           Enregistrer
         </Button>

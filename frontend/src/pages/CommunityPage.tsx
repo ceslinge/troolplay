@@ -18,6 +18,9 @@ import { serverOptions } from '../lib/games'
 import PageTitle from '../components/PageTitle'
 import styles from './CommunityPage.module.css'
 import { plural } from '../lib/text'
+import Notice from '../components/Notice'
+import StatusPage from '../components/StatusPage'
+import buttons from '../components/Button.module.css'
 
 /** /communaute tout court : le serveur du personnage actif, ou à défaut le premier. */
 export function CommunityIndex() {
@@ -31,7 +34,20 @@ export function CommunityIndex() {
   const list = servers.data ?? []
   // Un serveur fermé depuis n'est plus dans la liste : on retombe alors sur le premier.
   const target = list.find((s) => s.id === active?.server?.id) ?? list[0]
-  return target ? <Navigate to={`/communaute/${target.id}`} replace /> : <p>Aucun serveur pour l'instant.</p>
+  return target ? (
+    <Navigate to={`/communaute/${target.id}`} replace />
+  ) : (
+    <StatusPage
+      tab="Aucun serveur"
+      icon="compass"
+      title="Aucun serveur pour l'instant"
+      lead="Le panneau n'a encore aucun serveur où présenter des personnages. Repasse un peu plus tard."
+    >
+      <Link to="/" className={`${buttons.button} ${buttons.primary}`}>
+        Retour à l'accueil
+      </Link>
+    </StatusPage>
+  )
 }
 
 type Tab = 'lieux' | 'personnages' | 'histoires'
@@ -125,7 +141,18 @@ function CommunityPage({ tab }: { tab: Tab }) {
     return null
   }
   if (!server) {
-    return <p className={styles.page}>Ce serveur n'existe pas, ou plus.</p>
+    return (
+      <StatusPage
+        tab="Serveur introuvable"
+        icon="compass"
+        title="Ce serveur n'existe pas, ou plus"
+        lead="Il a peut-être fermé. Les fiches et les histoires qui y vivaient restent lisibles depuis leurs liens."
+      >
+        <Link to="/communaute" className={`${buttons.button} ${buttons.primary}`}>
+          Voir la communauté
+        </Link>
+      </StatusPage>
+    )
   }
 
   const total = characters.data?.total ?? 0
@@ -231,14 +258,19 @@ function CommunityPage({ tab }: { tab: Tab }) {
         />
       ) : tab === 'lieux' ? (
         <>
-          <p className={styles.count} aria-live="polite">
+          {/* En panne, on ne compte rien : « personne » serait faux. */}
+          <p className={styles.count} aria-live="polite" hidden={places.isError}>
             {places.isPending
               ? 'On parcourt le panneau…'
               : places.data?.length
                 ? `${plural(places.data.length, 'lieu', 'lieux')} où traîner`
                 : 'Personne n’a encore épinglé de lieu, à ce moment-là.'}
           </p>
-          {places.isError && <p>Impossible de charger les lieux. Réessaie dans un moment.</p>}
+          {places.isError && (
+            <Notice tone="error">
+              <p>Impossible de charger les lieux. Réessaie dans un moment.</p>
+            </Notice>
+          )}
           <div className={styles.places}>
             {places.data?.map((place) => (
               <PlaceCard key={`${place.area}-${place.x}-${place.y}`} place={place} />
@@ -247,7 +279,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
         </>
       ) : (
         <>
-          <p className={styles.count} aria-live="polite">
+          <p className={styles.count} aria-live="polite" hidden={characters.isError}>
             {characters.isPending
               ? 'On parcourt le panneau…'
               : total === 0
@@ -255,7 +287,11 @@ function CommunityPage({ tab }: { tab: Tab }) {
                 : plural(total, 'personnage')}
           </p>
 
-          {characters.isError && <p>Impossible de charger les personnages. Réessaie dans un moment.</p>}
+          {characters.isError && (
+            <Notice tone="error">
+              <p>Impossible de charger les personnages. Réessaie dans un moment.</p>
+            </Notice>
+          )}
 
           <div className={styles.grid}>
             {characters.data?.items.map((character) => (
