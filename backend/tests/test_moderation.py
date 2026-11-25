@@ -330,6 +330,19 @@ def test_the_journal_lists_actions_newest_first_and_filters(
     assert only["total"] == 1
 
 
+def test_the_journal_filters_by_who_acted(
+    session: Session, moderator: TestClient, admin: TestClient, mine: int, story: int
+) -> None:
+    moderator.post(f"/moderation/characters/{mine}/hide", json=WHY)
+    admin.post(f"/moderation/stories/{story}/hide", json=WHY)
+    by_moderator = journal(session)[0].actor_id
+
+    mine_only = moderator.get(f"/moderation/journal?actor_id={by_moderator}").json()
+
+    assert mine_only["total"] == 1
+    assert mine_only["items"][0]["target_character_id"] == mine
+
+
 def test_the_journal_cannot_be_changed_from_the_site(moderator: TestClient) -> None:
     assert moderator.delete("/moderation/journal").status_code == 405
     assert moderator.put("/moderation/journal", json={}).status_code == 405
