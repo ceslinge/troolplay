@@ -34,6 +34,10 @@ class Settings(BaseSettings):
     auto_hide_reporters: int = 3
     auto_hide_min_account_days: int = 3
 
+    # La documentation interactive de l'API (/api/docs). Éteinte par défaut : en production,
+    # elle donnerait à n'importe qui la carte complète de l'API (#56).
+    api_docs: bool = False
+
     @property
     def database_url(self) -> URL:
         return URL.create(

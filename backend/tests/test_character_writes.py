@@ -318,3 +318,37 @@ def test_a_closed_current_server_does_not_block_the_sheet(
 
     assert response.status_code == 200
     assert response.json()["hook"] == "Toujours là."
+
+
+def test_creating_in_a_loop_is_limited(me: TestClient, server: GameServer) -> None:
+    """Supprimer et recréer sans fin inonderait l'accueil : 10 créations par jour (#56)."""
+    statuses = []
+    for i in range(11):
+        created = me.post(
+            "/characters",
+            json={"name": f"Boucle {i}", "server_id": server.id, "gender": "neutral"},
+        )
+        statuses.append(created.status_code)
+        if created.status_code == 201:
+            me.delete(f"/characters/{created.json()['id']}")
+
+    assert statuses[:10] == [201] * 10
+    assert statuses[10] == 429
+
+
+def test_a_full_account_hears_why_before_the_rate_limit(
+    me: TestClient, server: GameServer
+) -> None:
+    """Dix créations remplissent à la fois le compte et la limite : on dit « compte plein »."""
+    for i in range(10):
+        me.post(
+            "/characters",
+            json={"name": f"Plein {i}", "server_id": server.id, "gender": "neutral"},
+        )
+
+    full = me.post(
+        "/characters",
+        json={"name": "Onzième", "server_id": server.id, "gender": "neutral"},
+    )
+
+    assert full.status_code == 409

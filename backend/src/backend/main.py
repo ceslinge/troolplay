@@ -17,7 +17,11 @@ from backend.servers.team import router as server_team_router
 from backend.stories.routes import me_router as my_stories_router
 from backend.stories.routes import router as stories_router
 
-app = FastAPI()
+app = FastAPI(
+    docs_url="/docs" if settings.api_docs else None,
+    redoc_url=None,
+    openapi_url="/openapi.json" if settings.api_docs else None,
+)
 
 UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
 

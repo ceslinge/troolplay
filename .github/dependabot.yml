@@ -1,0 +1,32 @@
+# Dependabot surveille les dépendances (#56) : une fois par semaine, les mises à jour
+# mineures regroupées en une seule PR par écosystème ; les majeures, une par une.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    groups:
+      mineures:
+        update-types: [minor, patch]
+
+  - package-ecosystem: uv
+    directory: /backend
+    schedule:
+      interval: weekly
+    groups:
+      mineures:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      mineures:
+        update-types: [minor, patch]
+
+  - package-ecosystem: docker
+    directories: [/backend, /deploy]
+    schedule:
+      interval: weekly
