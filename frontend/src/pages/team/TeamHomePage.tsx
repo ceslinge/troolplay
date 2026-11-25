@@ -6,6 +6,7 @@ import Sheet from '../../components/Sheet'
 import { useCan } from '../../lib/useCan'
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
+import { plural } from '../../lib/text'
 
 /** /equipe : les outils auxquels on a droit, chacun expliqué en une phrase (#80). */
 function TeamHome() {
@@ -31,7 +32,7 @@ function TeamHome() {
           </p>
           {waiting > 0 && (
             <span className={`${styles.badge} ${styles.alert}`}>
-              {waiting} dossier{waiting > 1 ? 's' : ''} en attente
+              {plural(waiting, 'dossier')} en attente
             </span>
           )}
         </Sheet>

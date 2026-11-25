@@ -25,6 +25,7 @@ from backend.characters.schemas import (
     Period,
 )
 from backend.db import SessionDep
+from backend.errors import field_error
 from backend.ignores.filters import not_ignored
 from backend.ignores.models import IgnoredCharacter
 from backend.servers.models import GameServer
@@ -84,14 +85,6 @@ def matches_name(text: str):
     return or_(
         func.unaccent(Character.name).ilike(pattern, escape="\\"),
         func.unaccent(Character.ingame_name).ilike(pattern, escape="\\"),
-    )
-
-
-def field_error(field: str, message: str) -> HTTPException:
-    """Une erreur 422 sur un champ, dans le même format que celles de FastAPI."""
-    return HTTPException(
-        status_code=422,
-        detail=[{"loc": ["body", field], "type": "value_error", "msg": message}],
     )
 
 

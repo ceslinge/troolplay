@@ -14,7 +14,7 @@ export function IgnoreButton({ character }: { character: Character }) {
 
   if (!asking) {
     return (
-      <button type="button" className={styles.open} onClick={() => setAsking(true)}>
+      <button type="button" className={`action-link ${styles.open}`} onClick={() => setAsking(true)}>
         Ignorer
       </button>
     )

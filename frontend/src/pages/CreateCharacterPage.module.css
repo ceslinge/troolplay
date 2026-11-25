@@ -33,9 +33,6 @@
   font-size: 0.9375rem;
 }
 
-
-
-
 .card {
   display: flex;
   flex-direction: column;
@@ -66,7 +63,6 @@
   color: var(--encre-douce);
 }
 
-
 .nav {
   display: flex;
   flex-wrap: wrap;
@@ -78,40 +74,15 @@
 .skip {
   align-self: flex-end;
   padding: 0.5rem;
-  border: 0;
-  background: transparent;
-  color: var(--cire);
-  font: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-/* Un lien d'action : souligné seulement au survol, comme les autres boutons discrets du site. */
-.skip:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
 }
 
 /* Passer d'un mode à l'autre : un lien d'action discret, sous l'introduction. */
 .switch {
   align-self: flex-start;
   padding: 0.25rem 0.75rem;
-  border: 0;
   border-radius: 2px;
   background: var(--papier);
-  color: var(--cire);
-  font: inherit;
   font-size: 0.9375rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.switch:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
 }
 
 .switch:focus-visible {

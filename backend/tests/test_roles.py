@@ -1,4 +1,4 @@
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 from datetime import UTC, datetime
 
 import pytest
@@ -22,7 +22,6 @@ from backend.accounts.roles import (
 from backend.accounts.sessions import current_user
 from backend.characters.models import Character
 from backend.db import get_session
-from backend.main import app
 
 C = Capability
 
@@ -133,12 +132,6 @@ def test_me_lists_my_capabilities(
 
 
 # Ce que les capacités changent sur les fiches.
-
-
-@pytest.fixture
-def moderator(client: TestClient, make_member, log_in_as) -> Iterator[TestClient]:
-    with TestClient(app) as other:
-        yield log_in_as(other, make_member("modo.test@example.com", role="moderator"))
 
 
 def test_moderators_read_hidden_sheets_and_their_owner_details(

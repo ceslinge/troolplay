@@ -55,7 +55,7 @@ function ReportButton({ target, targetId, mine }: Props) {
 
   if (!open) {
     return (
-      <button type="button" className={styles.open} onClick={() => setOpen(true)}>
+      <button type="button" className={`action-link ${styles.open}`} onClick={() => setOpen(true)}>
         Signaler
       </button>
     )

@@ -2,6 +2,7 @@ import { normalize } from '../lib/text'
 import Field from './Field'
 import styles from './HangoutsEditor.module.css'
 import Suggestions from './Suggestions'
+import { plural } from '../lib/text'
 
 export type HangoutDraft = { area: string; x: string; y: string; label: string; habits: string }
 
@@ -64,7 +65,7 @@ function HangoutsEditor({ value, onChange, error, known = [] }: Props) {
             items={suggestionsFor(hangout, known, used).map((place) => ({
               key: keyOf(place),
               label: place.label ?? place.area,
-              detail: `${place.label ? `${place.area} ` : ''}[${place.x}, ${place.y}] · ${place.count} habitué${place.count > 1 ? 's' : ''}`,
+              detail: `${place.label ? `${place.area} ` : ''}[${place.x}, ${place.y}] · ${plural(place.count, 'habitué')}`,
             }))}
             onPick={(key) => {
               const place = known.find((p) => keyOf(p) === key)
@@ -73,7 +74,7 @@ function HangoutsEditor({ value, onChange, error, known = [] }: Props) {
           />
           <Field label="Nom du lieu" name={`label-${index}`} value={hangout.label} onChange={(label) => update(index, { label })} maxLength={60} hint="Facultatif : Taverne du Bouftou Ivre…" />
           <Field label="Ses habitudes là-bas" name={`habits-${index}`} value={hangout.habits} onChange={(habits) => update(index, { habits })} maxLength={200} hint="Facultatif : souvent le soir, accoudé au comptoir, dos au mur…" />
-          <button type="button" className={styles.remove} onClick={() => onChange(value.filter((_, i) => i !== index))}>
+          <button type="button" className={`action-link ${styles.remove}`} onClick={() => onChange(value.filter((_, i) => i !== index))}>
             Retirer ce lieu
           </button>
         </fieldset>

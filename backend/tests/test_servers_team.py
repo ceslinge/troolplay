@@ -1,27 +1,10 @@
-from collections.abc import Iterator
-
-import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import select
 from sqlalchemy.orm import Session
+from support import journal
 
-from backend.main import app
-from backend.moderation.models import ModerationAction
 from backend.servers.models import GameServer
 
 WHY = {"reason": "Ankama l'a annoncé ce matin."}
-
-
-@pytest.fixture
-def moderator(client: TestClient, make_member, log_in_as) -> Iterator[TestClient]:
-    with TestClient(app) as other:
-        yield log_in_as(other, make_member("modo.test@example.com", role="moderator"))
-
-
-def last_entry(session: Session) -> ModerationAction:
-    return session.scalars(
-        select(ModerationAction).order_by(ModerationAction.id.desc())
-    ).first()
 
 
 def test_servers_are_for_admins_only(
@@ -62,7 +45,7 @@ def test_adding_a_server_opens_it_and_writes_it_down(
     added = response.json()
     assert added["name"] == "Nouvelle Lune" and added["closed"] is False
     assert any(s["id"] == added["id"] for s in client.get("/servers").json()["items"])
-    entry = last_entry(session)
+    entry = journal(session)[-1]
     assert (entry.action, entry.target_server_id) == ("add_server", added["id"])
 
 
@@ -90,7 +73,7 @@ def test_renaming_keeps_the_old_name_in_the_journal(
 
     assert response.json()["name"] == "Brial-Est"
     assert me.get(f"/characters/{mine}").json()["server"]["name"] == "Brial-Est"
-    entry = last_entry(session)
+    entry = journal(session)[-1]
     assert (entry.action, entry.detail) == ("rename_server", old)
 
 
@@ -115,7 +98,7 @@ def test_closing_keeps_the_sheets_but_stops_new_ones(
     )
     assert created.status_code == 422
     assert all(s["id"] != server.id for s in me.get("/servers").json()["items"])
-    assert last_entry(session).action == "close_server"
+    assert journal(session)[-1].action == "close_server"
 
 
 def test_reopening_and_saying_so_twice(admin: TestClient, server: GameServer) -> None:

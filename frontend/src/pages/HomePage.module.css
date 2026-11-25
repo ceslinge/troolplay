@@ -191,7 +191,6 @@
   font-size: 1.375rem;
 }
 
-
 .big {
   font-family: var(--titre);
   font-size: 1.25rem;
@@ -219,20 +218,6 @@
 .again {
   align-self: flex-start;
   padding: 0.5rem 0;
-  border: 0;
-  background: transparent;
-  color: var(--cire);
-  font: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-/* Un lien d'action : souligné seulement au survol, comme les autres boutons discrets du site. */
-.again:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
 }
 
 .recent {

@@ -16,7 +16,7 @@ function Disclosure({ label, open = false, children }: Props) {
   const visible = shown || open
   return (
     <div className={styles.disclosure}>
-      <button type="button" className={styles.toggle} aria-expanded={visible} aria-controls={id} onClick={() => setShown(!visible)}>
+      <button type="button" className={`action-link ${styles.toggle}`} aria-expanded={visible} aria-controls={id} onClick={() => setShown(!visible)}>
         <svg className={styles.chevron} viewBox="0 0 24 24" aria-hidden="true">
           <path d="M9 6l6 6-6 6" />
         </svg>

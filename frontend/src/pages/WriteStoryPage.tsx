@@ -30,6 +30,7 @@ import Sheet from '../components/Sheet'
 import StoryText from '../components/StoryText'
 import Unreachable from '../components/Unreachable'
 import { useActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
+import { forget, readStored, store, storyBackupKey } from '../lib/storage'
 import { WARNING_OPTIONS } from '../lib/stories'
 import { useToast } from '../lib/toast'
 import { useMe } from '../lib/useMe'
@@ -78,11 +79,10 @@ const same = (a: Draft, b: Draft) => JSON.stringify(a) === JSON.stringify(b)
 
 // La copie de secours, sur cet appareil : si la connexion coupe ou l'onglet se ferme, rien n'est perdu.
 type Backup = { draft: Draft; at: number }
-const backupKey = (id: number | null) => `troolplay:histoire:${id ?? 'nouvelle'}`
 
 function readBackup(id: number | null): Backup | null {
   try {
-    const raw = localStorage.getItem(backupKey(id))
+    const raw = readStored(storyBackupKey(id))
     if (!raw) return null
     const backup = JSON.parse(raw) as { draft: Partial<Draft>; at: number }
     // Une copie gardée avant l'arrivée d'un champ ne l'a pas : on le complète à vide.
@@ -93,21 +93,10 @@ function readBackup(id: number | null): Backup | null {
   }
 }
 
-function writeBackup(id: number | null, draft: Draft) {
-  try {
-    localStorage.setItem(backupKey(id), JSON.stringify({ draft, at: Date.now() }))
-  } catch {
-    // Navigation privée, ou mémoire pleine : on compte sur l'enregistrement en ligne.
-  }
-}
+// Sans stockage, on compte sur l'enregistrement en ligne.
+const writeBackup = (id: number | null, draft: Draft) => store(storyBackupKey(id), JSON.stringify({ draft, at: Date.now() }))
 
-function dropBackup(id: number | null) {
-  try {
-    localStorage.removeItem(backupKey(id))
-  } catch {
-    // Rien à faire.
-  }
-}
+const dropBackup = (id: number | null) => forget(storyBackupKey(id))
 
 function errorOf(failure: unknown): ApiError | null {
   return failure instanceof ApiError ? failure : null
@@ -535,7 +524,7 @@ function DeleteStory({ id }: { id: number }) {
           </Button>
         </>
       ) : (
-        <button type="button" className={styles.linkButton} onClick={() => setConfirming(true)}>
+        <button type="button" className={`action-link ${styles.linkButton}`} onClick={() => setConfirming(true)}>
           Supprimer cette histoire
         </button>
       )}

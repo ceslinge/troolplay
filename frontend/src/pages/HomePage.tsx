@@ -10,10 +10,12 @@ import Menu from '../components/Menu'
 import Seal from '../components/Seal'
 import Sheet from '../components/Sheet'
 import { serverOptions } from '../lib/games'
+import { HOME_SERVER_KEY, readStored, store } from '../lib/storage'
 import { useToast } from '../lib/toast'
 import { useMe } from '../lib/useMe'
 import PageTitle from '../components/PageTitle'
 import styles from './HomePage.module.css'
+import { plural } from '../lib/text'
 
 const DAY_NAMES = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
 
@@ -31,14 +33,8 @@ function moment(day: number, period: Period): string {
 }
 
 // Le serveur choisi est retenu sur l'appareil, d'une visite à l'autre.
-const SERVER_KEY = 'troolplay:serveur-accueil'
-
 function savedServer(): number | undefined {
-  try {
-    return Number(localStorage.getItem(SERVER_KEY)) || undefined
-  } catch {
-    return undefined
-  }
+  return Number(readStored(HOME_SERVER_KEY)) || undefined
 }
 
 function RightNowSheet({ data, onServer }: { data: RightNow; onServer: (id: number) => void }) {
@@ -47,7 +43,7 @@ function RightNowSheet({ data, onServer }: { data: RightNow; onServer: (id: numb
   const who =
     data.count === 0
       ? `personne n'a encore indiqué jouer à cette heure-ci sur ${data.server.name}.`
-      : `${data.count} personnage${data.count > 1 ? 's ont' : ' a'} l'habitude d'être sur ${data.server.name}.`
+      : `${plural(data.count, 'personnage a', 'personnages ont')} l'habitude d'être sur ${data.server.name}.`
 
   return (
     <Sheet seed="accueil-maintenant" as="section" contentClassName={styles.card}>
@@ -110,7 +106,7 @@ function OverheardSheet({ first }: { first: Overheard }) {
         <Link to={`/personnages/${quote.character_id}`}>{quote.name}</Link>
         {quote.server && `, ${quote.server}`}
       </p>
-      <button type="button" className={styles.again} onClick={() => another.mutate()} disabled={another.isPending}>
+      <button type="button" className={`action-link ${styles.again}`} onClick={() => another.mutate()} disabled={another.isPending}>
         Tendre l'oreille encore
       </button>
     </Sheet>
@@ -127,11 +123,7 @@ function HomePage() {
 
   function chooseServer(id: number) {
     setServerId(id)
-    try {
-      localStorage.setItem(SERVER_KEY, String(id))
-    } catch {
-      // Sans stockage, le choix vaut pour cette visite seulement.
-    }
+    store(HOME_SERVER_KEY, String(id))
   }
 
   return (

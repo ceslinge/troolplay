@@ -1,26 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
 import { useSyncExternalStore } from 'react'
 import { fetchMyCharacters, type MyCharacter } from '../api/characters'
+import { ACTIVE_CHARACTER_KEY, readStored, store } from './storage'
 import { useMe } from './useMe'
 
 // Le personnage avec lequel on joue en ce moment, retenu sur cet appareil.
-const KEY = 'troolplay:personnage-actif'
 const CHANGED = 'troolplay:personnage-actif-change'
 
 function read(): number | null {
-  try {
-    return Number(localStorage.getItem(KEY)) || null
-  } catch {
-    return null
-  }
+  return Number(readStored(ACTIVE_CHARACTER_KEY)) || null
 }
 
 export function setActiveCharacter(id: number) {
-  try {
-    localStorage.setItem(KEY, String(id))
-  } catch {
-    // Navigation privée : le choix ne sera pas retenu, rien de grave.
-  }
+  store(ACTIVE_CHARACTER_KEY, String(id))
   window.dispatchEvent(new Event(CHANGED))
 }
 

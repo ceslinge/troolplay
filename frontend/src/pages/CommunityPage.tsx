@@ -17,6 +17,7 @@ import { useMe } from '../lib/useMe'
 import { serverOptions } from '../lib/games'
 import PageTitle from '../components/PageTitle'
 import styles from './CommunityPage.module.css'
+import { plural } from '../lib/text'
 
 /** /communaute tout court : le serveur du personnage actif, ou à défaut le premier. */
 export function CommunityIndex() {
@@ -234,7 +235,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
             {places.isPending
               ? 'On parcourt le panneau…'
               : places.data?.length
-                ? `${places.data.length} lieu${places.data.length > 1 ? 'x' : ''} où traîner`
+                ? `${plural(places.data.length, 'lieu', 'lieux')} où traîner`
                 : 'Personne n’a encore épinglé de lieu, à ce moment-là.'}
           </p>
           {places.isError && <p>Impossible de charger les lieux. Réessaie dans un moment.</p>}
@@ -251,7 +252,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
               ? 'On parcourt le panneau…'
               : total === 0
                 ? 'Personne ne correspond, pour l’instant.'
-                : `${total} personnage${total > 1 ? 's' : ''}`}
+                : plural(total, 'personnage')}
           </p>
 
           {characters.isError && <p>Impossible de charger les personnages. Réessaie dans un moment.</p>}

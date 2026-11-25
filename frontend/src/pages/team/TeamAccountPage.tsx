@@ -11,6 +11,7 @@ import { useToast } from '../../lib/toast'
 import { useCan } from '../../lib/useCan'
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
+import { plural } from '../../lib/text'
 
 type Acting = 'suspend' | 'reinstate' | 'reporting' | 'role' | null
 
@@ -88,7 +89,7 @@ function Account({ id }: { id: number }) {
           </dd>
           <dt>Signalements</dt>
           <dd>
-            {a.reports_received} reçu{a.reports_received > 1 ? 's' : ''}, {a.reports_sent} envoyé{a.reports_sent > 1 ? 's' : ''}
+            {plural(a.reports_received, 'reçu')}, {plural(a.reports_sent, 'envoyé')}
           </dd>
         </dl>
         <p className={styles.muted}>
