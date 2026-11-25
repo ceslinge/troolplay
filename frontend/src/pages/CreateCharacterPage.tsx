@@ -134,6 +134,12 @@ function CreateCharacterPage() {
             place, retire une fiche dont tu ne te sers plus, depuis <Link to="/compte">ton compte</Link>. Mettre un
             personnage en retrait ne libère pas de place.
           </p>
+          {draft.name.trim() && (
+            <p>
+              Ta fiche « {draft.name.trim()} » t'attend sur cet appareil : une fois la place faite, reviens ici pour
+              l'épingler.
+            </p>
+          )}
         </Notice>
       </main>
     )

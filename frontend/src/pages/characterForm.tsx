@@ -57,9 +57,13 @@ export function loadDraft(): Draft {
   }
 }
 
-/** Une fiche a été commencée sur cet appareil, sans être épinglée. */
+/** Le nom de la fiche commencée sur cet appareil sans être épinglée, ou null. */
+export function pendingDraftName(): string | null {
+  return loadDraft().name.trim() || null
+}
+
 export function hasPendingDraft(): boolean {
-  return loadDraft().name.trim().length > 0
+  return pendingDraftName() !== null
 }
 
 export function saveDraft(draft: Draft) {
