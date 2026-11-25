@@ -87,9 +87,10 @@ export const reinstate = (id: number, reason: string) =>
 export const setReporting = (id: number, allowed: boolean, reason: string) =>
   apiFetch<TeamAccount>(`/moderation/accounts/${id}/reporting`, { method: 'POST', body: { allowed, reason } })
 
-export function fetchJournal(filters: { action?: string; targetUserId?: number; page?: number }) {
+export function fetchJournal(filters: { action?: string; actorId?: number; targetUserId?: number; page?: number }) {
   const params = new URLSearchParams({ limit: '50', offset: String(((filters.page ?? 1) - 1) * 50) })
   if (filters.action) params.set('action', filters.action)
+  if (filters.actorId) params.set('actor_id', String(filters.actorId))
   if (filters.targetUserId) params.set('target_user_id', String(filters.targetUserId))
   return apiFetch<{ items: JournalEntry[]; total: number }>(`/moderation/journal?${params}`)
 }
