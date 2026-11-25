@@ -65,11 +65,8 @@ def close_all_sessions(
     session.execute(query)
 
 
-def current_user(
-    session: SessionDep,
-    token: Annotated[str | None, Cookie(alias=COOKIE_NAME)] = None,
-) -> User:
-    """La personne connectée, ou 401. À utiliser dans toute route qui l'exige."""
+def find_user(session: Session, token: str | None) -> User:
+    """Le compte de cette session, suspendu ou non, ou 401."""
     if not token:
         raise HTTPException(status_code=401, detail="Il faut être connecté")
     now = datetime.now(UTC)
@@ -83,8 +80,6 @@ def current_user(
     if found is None:
         raise HTTPException(status_code=401, detail="Il faut être connecté")
     user_session, user = found
-    if user.suspended(now):
-        raise HTTPException(status_code=401, detail="Il faut être connecté")
     if now - user_session.last_seen_at > REFRESH_AFTER:
         user_session.last_seen_at = now
         user_session.expires_at = now + SESSION_LIFETIME
@@ -92,7 +87,34 @@ def current_user(
     return user
 
 
+def current_user(
+    session: SessionDep,
+    token: Annotated[str | None, Cookie(alias=COOKIE_NAME)] = None,
+) -> User:
+    """La personne connectée, ou 401. À utiliser dans toute route qui l'exige.
+
+    Un compte suspendu n'est pas connecté ici : toutes les routes lui restent fermées.
+    """
+    user = find_user(session, token)
+    if user.suspended():
+        raise HTTPException(status_code=401, detail="Il faut être connecté")
+    return user
+
+
+def session_user(
+    session: SessionDep,
+    token: Annotated[str | None, Cookie(alias=COOKIE_NAME)] = None,
+) -> User:
+    """La personne connectée, même suspendue (#141).
+
+    Réservé à ce qu'un compte suspendu doit pouvoir faire : se voir, se déconnecter,
+    lire les décisions qui le visent et les contester. tests/test_suspended.py tient la liste.
+    """
+    return find_user(session, token)
+
+
 CurrentUser = Annotated[User, Depends(current_user)]
+SessionUser = Annotated[User, Depends(session_user)]
 
 
 def optional_user(

@@ -1,6 +1,6 @@
 import { type FormEvent, type ReactNode, useId, useState } from 'react'
 import { ApiError } from '../api/client'
-import Button from './Button'
+import FormActions from './FormActions'
 import Notice from './Notice'
 import styles from './ReasonForm.module.css'
 
@@ -47,14 +47,7 @@ function ReasonForm({ title, hint, confirm, danger, busy, error, onConfirm, onCa
         <textarea value={reason} onChange={(event) => setReason(event.target.value)} rows={3} maxLength={1000} />
         <span className={styles.hint}>{hint ?? 'Elle est envoyée à la personne concernée, et gardée au journal.'}</span>
       </label>
-      <div className={styles.actions}>
-        <Button variant="secondary" onClick={onCancel}>
-          Annuler
-        </Button>
-        <Button type="submit" variant={danger ? 'danger' : 'primary'} busy={busy} disabled={reason.trim().length < 3 || !ready}>
-          {confirm}
-        </Button>
-      </div>
+      <FormActions confirm={confirm} onCancel={onCancel} busy={busy} disabled={reason.trim().length < 3 || !ready} danger={danger} />
     </form>
   )
 }

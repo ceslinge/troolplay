@@ -45,7 +45,9 @@ Un signalement garde une copie du contenu au moment où il a été fait. Cette c
 
 ## Contester une décision
 
-Écris à [ADRESSE EMAIL DE CONTACT]. Un autre membre de l'équipe que celui qui a décidé relit le cas, et te répond.
+Un masquage, une suspension ou le retrait du droit de signaler se contestent depuis ton compte, rubrique « Décisions de l'équipe » : le mail de la décision y mène. Même suspendu, tu peux te connecter pour ça, et seulement pour ça.
+
+Un seul message par décision : prends le temps de tout dire. Si possible, un autre membre de l'équipe que celui qui a décidé le relit. Il maintient la décision ou la lève, et te répond par mail. Une décision levée l'est aussitôt : le contenu redevient visible, le compte est rétabli.
 
 ## Changements
 

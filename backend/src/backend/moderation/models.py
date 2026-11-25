@@ -85,7 +85,11 @@ ACTIONS = (
     "rename_server",
     "close_server",
     "reopen_server",
+    "answer_contest",
 )
+# Ce qu'une personne peut contester : les décisions qui la visent et dont le mail le propose.
+CONTESTABLE = ("hide", "auto_hide", "suspend", "revoke_reporting")
+OUTCOMES = ("upheld", "lifted")
 DECISIONS = ("founded", "no_action", "abusive")
 
 
@@ -125,3 +129,40 @@ class ModerationAction(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), index=True
     )
+
+
+class Contest(Base):
+    """La contestation d'une décision (#141) : un seul message par décision, gardé avec elle.
+
+    L'unicité de action_id le garantit en base. La réponse de l'équipe tient dans la même
+    ligne : maintenue (upheld) ou levée (lifted), avec son mot.
+    """
+
+    __tablename__ = "contests"
+    __table_args__ = (
+        CheckConstraint(
+            "outcome IS NULL OR outcome IN ("
+            + ", ".join(f"'{o}'" for o in OUTCOMES)
+            + ")",
+            name="outcome",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    # Le journal n'est jamais effacé : la décision contestée non plus.
+    action_id: Mapped[int] = mapped_column(
+        ForeignKey("moderation_actions.id"), unique=True
+    )
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
+    body: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    answer: Mapped[str | None] = mapped_column(Text)
+    outcome: Mapped[str | None] = mapped_column(String(10))
+    answered_by: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL")
+    )
+    answered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

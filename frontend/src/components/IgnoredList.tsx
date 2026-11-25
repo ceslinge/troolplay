@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
 import { type CharacterSummary, fetchIgnored } from '../api/characters'
 import { useIgnore } from '../lib/useIgnore'
+import AccountSection from './AccountSection'
 import Button from './Button'
 import Seal from './Seal'
-import Sheet from './Sheet'
 import styles from './IgnoredList.module.css'
 
 function Row({ character }: { character: CharacterSummary }) {
@@ -28,17 +28,14 @@ function IgnoredList() {
   const ignored = useQuery({ queryKey: ['ignored'], queryFn: fetchIgnored })
   if (!ignored.data?.length) return null
   return (
-    <section className={styles.section}>
-      <h2 className={styles.title}>Personnages ignorés</h2>
-      <Sheet seed="compte-ignores" contentClassName={styles.card}>
-        <p className={styles.hint}>Ils n'apparaissent plus dans tes listes. Personne d'autre ne le sait.</p>
-        <ul className={styles.list}>
-          {ignored.data.map((c) => (
-            <Row key={c.id} character={c} />
-          ))}
-        </ul>
-      </Sheet>
-    </section>
+    <AccountSection title="Personnages ignorés" seed="compte-ignores">
+      <p className={styles.hint}>Ils n'apparaissent plus dans tes listes. Personne d'autre ne le sait.</p>
+      <ul className={styles.list}>
+        {ignored.data.map((c) => (
+          <Row key={c.id} character={c} />
+        ))}
+      </ul>
+    </AccountSection>
   )
 }
 

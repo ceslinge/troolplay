@@ -56,6 +56,7 @@ erDiagram
 - **email_tokens** : id, user_id, purpose, token_hash, expires_at, used_at, created_at
 - **moderation_actions** : id, actor_id, action, target_user_id, target_character_id, target_story_id, target_server_id, detail, reason, created_at
 - **ignored_characters** : user_id, character_id, created_at
+- **contests** : id, action_id (unique : une contestation par décision), user_id, body, created_at, answer, outcome (upheld, lifted), answered_by, answered_at
 - **reports** : id, reporter_id, reported_user_id, target_character_id, target_story_id, reason, details, snapshot, decision, handled_by, handled_at, created_at
 
 ## Retrouver un personnage en jeu
@@ -88,7 +89,7 @@ Tous ces champs sont facultatifs.
 ## La modération
 - `banned_at`, `banned_until` : suspendu depuis, jusqu'à. Sans `banned_until`, c'est sans fin. Une suspension passée ne compte plus, sans qu'il faille l'effacer.
 - `report_banned_at` : le droit de signaler, retiré par la modération.
-- `moderation_actions.action` : decide, hide, unhide, suspend, reinstate, revoke_reporting, restore_reporting, set_role, auto_hide (sans auteur : `actor_id` vide), add_server, rename_server, close_server, reopen_server. `detail` garde la décision, la durée, le nouveau rôle ou l'ancien nom d'un serveur. Les références passent à NULL quand ce qu'elles visent disparaît.
+- `moderation_actions.action` : decide, hide, unhide, suspend, reinstate, revoke_reporting, restore_reporting, set_role, auto_hide (sans auteur : `actor_id` vide), add_server, rename_server, close_server, reopen_server, answer_contest. `detail` garde la décision, la durée, le nouveau rôle ou l'ancien nom d'un serveur. Les références passent à NULL quand ce qu'elles visent disparaît.
 
 ## Avant les histoires à plusieurs mains
 Séparer stories de story_parts, pour que supprimer un compte n'efface pas les suites des autres.

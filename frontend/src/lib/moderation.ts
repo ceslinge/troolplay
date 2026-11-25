@@ -1,4 +1,4 @@
-import type { Decision, Duration } from '../api/moderation'
+import type { Decision, Duration, JournalEntry, Outcome } from '../api/moderation'
 import type { ReportReason } from '../api/reports'
 
 export const REASON_LABELS: Record<ReportReason, string> = {
@@ -47,7 +47,10 @@ export const ACTION_LABELS: Record<string, string> = {
   rename_server: 'Serveur renommé',
   close_server: 'Serveur fermé',
   reopen_server: 'Serveur rouvert',
+  answer_contest: 'Contestation tranchée',
 }
+
+export const OUTCOME_LABELS: Record<Outcome, string> = { upheld: 'Maintenue', lifted: 'Levée' }
 
 export const ROLE_LABELS = { user: 'Joueur', moderator: 'Modérateur', admin: 'Admin' } as const
 
@@ -62,6 +65,7 @@ export function detailLabel(detail: string | null): string | null {
     (DECISION_LABELS as Record<string, string>)[detail] ??
     (DURATION_LABELS as Record<string, string>)[detail] ??
     (ROLE_LABELS as Record<string, string>)[detail] ??
+    (OUTCOME_LABELS as Record<string, string>)[detail] ??
     detail
   )
 }
@@ -69,3 +73,12 @@ export function detailLabel(detail: string | null): string | null {
 /** Qui a agi : un compte de l'équipe, ou le masquage automatique. */
 export const actorLabel = (actorId: number | null, action: string) =>
   action === 'auto_hide' ? 'automatiquement' : `par le compte n°${actorId ?? '?'}`
+
+/** Le détail d'une ligne du journal en clair ; pour un serveur renommé, son ancien nom. */
+export function entryDetail(e: JournalEntry): string | null {
+  if (!e.detail) return null
+  return e.action === 'rename_server' ? `ancien nom : ${e.detail}` : detailLabel(e.detail)
+}
+
+/** Une ligne du journal vise-t-elle autre chose qu'un compte : une histoire, une fiche, un serveur ? */
+export const hasTarget = (e: JournalEntry) => Boolean(e.target_story_id || e.target_character_id || e.target_server_id)

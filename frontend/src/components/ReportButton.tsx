@@ -3,7 +3,7 @@ import { type FormEvent, useId, useState } from 'react'
 import { ApiError } from '../api/client'
 import { DETAILS_MAX, type ReportIn, type ReportReason, sendReport } from '../api/reports'
 import { useMe } from '../lib/useMe'
-import Button from './Button'
+import FormActions from './FormActions'
 import Notice from './Notice'
 import styles from './ReportButton.module.css'
 
@@ -93,14 +93,7 @@ function ReportButton({ target, targetId, mine }: Props) {
         <span className={styles.legend}>{reason === 'other' ? 'En quelques mots' : 'Préciser, si tu veux'}</span>
         <textarea value={details} onChange={(event) => setDetails(event.target.value)} maxLength={DETAILS_MAX} rows={3} />
       </label>
-      <div className={styles.actions}>
-        <Button variant="secondary" onClick={() => setOpen(false)}>
-          Annuler
-        </Button>
-        <Button type="submit" busy={send.isPending} disabled={!reason || needsDetails}>
-          Envoyer le signalement
-        </Button>
-      </div>
+      <FormActions confirm="Envoyer le signalement" onCancel={() => setOpen(false)} busy={send.isPending} disabled={!reason || needsDetails} />
     </form>
   )
 }

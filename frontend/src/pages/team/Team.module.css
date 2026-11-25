@@ -228,3 +228,12 @@
   align-items: center;
   gap: 0.5rem 1rem;
 }
+
+/* Le message d'une personne, cité tel quel. */
+.quote {
+  margin: 0;
+  padding-left: 0.875rem;
+  border-left: 3px solid var(--filet);
+  white-space: pre-line;
+  font-style: italic;
+}

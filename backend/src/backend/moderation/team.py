@@ -111,12 +111,11 @@ def tell(
     """Prévenir la personne concernée, après la réponse, comme tous les emails du site."""
     if user is None:
         return
-    contact = f"{settings.site_url}/mentions-legales"
     footer = (
         "\n\nCette décision suit la charte de modération : "
         f"{settings.site_url}/moderation\n"
-        f"Pour la contester, écris à l'adresse indiquée sur {contact} : "
-        "un autre membre de l'équipe relira."
+        "Pour la contester, connecte-toi, même suspendu, et écris-nous depuis "
+        f"{settings.site_url}/compte#decisions : un membre de l'équipe relira."
     )
     background.add_task(
         emails.send_email, user.email, subject, body + (footer if contestable else "")

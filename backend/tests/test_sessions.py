@@ -61,13 +61,17 @@ def test_an_unverified_account_cannot_log_in(
     assert log_in(client, member.email, member_password).status_code == 403
 
 
-def test_a_banned_account_cannot_log_in(
+def test_a_banned_account_logs_in_only_to_read_and_contest(
     session: Session, client: TestClient, member: User, member_password: str
 ) -> None:
     member.banned_at = datetime.now(UTC)
     session.flush()
 
-    assert log_in(client, member.email, member_password).status_code == 403
+    # #141 : connecté pour contester, mais le reste du site lui reste fermé
+    # (tests/test_suspended.py vérifie chaque route).
+    assert log_in(client, member.email, member_password).status_code == 204
+    assert client.get("/me").json()["suspended"] is True
+    assert client.get("/me/characters").status_code == 401
 
 
 def test_logging_out_closes_the_session_on_the_server(
