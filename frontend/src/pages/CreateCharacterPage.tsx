@@ -1,14 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { type FormEvent, useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import { createCharacter, MAX_CHARACTERS } from '../api/characters'
 import { ApiError } from '../api/client'
 import { fetchServers, type Server } from '../api/servers'
 import Button from '../components/Button'
+import buttons from '../components/Button.module.css'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
 import Unreachable from '../components/Unreachable'
 import { focusFirstError, useToast } from '../lib/toast'
+import { agree } from '../lib/agree'
+import { RESUME_SHEET } from '../lib/next'
 import { useMe } from '../lib/useMe'
 import { STORY_FIELDS } from './characterFields'
 import {
@@ -46,6 +49,9 @@ function CreateCharacterPage() {
   const [draft, setDraft] = useState<Draft>(loadDraft)
   const [mode, setMode] = useState<Mode>('guided')
   const [step, setStep] = useState(0)
+  // Sans compte, « Épingler » invite à s'inscrire : la fiche attend sur cet appareil (#124).
+  const [inviting, setInviting] = useState(false)
+  const [params] = useSearchParams()
   const toast = useToast()
 
   useEffect(() => saveDraft(draft), [draft])
@@ -80,10 +86,6 @@ function CreateCharacterPage() {
   if (me.isPending || servers.isPending) {
     return null
   }
-  if (!me.data) {
-    return <Navigate to="/connexion?suite=/personnages/nouveau" replace />
-  }
-
   const server: Server | undefined = servers.data?.find((s) => String(s.id) === draft.server_id)
 
   function set<K extends keyof Draft>(key: K, value: Draft[K]) {
@@ -92,7 +94,18 @@ function CreateCharacterPage() {
 
   function submit(event?: FormEvent) {
     event?.preventDefault()
-    create.mutate(toCreateRequest(draft))
+    if (me.data) {
+      create.mutate(toCreateRequest(draft))
+      return
+    }
+    // Un visiteur : on vérifie l'essentiel ici, puis on l'invite à créer son compte.
+    if (!firstStepDone) {
+      setStep(0)
+      toast.show('Il manque encore le nom ou le serveur.', 'error')
+      return
+    }
+    setInviting(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const parts = formParts({ draft, set, errors, servers: servers.data ?? [], server, mode })
@@ -107,10 +120,10 @@ function CreateCharacterPage() {
   const firstStepDone = draft.name.trim().length >= 2 && draft.server_id !== ''
 
   // On attend de savoir combien de personnages on a, pour ne pas faire écrire une fiche refusée à la fin.
-  if (mine === undefined) {
+  if (me.data && mine === undefined) {
     return null
   }
-  if (mine.length >= MAX_CHARACTERS) {
+  if (mine && mine.length >= MAX_CHARACTERS) {
     return (
       <main className={styles.page}>
         <PageTitle>Présenter un nouveau personnage</PageTitle>
@@ -133,8 +146,38 @@ function CreateCharacterPage() {
         <h1 className={styles.title}>Présenter un nouveau personnage</h1>
       </div>
       <p className={styles.lead}>
-        Seuls le nom et le serveur sont obligatoires. Ton brouillon est gardé sur cet appareil, tu peux revenir plus tard.
+        {me.data
+          ? 'Seuls le nom et le serveur sont obligatoires. Ton brouillon est gardé sur cet appareil, tu peux revenir plus tard.'
+          : "Pas besoin de compte pour commencer : ta fiche est gardée sur cet appareil. Seuls le nom et le serveur sont obligatoires."}
       </p>
+      {me.data && params.get('reprise') && draft.name.trim() && (
+        <Notice tone="success">
+          <p>Ta fiche t'attendait. Relis-la si tu veux, puis épingle-la.</p>
+        </Notice>
+      )}
+      {inviting && !me.data && (
+        <Sheet seed="creation-invitation" as="section" contentClassName={styles.invite}>
+          <h2 className={styles.question}>
+            {agree(draft.gender, {
+              feminine: `${draft.name.trim()} est prête à être épinglée`,
+              masculine: `${draft.name.trim()} est prêt à être épinglé`,
+              neutral: `La fiche de ${draft.name.trim()} est prête à être épinglée`,
+            })}
+          </h2>
+          <p>
+            Crée ton compte pour l'épingler : ta fiche t'attend sur cet appareil. Après avoir vérifié ton adresse, reviens
+            ici, et elle sera sur le panneau en un clic.
+          </p>
+          <div className={styles.nav}>
+            <Link to={`/connexion?suite=${encodeURIComponent(RESUME_SHEET)}`} className={`${buttons.button} ${buttons.secondary}`}>
+              J'ai déjà un compte
+            </Link>
+            <Link to="/inscription" className={`${buttons.button} ${buttons.primary}`}>
+              Créer mon compte
+            </Link>
+          </div>
+        </Sheet>
+      )}
       {/* Une question à la fois par défaut : un nouveau venu n'a pas à choisir avant d'avoir commencé. */}
       <button type="button" className={styles.switch} onClick={() => setMode(mode === 'guided' ? 'free' : 'guided')}>
         {mode === 'guided' ? "Je préfère tout voir d'un coup" : 'Revenir aux questions une à une'}

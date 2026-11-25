@@ -8,6 +8,8 @@ import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
 import PageTitle from '../components/PageTitle'
+import { RESUME_SHEET } from '../lib/next'
+import { hasPendingDraft } from './characterForm'
 import styles from './AuthPages.module.css'
 
 /** Demande un nouveau lien de vérification. */
@@ -66,7 +68,14 @@ function VerifyPage() {
                 <Notice tone="success">
                   <p>C'est fait, ton adresse est vérifiée. Bienvenue sur le panneau !</p>
                 </Notice>
-                <Link to="/connexion">Se connecter</Link>
+                {hasPendingDraft() ? (
+                  <>
+                    <p className={styles.lead}>Ta fiche t'attend : connecte-toi pour l'épingler.</p>
+                    <Link to={`/connexion?suite=${encodeURIComponent(RESUME_SHEET)}`}>Se connecter et épingler ma fiche</Link>
+                  </>
+                ) : (
+                  <Link to="/connexion">Se connecter</Link>
+                )}
               </>
             ) : (
               <>

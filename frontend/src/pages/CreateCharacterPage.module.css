@@ -118,3 +118,19 @@
   outline: 2px solid var(--bois);
   outline-offset: 2px;
 }
+
+/* L'invitation à créer son compte, une fois la fiche remplie sans être connecté. */
+.invite {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem 1.5rem 1.75rem;
+}
+
+.invite p {
+  margin: 0;
+}
+
+.invite a {
+  text-decoration: none;
+}
