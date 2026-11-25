@@ -12,7 +12,10 @@ import Button from '../components/Button'
 import Field from '../components/Field'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
+import { clearLocalDrafts } from '../lib/localDrafts'
+import { RESUME_SHEET } from '../lib/next'
 import { useMe } from '../lib/useMe'
+import { pendingDraftName } from './characterForm'
 import PageTitle from '../components/PageTitle'
 import Unreachable from '../components/Unreachable'
 import { useToast } from '../lib/toast'
@@ -145,6 +148,7 @@ function AccountPage() {
   const navigate = useNavigate()
 
   async function leave() {
+    clearLocalDrafts()
     queryClient.setQueryData(['me'], null)
     // Ce qui a été chargé connecté ne doit pas resservir au visiteur qui suit.
     await queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] !== 'me' })
@@ -156,6 +160,14 @@ function AccountPage() {
     onSuccess: leave,
     onError: (failure) => toast.show(`Pas déconnecté : ${failure.message}`, 'error'),
   })
+  // Une fiche pas encore épinglée disparaîtrait avec la déconnexion : on prévient d'abord.
+  const [unpinned, setUnpinned] = useState<string | null>(null)
+
+  function askToLeave() {
+    const name = pendingDraftName()
+    if (name) setUnpinned(name)
+    else logout.mutate()
+  }
 
   if (me.isPending) {
     return null
@@ -179,11 +191,30 @@ function AccountPage() {
             <dt>Membre depuis</dt>
             <dd>{new Date(me.data.created_at).toLocaleDateString('fr-FR', { dateStyle: 'long' })}</dd>
           </dl>
-          <div>
-            <Button variant="secondary" busy={logout.isPending} onClick={() => logout.mutate()}>
-              Se déconnecter
-            </Button>
-          </div>
+          {unpinned ? (
+            <div className={styles.confirm}>
+              <Notice>
+                <p>
+                  Ta fiche « {unpinned} » n'est pas épinglée : elle sera effacée de cet appareil.{' '}
+                  <Link to={RESUME_SHEET}>L'épingler d'abord</Link>
+                </p>
+              </Notice>
+              <div className={styles.confirmActions}>
+                <Button variant="secondary" busy={logout.isPending} onClick={() => logout.mutate()}>
+                  Se déconnecter quand même
+                </Button>
+                <button type="button" className={styles.linkButton} onClick={() => setUnpinned(null)}>
+                  Rester connecté
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <Button variant="secondary" busy={logout.isPending} onClick={askToLeave}>
+                Se déconnecter
+              </Button>
+            </div>
+          )}
         </div>
       </Sheet>
       <MyCharacters />
