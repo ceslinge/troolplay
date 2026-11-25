@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, Response
@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session, selectinload
 from backend.accounts.models import User
 from backend.accounts.roles import Capability, can
 from backend.accounts.sessions import CurrentUser, OptionalUser
+from backend.accounts.throttle import throttle
 from backend.characters.classes import is_available
 from backend.characters.models import Character, CharacterHangout
 from backend.characters.schemas import (
@@ -34,6 +35,9 @@ router = APIRouter(prefix="/characters", tags=["characters"])
 
 # Assez pour plusieurs vies, pas au point d'encombrer la barre (ni l'annuaire).
 MAX_CHARACTERS = 10
+# Supprimer puis recréer en boucle inonderait « Fraîchement épinglés » : 10 créations par jour (#56).
+CREATE_LIMIT = 10
+CREATE_WINDOW = timedelta(days=1)
 
 
 @router.get("")
@@ -188,6 +192,10 @@ def create_character(
             )
         # Le nouveau venu se range au bout de la barre.
         values["position"] = (last or 0) + 1
+    # Après le plafond : celui-là dit mieux pourquoi c'est refusé.
+    throttle(
+        session, "character", str(user.id), limit=CREATE_LIMIT, window=CREATE_WINDOW
+    )
     character = Character(user_id=None if data.is_npc else user.id, **values)
     session.add(character)
     session.commit()

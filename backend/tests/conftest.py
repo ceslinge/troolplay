@@ -1,3 +1,8 @@
+import os
+
+# Les tests voient l'API comme en production, quel que soit le .env local (#56).
+os.environ["API_DOCS"] = "false"
+
 from collections.abc import Callable, Iterator
 from datetime import UTC, datetime
 

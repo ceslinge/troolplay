@@ -36,6 +36,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:?}
       POSTGRES_HOST: db
       COOKIE_SECURE: "true"
+      # Jamais la documentation interactive de l'API en production (#56).
+      API_DOCS: "false"
       SITE_URL: https://${SITE_DOMAIN:?}
       ALLOWED_ORIGINS: '["https://${SITE_DOMAIN:?}"]'
       # Les emails : sans SMTP_HOST, ils ne partent pas (ils s'affichent dans les journaux).
