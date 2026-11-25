@@ -9,6 +9,7 @@ from backend.ignores import models as ignores_models  # noqa: F401
 from backend.moderation import models as moderation_models  # noqa: F401
 from backend.servers import models as servers_models  # noqa: F401
 from backend.stories import models as stories_models  # noqa: F401
+from backend.support import models as support_models  # noqa: F401
 
 if context.config.config_file_name is not None:
     fileConfig(context.config.config_file_name)

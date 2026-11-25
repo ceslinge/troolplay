@@ -19,6 +19,7 @@ Le responsable des données est l'éditeur du site, joignable à [ADRESSE EMAIL 
 | Les signalements | permettre la modération | jusqu'à leur traitement. La copie du contenu signalé est alors effacée |
 | Ton adresse IP, dans les journaux du serveur | protéger le site contre les abus | 30 jours |
 | Les décisions de la modération qui te concernent (masquage, suspension), avec leur raison | garder la trace, et pouvoir relire une contestation | sans ton adresse email ; le lien avec toi disparaît avec ton compte |
+| Tes demandes à l'équipe (« Écrire à l'équipe ») et ses réponses | te répondre | jusqu'à un an après leur clôture, ou ta suppression de compte si elle vient avant |
 | Tes contestations, et la réponse de l'équipe | relire la décision, et en garder la trace | avec la décision qu'elles visent ; le lien avec toi disparaît avec ton compte |
 | Les sauvegardes de la base, qui contiennent tout ce qui précède sauf les journaux | retrouver le site après une panne | 35 jours au plus, puis effacées |
 

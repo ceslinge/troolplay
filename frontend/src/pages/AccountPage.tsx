@@ -6,6 +6,7 @@ import { fetchMyCharacters, MAX_CHARACTERS } from '../api/characters'
 import CharacterCard from '../components/CharacterCard'
 import CharacterOrder from '../components/CharacterOrder'
 import IgnoredList from '../components/IgnoredList'
+import MyConversations from '../components/MyConversations'
 import MyDecisions from '../components/MyDecisions'
 import MyStories from '../components/MyStories'
 import { ApiError } from '../api/client'
@@ -206,6 +207,7 @@ function AccountPage() {
       <MyCharacters />
       <MyStories />
       <MyDecisions />
+      <MyConversations />
       <IgnoredList />
       <Sheet seed="compte-mot-de-passe" as="section">
         <ChangePasswordForm />

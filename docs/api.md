@@ -470,6 +470,19 @@ Un compte suspendu se connecte, mais toutes les routes lui restent fermées (401
 - `GET /api/moderation/contests?status=open|answered` (capacité `moderate`) : en attente (les plus anciennes d'abord) ou traitées. `decided_by_me` signale une décision prise par la personne qui lit, pour qu'une autre relise si possible.
 - `POST /api/moderation/contests/{id}/answer` avec `{"outcome": "upheld" | "lifted", "answer": "…"}` : 409 si déjà répondu, 403 sur un compte de rang égal ou supérieur. `lifted` lève la mesure si elle tient encore (`unhide`, `reinstate` ou `restore_reporting` au journal), puis `answer_contest` va au journal. La personne reçoit la réponse par mail.
 
+### Écrire à l'équipe (#142)
+
+Une conversation entre un membre et l'équipe : question, problème ou bug. La contestation d'une décision passe par la sienne, ci-dessus. Un compte suspendu n'y a pas accès.
+
+- `GET /api/me/conversations` : mes conversations, la plus récente d'abord, avec leurs messages. L'équipe y parle d'une seule voix (pas d'`author_id`).
+- `POST /api/me/conversations` avec `{"topic": "question" | "problem" | "bug", "body": "…"}` (10 à 4 000 caractères) : 201. 409 au-delà de 3 conversations ouvertes.
+- `POST /api/me/conversations/{id}/messages` avec `{"body": "…"}` : 201 ; 409 si elle est close, 404 si elle n'est pas à moi. 10 messages par jour au plus (429 au-delà).
+- `GET /api/moderation/conversations?status=waiting|answered|closed` (capacité `moderate`) : à répondre (les plus anciennes d'abord), en attente du membre, closes. Les messages y portent leur `author_id`.
+- `POST /api/moderation/conversations/{id}/messages` avec `{"body": "…"}` : la réponse ; le membre reçoit un mail sans le contenu, avec le lien vers `/compte#demandes`.
+- `POST /api/moderation/conversations/{id}/close` : 409 si déjà close.
+
+Une conversation close s'efface au bout d'un an, au moment où l'on liste les conversations (pas de tâche planifiée) ; toutes partent avec le compte.
+
 ### Le journal
 
 `GET /api/moderation/journal`, filtrable par `action`, `actor_id`, `target_user_id` : qui, quoi, sur quoi, quand, pourquoi, le plus récent d'abord. Une action sur un serveur donne `target_server_id` et son nom actuel, `target_server_name`. Aucune route ne le modifie ni ne l'efface.
