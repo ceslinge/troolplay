@@ -38,6 +38,8 @@ jobs:
       - run: uv sync --locked
       - run: uv run ruff format --check
       - run: uv run ruff check
+      # Code mort : réglages dans pyproject.toml ([tool.vulture]).
+      - run: uv run vulture
       - run: uv run alembic upgrade head
       - run: uv run alembic check
       - run: uv run pytest
@@ -56,6 +58,10 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
+      # Code mort (knip.jsonc), puis copier-coller du site et du backend (.jscpd.json) :
+      # au-dessus du seuil, en % de lignes dupliquées, on partage au lieu de recopier. Le seuil ne fait que baisser.
+      - run: npm run dead-code
+      - run: npm run duplicates
       - run: npm run build
 
   # Les images de production se construisent : un déploiement ne casse pas par surprise.

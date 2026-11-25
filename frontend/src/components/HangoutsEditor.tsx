@@ -6,7 +6,7 @@ import { plural } from '../lib/text'
 
 export type HangoutDraft = { area: string; x: string; y: string; label: string; habits: string }
 
-export const MAX_HANGOUTS = 3
+const MAX_HANGOUTS = 3
 
 const EMPTY_HANGOUT: HangoutDraft = { area: '', x: '', y: '', label: '', habits: '' }
 
