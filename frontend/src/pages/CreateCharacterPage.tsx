@@ -48,12 +48,17 @@ function CreateCharacterPage() {
   const servers = useQuery({ queryKey: ['servers'], queryFn: fetchServers })
   const queryClient = useQueryClient()
   const navigate = useNavigate()
-  const [draft, setDraft] = useState<Draft>(loadDraft)
+  const [params] = useSearchParams()
+  // Venu d'une invitation liée à un serveur : il est choisi d'office, sans écraser un brouillon (#139).
+  const [draft, setDraft] = useState<Draft>(() => {
+    const saved = loadDraft()
+    const invited = params.get('serveur')
+    return invited && !saved.server_id ? { ...saved, server_id: invited } : saved
+  })
   const [mode, setMode] = useState<Mode>('guided')
   const [step, setStep] = useState(0)
   // Sans compte, « Épingler » invite à s'inscrire : la fiche attend sur cet appareil (#124).
   const [inviting, setInviting] = useState(false)
-  const [params] = useSearchParams()
   const toast = useToast()
 
   useEffect(() => saveDraft(draft), [draft])

@@ -84,7 +84,7 @@ function Decision({ decision }: { decision: MyDecision }) {
               <strong>Réponse de l'équipe : décision {OUTCOME_LABELS[contest.outcome].toLowerCase()}.</strong> {contest.answer}
             </p>
           ) : (
-            <p className={styles.hint}>En attente de relecture par l'équipe.</p>
+            <p className="hint">En attente de relecture par l'équipe.</p>
           )}
         </div>
       ) : (
@@ -105,7 +105,7 @@ function MyDecisions({ always = false }: { always?: boolean }) {
           <p>Impossible de charger les décisions pour l'instant.</p>
         </Notice>
       ) : decisions.data?.length === 0 ? (
-        <p className={styles.hint}>Aucune décision ne te concerne.</p>
+        <p className="hint">Aucune décision ne te concerne.</p>
       ) : (
         <ul className={styles.list}>
           {decisions.data?.map((d) => (
@@ -113,7 +113,7 @@ function MyDecisions({ always = false }: { always?: boolean }) {
           ))}
         </ul>
       )}
-      <p className={styles.hint}>
+      <p className="hint">
         Les décisions suivent la <Link to="/moderation">charte de modération</Link>.
       </p>
     </AccountSection>

@@ -6,3 +6,6 @@ export function safeNext(value: string | null): string {
 
 /** La fiche commencée avant l'inscription attend sur cet appareil : on y ramène après la connexion. */
 export const RESUME_SHEET = '/personnages/nouveau?reprise=1'
+
+/** Présenter un personnage sur ce serveur : la création le préremplit (#139). */
+export const newSheetOn = (serverId: number) => `/personnages/nouveau?serveur=${serverId}`

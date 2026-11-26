@@ -17,6 +17,7 @@ import PageTitle from '../components/PageTitle'
 import styles from './HomePage.module.css'
 import { plural, ofName } from '../lib/text'
 import Notice from '../components/Notice'
+import { newSheetOn } from '../lib/next'
 
 const DAY_NAMES = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
 
@@ -77,7 +78,7 @@ function RightNowSheet({ data, onServer }: { data: RightNow; onServer: (id: numb
           <p className={styles.big}>Le panneau {ofName(data.server.name)} attend ses premiers habitués.</p>
           <p>
             Indique sur ta fiche quand tu joues : on saura à quelle heure te croiser.{' '}
-            <Link to={me.data ? '/compte' : '/personnages/nouveau'}>
+            <Link to={me.data ? '/compte' : newSheetOn(data.server.id)}>
               {me.data ? 'Compléter mes fiches' : 'Présenter mon personnage'}
             </Link>
           </p>

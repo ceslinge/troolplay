@@ -25,7 +25,7 @@ export function IgnoreButton({ character }: { character: Character }) {
         {character.name} n'apparaîtra plus dans tes listes : l'annuaire, « Qui traîne ici ? », les histoires du serveur,
         l'accueil. Personne n'en saura rien, pas même son joueur. Sa fiche reste ouverte par un lien.
       </p>
-      <p className={styles.hint}>Pour ce qui enfreint les règles, mieux vaut signaler.</p>
+      <p className="hint">Pour ce qui enfreint les règles, mieux vaut signaler.</p>
       <div className={styles.actions}>
         <Button variant="secondary" onClick={() => setAsking(false)}>
           Annuler

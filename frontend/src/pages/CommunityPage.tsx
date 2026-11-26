@@ -21,6 +21,7 @@ import { plural, ofName } from '../lib/text'
 import Notice from '../components/Notice'
 import StatusPage from '../components/StatusPage'
 import buttons from '../components/Button.module.css'
+import { newSheetOn } from '../lib/next'
 
 /** /communaute tout court : le serveur du personnage actif, ou à défaut le premier. */
 export function CommunityIndex() {
@@ -291,6 +292,12 @@ function CommunityPage({ tab }: { tab: Tab }) {
             <Notice tone="error">
               <p>Impossible de charger les personnages. Réessaie dans un moment.</p>
             </Notice>
+          )}
+          {/* Un serveur encore vide, sans filtre : on invite à y présenter le premier (#139). */}
+          {characters.isSuccess && total === 0 && active === 0 && (
+            <p className={styles.invite}>
+              <Link to={newSheetOn(server.id)}>Présenter le premier personnage {ofName(server.name)}</Link>
+            </p>
           )}
 
           <div className={styles.grid}>
