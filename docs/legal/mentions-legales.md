@@ -12,7 +12,7 @@ Dofus et les noms, lieux et classes de son univers appartiennent à Ankama. Ils 
 
 Le site est édité par un particulier, à titre non professionnel. Conformément à la loi, son identité a été communiquée à l'hébergeur, qui la tient à la disposition de la justice.
 
-Contact : [ADRESSE EMAIL DE CONTACT]
+Contact : contact@troolplay.fr
 
 ## Hébergeur
 

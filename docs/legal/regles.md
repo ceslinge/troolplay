@@ -47,7 +47,7 @@ Le RP peut être sombre, c'est souvent ce qui le rend intéressant. La limite, c
 - La modération peut masquer un contenu, le temps de le regarder ou pour de bon.
 - En cas d'abus répétés ou graves, un compte peut être suspendu.
 
-Chaque décision vient avec sa raison. La façon dont l'équipe décide est expliquée dans la [charte de modération](moderation.md). Pour contester une décision, écris à [ADRESSE EMAIL DE CONTACT] : un autre membre de l'équipe la relira.
+Chaque décision vient avec sa raison. La façon dont l'équipe décide est expliquée dans la [charte de modération](moderation.md). Pour contester une décision, passe par ton compte, rubrique « Décisions de l'équipe », même si tu es suspendu : un membre de l'équipe la relira.
 
 ## Ankama
 
