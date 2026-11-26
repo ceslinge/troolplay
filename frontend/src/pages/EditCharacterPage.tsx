@@ -16,6 +16,7 @@ import { type Draft, formParts, fromCharacter, toUpdateRequest, withChange } fro
 import PageTitle from '../components/PageTitle'
 import styles from './CreateCharacterPage.module.css'
 import { useNamesakes } from '../lib/useNamesakes'
+import { ofName } from '../lib/text'
 
 function toHangoutDrafts(character: Character): HangoutDraft[] {
   return character.hangouts.map((h) => ({
@@ -225,9 +226,9 @@ function EditCharacterPage() {
 
   return (
     <main className={styles.page}>
-      <PageTitle>{query.data ? `Modifier la fiche de ${query.data.name}` : 'Modifier la fiche'}</PageTitle>
+      <PageTitle>{query.data ? `Modifier la fiche ${ofName(query.data.name)}` : 'Modifier la fiche'}</PageTitle>
       {/* Le nom enregistré, pas celui en cours de saisie : on sait toujours quelle fiche on modifie. */}
-      <h1 className={styles.title}>{query.data ? `Modifier la fiche de ${query.data.name}` : 'Modifier la fiche'}</h1>
+      <h1 className={styles.title}>{query.data ? `Modifier la fiche ${ofName(query.data.name)}` : 'Modifier la fiche'}</h1>
       {query.isPending ? null : query.isError ? (
         <Notice tone="error">
           <p>Le panneau est inaccessible pour l'instant. Réessaie dans un moment.</p>

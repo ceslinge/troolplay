@@ -14,6 +14,7 @@ import Unreachable from '../components/Unreachable'
 import { readingLabel, readingMinutes, storyDate, WARNING_LABELS } from '../lib/stories'
 import { useMe } from '../lib/useMe'
 import styles from './StoryPage.module.css'
+import { ofName } from '../lib/text'
 
 /** Une fine barre en haut de l'écran : où l'on en est dans un long texte. */
 function ReadingProgress({ target }: { target: RefObject<HTMLElement | null> }) {
@@ -116,9 +117,9 @@ function Reading({ story }: { story: Story }) {
       </Sheet>
       {c && (
         <p className={styles.back}>
-          <Link to={`/personnages/${c.id}`}>Les autres histoires de {c.name}</Link>
+          <Link to={`/personnages/${c.id}`}>Les autres histoires {ofName(c.name)}</Link>
           {/* Un serveur fermé n'a plus de page Communauté. */}
-          {c.server && !c.server.closed && <Link to={`/communaute/${c.server.id}/histoires`}>Les histoires de {c.server.name}</Link>}
+          {c.server && !c.server.closed && <Link to={`/communaute/${c.server.id}/histoires`}>Les histoires {ofName(c.server.name)}</Link>}
         </p>
       )}
     </>

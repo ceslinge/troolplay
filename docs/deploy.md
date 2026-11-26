@@ -87,6 +87,18 @@ Pour que les emails n'arrivent pas dans les indésirables, le domaine doit dire 
 
 Pour vérifier : s'inscrire avec une vraie adresse (Gmail, Outlook…), et regarder que l'email arrive en boîte de réception. Dans Gmail, « Afficher l'original » indique si SPF, DKIM et DMARC sont passés.
 
+## Les aperçus de liens (#53)
+
+Discord, Slack, WhatsApp et les autres affichent un aperçu des liens vers une fiche ou une histoire. Pour vérifier une fois le site en ligne :
+
+1. Coller le lien d'une fiche dans un salon Discord : son nom, sa réplique, le serveur, la classe et le niveau, l'image du site.
+2. Coller le lien d'une histoire : « Une histoire de… », rien de son titre ni de son texte.
+3. Sans Discord : `curl -A "Discordbot/2.0" https://<domaine>/personnages/<n°>` montre les balises `og:` reçues par le robot.
+
+Discord garde un aperçu en mémoire un moment : après une correction, essayer avec une autre fiche, ou ajouter `?v=2` au lien.
+
+L'image (`frontend/public/apercu.png`) se refait avec `npm run preview-image` (dans `frontend/`) après un changement de logo.
+
 ## Mettre à jour
 
 ```

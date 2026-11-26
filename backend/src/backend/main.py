@@ -12,6 +12,7 @@ from backend.moderation.contests import me_router as my_decisions_router
 from backend.moderation.contests import router as contests_router
 from backend.moderation.routes import router as reports_router
 from backend.moderation.team import router as moderation_router
+from backend.previews.routes import router as previews_router
 from backend.servers.places import router as places_router
 from backend.servers.routes import router as servers_router
 from backend.servers.team import router as server_team_router
@@ -61,6 +62,7 @@ app.include_router(my_decisions_router)
 app.include_router(contests_router)
 app.include_router(my_conversations_router)
 app.include_router(export_router)
+app.include_router(previews_router)
 app.include_router(conversations_router)
 app.include_router(ignores_router)
 
