@@ -73,7 +73,8 @@ function ContestCard({ contest }: { contest: TeamContest }) {
         {contest.contester_id && (
           <>
             {' '}
-            · <Link to={`/equipe/comptes/${contest.contester_id}`}>compte n°{contest.contester_id}</Link>
+            · <Link to={`/equipe/comptes/${contest.contester_id}`}>compte n°{contest.contester_id}</Link> (
+            <Link to={`/equipe/comptes/${contest.contester_id}#historique`}>son historique</Link>)
           </>
         )}
       </p>

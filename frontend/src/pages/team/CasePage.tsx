@@ -20,6 +20,20 @@ function contentLink(c: CaseDetail): string {
 }
 
 /** Le bilan de qui signale : de quoi repérer un abus qui se répète. */
+/** Le texte d'un dossier ouvert par le site : « la fiche n°23 » devient un lien vers elle (#139). */
+function WithSheetLinks({ text }: { text: string }) {
+  return text.split(/(fiche n°\d+)/).map((part, i) => {
+    const id = part.match(/^fiche n°(\d+)$/)?.[1]
+    return id ? (
+      <Link key={i} to={`/personnages/${id}`}>
+        {part}
+      </Link>
+    ) : (
+      part
+    )
+  })
+}
+
 function ReporterLine({ r }: { r: CaseDetail['reports'][number]['reporter'] }) {
   if (r.id === null) return <span className={styles.muted}>Compte supprimé depuis</span>
   return (
@@ -175,7 +189,7 @@ function Case({ target, id }: { target: Target; id: number }) {
                 {r.decision && <span className={styles.badge}>{DECISION_LABELS[r.decision]}</span>}
                 <span className={styles.muted}>le {teamDate(r.created_at)}</span>
               </span>
-              {r.details && <p>{r.automatic ? r.details : `« ${r.details} »`}</p>}
+              {r.details && <p>{r.automatic ? <WithSheetLinks text={r.details} /> : `« ${r.details} »`}</p>}
               {r.automatic ? <span className={styles.muted}>Ouvert par le site : deux fiches, un même nom en jeu</span> : <ReporterLine r={r.reporter} />}
               {r.snapshot && (
                 <details className={styles.snapshot}>

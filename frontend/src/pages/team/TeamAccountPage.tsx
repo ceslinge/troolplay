@@ -12,6 +12,7 @@ import { useCan } from '../../lib/useCan'
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
 import { plural } from '../../lib/text'
+import { useScrollToHash } from '../../lib/useScrollToHash'
 
 type Acting = 'suspend' | 'reinstate' | 'reporting' | 'role' | null
 
@@ -24,6 +25,8 @@ function Account({ id }: { id: number }) {
   const account = useQuery({ queryKey: ['moderation', 'account', id], queryFn: () => fetchTeamAccount(id) })
   const history = useQuery({ queryKey: ['moderation', 'journal', { targetUserId: id }], queryFn: () => fetchJournal({ targetUserId: id }) })
   const [acting, setActing] = useState<Acting>(null)
+  // Venu d'une contestation (« son historique ») : on descend jusqu'au journal du compte.
+  useScrollToHash('historique', account.isSuccess && history.isSuccess)
   const [duration, setDuration] = useState<Duration | null>(null)
 
   const act = useMutation({
@@ -166,7 +169,7 @@ function Account({ id }: { id: number }) {
       </Sheet>
 
       <Sheet seed={`equipe-compte-${a.id}-journal`} contentClassName={styles.card}>
-        <h2>Ce que l'équipe a décidé pour ce compte</h2>
+        <h2 id="historique">Ce que l'équipe a décidé pour ce compte</h2>
         {history.data?.items.length ? (
           <ul className={styles.list}>
             {history.data.items.map((e) => (

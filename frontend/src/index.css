@@ -89,7 +89,12 @@ a:hover {
   cursor: pointer;
 }
 
-.action-link:hover {
+.action-link:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.action-link:hover:not(:disabled) {
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.22em;

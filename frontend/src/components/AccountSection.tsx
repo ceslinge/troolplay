@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect } from 'react'
-import { useLocation } from 'react-router'
+import type { ReactNode } from 'react'
+import { useScrollToHash } from '../lib/useScrollToHash'
 import Sheet from './Sheet'
 import styles from './AccountSection.module.css'
 
@@ -16,11 +16,8 @@ type Props = {
 
 /** Une rubrique de Mon compte : son titre sur une étiquette, puis une feuille. */
 function AccountSection({ title, seed, id, ready = true, children }: Props) {
-  const { hash } = useLocation()
   // Le lien d'un mail mène ici : on y descend une fois le contenu arrivé.
-  useEffect(() => {
-    if (id && ready && hash === `#${id}`) document.getElementById(id)?.scrollIntoView({ block: 'start' })
-  }, [id, ready, hash])
+  useScrollToHash(id, ready)
 
   return (
     <section className={styles.section} id={id}>
