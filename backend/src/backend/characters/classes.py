@@ -2,8 +2,9 @@
 
 Ajouter une classe :
 1. l'ajouter à CharacterClass, et aux jeux qui l'ont dans CLASSES_BY_GAME ;
-2. ajouter son nom affiché dans frontend/src/lib/classes.ts
-   (TypeScript refuse de compiler tant qu'il manque) ;
+2. ajouter son nom affiché dans CLASS_LABELS ci-dessous et dans frontend/src/lib/classes.ts
+   (TypeScript refuse de compiler tant qu'il manque ; tests/test_classes_labels.py vérifie
+   que les deux listes disent la même chose) ;
 3. écrire une migration qui remplace la contrainte ck_characters_class,
    sur le modèle de « add bellaphone class ».
 """
@@ -12,7 +13,7 @@ from enum import StrEnum
 
 
 class CharacterClass(StrEnum):
-    """L'identifiant de chaque classe. Le nom affiché se trouve côté frontend."""
+    """L'identifiant de chaque classe. Le nom affiché est dans CLASS_LABELS."""
 
     FECA = "feca"
     OSAMODAS = "osamodas"
@@ -35,6 +36,31 @@ class CharacterClass(StrEnum):
     FORGELANCE = "forgelance"
     BELLAPHONE = "bellaphone"
 
+
+# Le nom affiché, pour ce que le backend écrit lui-même (les aperçus de liens, #53).
+# Le site a la même liste, dans frontend/src/lib/classes.ts.
+CLASS_LABELS: dict[CharacterClass, str] = {
+    CharacterClass.FECA: "Féca",
+    CharacterClass.OSAMODAS: "Osamodas",
+    CharacterClass.ENUTROF: "Enutrof",
+    CharacterClass.SRAM: "Sram",
+    CharacterClass.XELOR: "Xélor",
+    CharacterClass.ECAFLIP: "Ecaflip",
+    CharacterClass.ENIRIPSA: "Eniripsa",
+    CharacterClass.IOP: "Iop",
+    CharacterClass.CRA: "Crâ",
+    CharacterClass.SADIDA: "Sadida",
+    CharacterClass.SACRIEUR: "Sacrieur",
+    CharacterClass.PANDAWA: "Pandawa",
+    CharacterClass.ROUBLARD: "Roublard",
+    CharacterClass.ZOBAL: "Zobal",
+    CharacterClass.STEAMER: "Steamer",
+    CharacterClass.ELIOTROPE: "Eliotrope",
+    CharacterClass.HUPPERMAGE: "Huppermage",
+    CharacterClass.OUGINAK: "Ouginak",
+    CharacterClass.FORGELANCE: "Forgelance",
+    CharacterClass.BELLAPHONE: "Bellaphone",
+}
 
 C = CharacterClass
 

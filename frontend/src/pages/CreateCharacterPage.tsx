@@ -28,6 +28,7 @@ import { setActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
 import PageTitle from '../components/PageTitle'
 import styles from './CreateCharacterPage.module.css'
 import { useNamesakes } from '../lib/useNamesakes'
+import { ofName } from '../lib/text'
 
 /**
  * Les étapes du mode guidé, et les champs que chacune remplit. L'essentiel d'abord (qui, où,
@@ -171,7 +172,7 @@ function CreateCharacterPage() {
             {agree(draft.gender, {
               feminine: `${draft.name.trim()} est prête à être épinglée`,
               masculine: `${draft.name.trim()} est prêt à être épinglé`,
-              neutral: `La fiche de ${draft.name.trim()} est prête à être épinglée`,
+              neutral: `La fiche ${ofName(draft.name.trim())} est prête à être épinglée`,
             })}
           </h2>
           <p>

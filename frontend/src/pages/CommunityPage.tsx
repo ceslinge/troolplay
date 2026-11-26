@@ -17,7 +17,7 @@ import { useMe } from '../lib/useMe'
 import { serverOptions } from '../lib/games'
 import PageTitle from '../components/PageTitle'
 import styles from './CommunityPage.module.css'
-import { plural } from '../lib/text'
+import { plural, ofName } from '../lib/text'
 import Notice from '../components/Notice'
 import StatusPage from '../components/StatusPage'
 import buttons from '../components/Button.module.css'
@@ -160,7 +160,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
 
   return (
     <main className={styles.page}>
-      <PageTitle>{`Communauté de ${server.name}`}</PageTitle>
+      <PageTitle>{`Communauté ${ofName(server.name)}`}</PageTitle>
       <div className={styles.top}>
         <Sheet seed={`${server.id}-titre`} contentClassName={styles.title}>
           <span className={styles.kicker}>Communauté du serveur</span>

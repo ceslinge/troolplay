@@ -6,7 +6,7 @@ import MembersOnly from './MembersOnly'
 import Menu from './Menu'
 import StoryCard from './StoryCard'
 import styles from './StoryList.module.css'
-import { plural } from '../lib/text'
+import { plural, ofName } from '../lib/text'
 
 type Group = { key: number; stories: StorySummary[] }
 
@@ -34,7 +34,7 @@ function StoryGroup({ group }: { group: Group }) {
           more.map((story) => <StoryCard key={story.id} story={story} />)
         ) : (
           <button type="button" className={styles.more} onClick={() => setOpen(true)}>
-            Et {plural(more.length, 'autre histoire', 'autres histoires')} de {name}
+            Et {plural(more.length, 'autre histoire', 'autres histoires')} {name ? ofName(name) : 'du même personnage'}
           </button>
         ))}
     </div>

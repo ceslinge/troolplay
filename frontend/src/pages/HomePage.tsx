@@ -15,7 +15,7 @@ import { useToast } from '../lib/toast'
 import { useMe } from '../lib/useMe'
 import PageTitle from '../components/PageTitle'
 import styles from './HomePage.module.css'
-import { plural } from '../lib/text'
+import { plural, ofName } from '../lib/text'
 import Notice from '../components/Notice'
 
 const DAY_NAMES = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
@@ -74,7 +74,7 @@ function RightNowSheet({ data, onServer }: { data: RightNow; onServer: (id: numb
       ) : (
         // Personne pour l'instant : plutôt qu'un panneau vide, une invitation à être le premier.
         <>
-          <p className={styles.big}>Le panneau de {data.server.name} attend ses premiers habitués.</p>
+          <p className={styles.big}>Le panneau {ofName(data.server.name)} attend ses premiers habitués.</p>
           <p>
             Indique sur ta fiche quand tu joues : on saura à quelle heure te croiser.{' '}
             <Link to={me.data ? '/compte' : '/personnages/nouveau'}>

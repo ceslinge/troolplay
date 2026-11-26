@@ -27,6 +27,18 @@
 		reverse_proxy backend:8000
 	}
 
+	# Les robots d'aperçu (Discord, Slack, WhatsApp…) lisent la page sans JavaScript : pour
+	# une fiche ou une histoire, l'API leur sert une page de balises d'aperçu (#53).
+	# Les humains reçoivent le site, comme pour toute autre adresse.
+	@apercu {
+		path_regexp ^/(personnages|histoires)/[0-9]+$
+		header_regexp User-Agent (?i)(discordbot|slackbot|twitterbot|facebookexternalhit|whatsapp|telegrambot|linkedinbot|mastodon|embedly|skypeuripreview|redditbot)
+	}
+	handle @apercu {
+		rewrite * /preview{path}
+		reverse_proxy backend:8000
+	}
+
 	handle {
 		root * /srv
 		# Les fichiers construits portent leur empreinte dans leur nom : on peut les garder un an.

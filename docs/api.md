@@ -254,6 +254,14 @@ Erreurs : 401, 403, 404.
 
 Créer ou modifier une fiche dont le nom en jeu est déjà porté sur le serveur ne bloque rien, mais ouvre un dossier pour l'équipe : un signalement `impersonation` avec `automatic: true`, sans auteur, une seule fois par fiche tant qu'il est en attente.
 
+### Les aperçus de liens (#53)
+
+`GET /api/preview/personnages/{id}` et `GET /api/preview/histoires/{id}` répondent une petite page HTML faite des balises d'aperçu (Open Graph), pour les robots de Discord, Slack, WhatsApp… que Caddy y envoie (reconnus à leur `User-Agent`, seulement sur ces deux adresses). Les humains reçoivent le site, comme ailleurs.
+
+- Une fiche : son nom ; sa réplique, puis le serveur, la classe et le niveau ; l'image du site.
+- Une histoire : « Une histoire de » et le personnage qui la signe ; ni son titre ni son texte, réservés aux membres.
+- Masquée, supprimée, brouillon ou inconnue : l'aperçu du site, sans plus. On n'y montre jamais rien qu'un visiteur ne voie pas déjà.
+
 ## Les serveurs
 
 `GET /api/servers`
