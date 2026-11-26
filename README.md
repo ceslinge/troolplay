@@ -16,7 +16,7 @@ Un lieu où les rôlistes de Dofus présentent leurs personnages, racontent leur
 
 ## Lancer le projet en local
 
-Il faut [Docker](https://docs.docker.com/get-docker/), [uv](https://docs.astral.sh/uv/) et [Node.js](https://nodejs.org/) 24.
+Il faut [Docker](https://docs.docker.com/get-docker/), [uv](https://docs.astral.sh/uv/) et [Node.js](https://nodejs.org/) 26.
 
 Une seule fois, depuis la racine du dépôt :
 

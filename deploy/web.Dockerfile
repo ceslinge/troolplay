@@ -1,5 +1,5 @@
 # Construit depuis la racine du dépôt : le site lit aussi les pages légales de docs/legal.
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
