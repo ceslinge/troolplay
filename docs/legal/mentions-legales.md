@@ -18,7 +18,7 @@ Contact : contact@troolplay.fr
 
 OVH SAS
 2 rue Kellermann, 59100 Roubaix, France
-[TÉLÉPHONE]
+Téléphone : 1007 depuis la France, ou +33 9 72 10 10 07
 
 ## Contenus des joueurs
 
