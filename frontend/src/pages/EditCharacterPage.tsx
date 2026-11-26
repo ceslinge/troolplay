@@ -11,8 +11,7 @@ import HangoutsEditor, { type HangoutDraft } from '../components/HangoutsEditor'
 import Notice from '../components/Notice'
 import Sheet from '../components/Sheet'
 import { focusFirstError, useToast } from '../lib/toast'
-import { STORY_FIELDS } from './characterFields'
-import { type Draft, formParts, fromCharacter, toUpdateRequest, withChange } from './characterForm'
+import { type Draft, formParts, fromCharacter, toUpdateRequest, withChange, FORM_GROUPS } from './characterForm'
 import PageTitle from '../components/PageTitle'
 import styles from './CreateCharacterPage.module.css'
 import { useNamesakes } from '../lib/useNamesakes'
@@ -109,12 +108,7 @@ function EditForm({ character }: { character: Character }) {
   // Sa propre fiche ne compte pas : on l'écarte de la recherche.
   const namesakes = useNamesakes(draft.server_id, draft.name, draft.ingame_name, character.id)
   const parts = formParts({ draft, set, errors, servers: sameGame, server, mode: 'free', namesakes })
-  const groups: { title: string; fields: (keyof Draft)[] }[] = [
-    { title: 'Qui est-ce ?', fields: ['name', 'server_id', 'gender'] },
-    { title: 'En jeu', fields: ['class', 'level', 'ingame_name', 'play_days', 'play_periods'] },
-    { title: 'Son histoire', fields: [...STORY_FIELDS] },
-    { title: 'Hors RP', fields: ['ooc_note'] },
-  ]
+  const groups = FORM_GROUPS
 
   return (
     <form onSubmit={submit} noValidate className={styles.stack}>
@@ -228,7 +222,7 @@ function EditCharacterPage() {
     <main className={styles.page}>
       <PageTitle>{query.data ? `Modifier la fiche ${ofName(query.data.name)}` : 'Modifier la fiche'}</PageTitle>
       {/* Le nom enregistré, pas celui en cours de saisie : on sait toujours quelle fiche on modifie. */}
-      <h1 className={styles.title}>{query.data ? `Modifier la fiche ${ofName(query.data.name)}` : 'Modifier la fiche'}</h1>
+      <h1 className={`paper-tag ${styles.title}`}>{query.data ? `Modifier la fiche ${ofName(query.data.name)}` : 'Modifier la fiche'}</h1>
       {query.isPending ? null : query.isError ? (
         <Notice tone="error">
           <p>Le panneau est inaccessible pour l'instant. Réessaie dans un moment.</p>

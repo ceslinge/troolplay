@@ -8,13 +8,24 @@ from datetime import UTC, datetime
 
 import pytest
 from fastapi.testclient import TestClient
+from pwdlib import PasswordHash
+from pwdlib.hashers.argon2 import Argon2Hasher
 from sqlalchemy.orm import Session
+from support import STORY_TEXT
 
+from backend.accounts import security
 from backend.accounts.models import User
 from backend.accounts.security import hash_password
 from backend.db import engine, get_session
 from backend.main import app
 from backend.servers.models import GameServer
+
+# Argon2 au réglage le plus léger : c'est le même algorithme et le même code, mais un
+# hachage de production coûte volontairement cher, et les tests en font des centaines.
+security._hasher = PasswordHash(
+    (Argon2Hasher(time_cost=1, memory_cost=1024, parallelism=1),)
+)
+security._DUMMY_HASH = security._hasher.hash("pas-un-vrai-mot-de-passe")
 
 
 @pytest.fixture
@@ -147,3 +158,18 @@ def mine(me: TestClient, server: GameServer) -> int:
     response = me.post("/characters", json={"name": "Maëlis", "server_id": server.id})
     assert response.status_code == 201
     return response.json()["id"]
+
+
+@pytest.fixture
+def story(me: TestClient, mine: int) -> int:
+    """Une histoire publiée du propriétaire, signée par son personnage."""
+    created = me.post(
+        "/stories",
+        json={
+            "character_id": mine,
+            "title": "La nuit",
+            "body": STORY_TEXT,
+        },
+    ).json()
+    me.post(f"/stories/{created['id']}/publish")
+    return created["id"]

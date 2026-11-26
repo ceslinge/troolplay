@@ -15,7 +15,7 @@ function Cases() {
   return (
     <main className={styles.page}>
       <PageTitle>Signalements</PageTitle>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h1>Signalements</h1>
         <Link to="/equipe" className={styles.crumb}>
           Espace équipe

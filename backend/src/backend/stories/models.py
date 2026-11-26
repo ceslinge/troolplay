@@ -7,14 +7,13 @@ from sqlalchemy import (
     Index,
     String,
     Text,
-    func,
     text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.characters.models import Character
-from backend.db import Base
+from backend.db import Base, Timestamps
 
 # Ce qui attend le lecteur : il choisit avant de lire (docs/api.md, « Les histoires »).
 CONTENT_WARNINGS = (
@@ -30,7 +29,7 @@ CONTENT_WARNINGS = (
 _WARNINGS_SQL = ", ".join(f"'{w}'" for w in CONTENT_WARNINGS)
 
 
-class Story(Base):
+class Story(Timestamps, Base):
     """Une histoire : le compte la possède, un de ses personnages la signe.
 
     Elle part avec le compte, mais survit à son personnage : elle perd alors sa signature.
@@ -64,11 +63,5 @@ class Story(Base):
     author_note: Mapped[str | None] = mapped_column(String(1000))
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     hidden_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
-    )
 
     character: Mapped[Character | None] = relationship()

@@ -84,7 +84,7 @@ function Case({ target, id }: { target: Target; id: number }) {
   return (
     <>
       <PageTitle>{`Dossier : ${c.label}`}</PageTitle>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h1>{c.label}</h1>
         <Link to="/equipe/signalements" className={styles.crumb}>
           Tous les dossiers

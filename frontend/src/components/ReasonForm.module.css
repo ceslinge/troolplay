@@ -12,30 +12,3 @@
   margin: 0;
   font-size: 1.125rem;
 }
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--encre-douce);
-}
-
-.field textarea {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--medaillon-bord);
-  border-radius: 4px;
-  background: var(--papier);
-  color: var(--encre);
-  font: inherit;
-  resize: vertical;
-}
-
-.hint {
-  font-size: 0.8125rem;
-  color: var(--encre-douce);
-}

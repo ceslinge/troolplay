@@ -116,7 +116,7 @@ function Contests() {
   return (
     <main className={styles.page}>
       <PageTitle>Contestations</PageTitle>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h1>Contestations</h1>
         <Link to="/equipe" className={styles.crumb}>
           Espace équipe

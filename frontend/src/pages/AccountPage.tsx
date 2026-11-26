@@ -30,7 +30,7 @@ function MyCharacters() {
 
   return (
     <section className={styles.mine}>
-      <div className={styles.mineHead}>
+      <div className={`paper-tag ${styles.mineHead}`}>
         <h2 className={styles.title}>Mes personnages</h2>
         <div className={styles.mineActions}>
           {count > 1 && (

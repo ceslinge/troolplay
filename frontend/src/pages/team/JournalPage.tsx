@@ -8,6 +8,7 @@ import { ACTION_LABELS, actorLabel, entryDetail, hasTarget, teamDate } from '../
 import JournalTarget from './JournalTarget'
 import TeamGuard from './TeamGuard'
 import styles from './Team.module.css'
+import Pagination from '../../components/Pagination'
 
 const memberLabel = (m: TeamMember) => `compte n°${m.id}${m.characters.length ? ` (${m.characters.slice(0, 2).join(', ')})` : ''}`
 
@@ -44,7 +45,7 @@ function Journal() {
   return (
     <main className={styles.page}>
       <PageTitle>Journal de modération</PageTitle>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h1>Journal</h1>
         <Link to="/equipe" className={styles.crumb}>
           Espace équipe
@@ -100,19 +101,7 @@ function Journal() {
           <p className={styles.muted}>{journal.isPending ? 'On ouvre le journal…' : 'Rien au journal pour l’instant.'}</p>
         )}
       </Sheet>
-      {pages > 1 && (
-        <nav className={styles.pagination} aria-label="Pages">
-          <button type="button" disabled={page <= 1} onClick={() => show({ page: page - 1 })}>
-            Plus récentes
-          </button>
-          <span>
-            Page {page} sur {pages}
-          </span>
-          <button type="button" disabled={page >= pages} onClick={() => show({ page: page + 1 })}>
-            Plus anciennes
-          </button>
-        </nav>
-      )}
+      <Pagination page={page} pages={pages} onPage={(p) => show({ page: p })} previous="Plus récentes" next="Plus anciennes" />
     </main>
   )
 }

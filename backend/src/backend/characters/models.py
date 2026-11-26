@@ -9,18 +9,17 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     false,
-    func,
     text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.characters.classes import CLASS_VALUES_SQL
-from backend.db import Base
+from backend.db import Base, Timestamps
 from backend.servers.models import GameServer
 
 
-class Character(Base):
+class Character(Timestamps, Base):
     __tablename__ = "characters"
     __table_args__ = (
         CheckConstraint(
@@ -77,12 +76,6 @@ class Character(Base):
     hidden_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # La place du personnage dans la barre de son joueur, choisie par lui.
     position: Mapped[int] = mapped_column(SmallInteger, server_default="0")
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
-    )
 
     server: Mapped[GameServer | None] = relationship()
     hangouts: Mapped[list["CharacterHangout"]] = relationship(

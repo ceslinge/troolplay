@@ -4,23 +4,13 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from support import STORY_TEXT
 
 from backend.accounts.models import User
 from backend.characters.models import Character
 from backend.moderation.models import Report
 from backend.moderation.routes import REPORT_LIMIT
 from backend.stories.models import Story
-
-TEXT = "Le vent tournait. *Encore une nuit sans sommeil*, pensa-t-elle."
-
-
-@pytest.fixture
-def story(me: TestClient, mine: int) -> int:
-    created = me.post(
-        "/stories", json={"character_id": mine, "title": "La nuit", "body": TEXT}
-    ).json()
-    me.post(f"/stories/{created['id']}/publish")
-    return created["id"]
 
 
 def reports(session: Session) -> list[Report]:
@@ -63,7 +53,7 @@ def test_a_member_reports_a_story_with_a_copy_of_it(
     (report,) = reports(session)
     assert report.target_story_id == story
     assert report.details == "Vise un joueur précis."
-    assert report.snapshot["body"] == TEXT
+    assert report.snapshot["body"] == STORY_TEXT
     assert "is_mine" not in report.snapshot
 
 
@@ -75,7 +65,7 @@ def test_the_copy_keeps_what_was_reported_even_if_it_changes(
     )
     me.patch(f"/stories/{story}", json={"body": "Tout a été réécrit."})
 
-    assert reports(session)[0].snapshot["body"] == TEXT
+    assert reports(session)[0].snapshot["body"] == STORY_TEXT
 
 
 def test_nobody_reports_their_own_content(

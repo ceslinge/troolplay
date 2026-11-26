@@ -46,7 +46,7 @@ function CharacterOrder({ characters }: Props) {
   }
 
   return (
-    <ol className={styles.list}>
+    <ol className={`paper-tag ${styles.list}`}>
       {characters.map((c, index) => (
         <li key={c.id} className={styles.row}>
           <span className={styles.rank} aria-hidden="true">

@@ -3,6 +3,7 @@ import { ApiError } from '../api/client'
 import FormActions from './FormActions'
 import Notice from './Notice'
 import styles from './ReasonForm.module.css'
+import Field from './Field'
 
 type Props = {
   /** Ce qu'on s'apprête à faire, en clair : « Masquer cette histoire ». */
@@ -42,11 +43,15 @@ function ReasonForm({ title, hint, confirm, danger, busy, error, onConfirm, onCa
         </Notice>
       )}
       {children}
-      <label className={styles.field}>
-        <span className={styles.label}>La raison</span>
-        <textarea value={reason} onChange={(event) => setReason(event.target.value)} rows={3} maxLength={1000} />
-        <span className={styles.hint}>{hint ?? 'Elle est envoyée à la personne concernée, et gardée au journal.'}</span>
-      </label>
+      <Field
+        label="La raison"
+        name="reason"
+        value={reason}
+        onChange={setReason}
+        rows={3}
+        maxLength={1000}
+        hint={hint ?? 'Elle est envoyée à la personne concernée, et gardée au journal.'}
+      />
       <FormActions confirm={confirm} onCancel={onCancel} busy={busy} disabled={reason.trim().length < 3 || !ready} danger={danger} />
     </form>
   )

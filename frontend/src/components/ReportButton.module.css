@@ -54,18 +54,3 @@
   margin-top: 0.3rem;
   accent-color: var(--bois);
 }
-
-.details {
-  display: flex;
-  flex-direction: column;
-}
-
-.details textarea {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--medaillon-bord);
-  border-radius: 4px;
-  background: var(--papier);
-  color: var(--encre);
-  font: inherit;
-  resize: vertical;
-}

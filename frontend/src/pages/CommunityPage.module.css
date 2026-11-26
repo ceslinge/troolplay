@@ -31,9 +31,6 @@
   flex-wrap: wrap;
   gap: 0.375rem;
   padding: 0.375rem;
-  background: var(--papier);
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 .tab {
@@ -92,46 +89,11 @@
   min-height: 2.75rem;
 }
 
-.count {
-  margin: 0;
-  align-self: flex-start;
-  padding: 0.25rem 0.75rem;
-  background: var(--bois);
-  color: var(--laiton);
-  border-radius: 2px;
-  font-weight: 600;
-}
-
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
   gap: 1.25rem;
   align-items: start;
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  color: var(--papier);
-}
-
-.pagination button {
-  min-height: 2.75rem;
-  padding: 0 1rem;
-  border: 0;
-  border-radius: 4px;
-  background: var(--papier);
-  color: var(--bois);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  opacity: 0.5;
-  cursor: default;
 }
 
 .tab {
@@ -144,7 +106,6 @@
   gap: 1.5rem 1.25rem;
   align-items: start;
 }
-
 
 /* « Affiner » n'existe que sur téléphone : sur grand écran, les filtres restent toujours visibles. */
 .refine {
@@ -182,7 +143,4 @@
   margin: 0;
   align-self: flex-start;
   padding: 0.5rem 0.875rem;
-  background: var(--papier);
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }

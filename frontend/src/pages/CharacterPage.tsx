@@ -150,7 +150,7 @@ function CharacterPage() {
         </div>
       </Sheet>
 
-      <nav className={styles.summary} aria-label="Sections de la fiche">
+      <nav className={`paper-tag ${styles.summary}`} aria-label="Sections de la fiche">
         {sections.map((section) => (
           <a key={section.id} href={`#${section.id}`} title={section.title} aria-label={section.title}>
             <Medallion icon={section.icon} />
@@ -243,7 +243,7 @@ function CharacterPage() {
       </div>
 
       <section id="histoires" className={styles.stories} aria-labelledby="histoires-titre">
-        <div className={styles.storiesHead}>
+        <div className={`paper-tag ${styles.storiesHead}`}>
           <Medallion icon="quill" />
           <h2 id="histoires-titre">Ses histoires</h2>
           {c.is_mine && <Link to="/histoires/nouvelle">Écrire une histoire</Link>}

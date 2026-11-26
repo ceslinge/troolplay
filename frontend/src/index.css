@@ -101,6 +101,25 @@ a:hover {
   text-decoration-color: currentColor;
 }
 
+/* Une étiquette de papier posée sur le bois : un titre, des onglets, un bandeau. Chaque
+   usage ajoute ses marges et sa mise en page dans son module. */
+.paper-tag {
+  background: var(--papier);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+/* Un bandeau sombre posé sur le bois : le nombre de résultats d'une liste. */
+.tally {
+  margin: 0;
+  align-self: flex-start;
+  padding: 0.25rem 0.75rem;
+  background: var(--bois);
+  color: var(--laiton);
+  border-radius: 2px;
+  font-weight: 600;
+}
+
 /* Une note discrète sous un titre ou un bouton : grise, un peu plus petite. */
 .hint {
   margin: 0;

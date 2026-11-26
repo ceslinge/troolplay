@@ -17,7 +17,7 @@ function MyStories() {
 
   return (
     <section className={styles.section}>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h2 className={styles.title}>Mes histoires</h2>
         {drafts >= MAX_DRAFTS ? (
           <span className={styles.note}>

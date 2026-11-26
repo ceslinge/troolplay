@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from support import journal
+from support import STORY_TEXT, journal
 
 from backend.accounts.models import User, UserSession
 from backend.characters.models import Character
@@ -12,17 +12,7 @@ from backend.main import app
 from backend.moderation.models import Report
 from backend.stories.models import Story
 
-TEXT = "Le vent tournait. *Encore une nuit sans sommeil*, pensa-t-elle."
 WHY = {"reason": "Vise un joueur précis, contraire à la charte."}
-
-
-@pytest.fixture
-def story(me: TestClient, mine: int) -> int:
-    created = me.post(
-        "/stories", json={"character_id": mine, "title": "La nuit", "body": TEXT}
-    ).json()
-    me.post(f"/stories/{created['id']}/publish")
-    return created["id"]
 
 
 @pytest.fixture
@@ -78,7 +68,7 @@ def test_a_case_shows_the_owner_account_without_any_email(
 
     assert case["owner"]["id"] == owner.id
     assert [c["name"] for c in case["owner"]["characters"]] == ["Maëlis"]
-    assert case["reports"][0]["snapshot"]["body"] == TEXT
+    assert case["reports"][0]["snapshot"]["body"] == STORY_TEXT
     assert case["reports"][0]["reporter"]["reports_sent"] == 1
     assert "@" not in str(case)
 

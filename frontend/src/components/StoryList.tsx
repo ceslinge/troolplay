@@ -7,6 +7,8 @@ import Menu from './Menu'
 import StoryCard from './StoryCard'
 import styles from './StoryList.module.css'
 import { plural, ofName } from '../lib/text'
+import Pagination from './Pagination'
+import Notice from './Notice'
 
 type Group = { key: number; stories: StorySummary[] }
 
@@ -62,7 +64,11 @@ function ServerStories({ filters, onPage, empty }: Props) {
 
   if (me.isPending) return null
   if (!me.data) return <MembersOnly />
-  if (stories.isError) return <p className={styles.count}>Impossible de charger les histoires. Réessaie dans un moment.</p>
+  if (stories.isError) return (
+      <Notice tone="error">
+        <p>Impossible de charger les histoires. Réessaie dans un moment.</p>
+      </Notice>
+    )
 
   const total = stories.data?.total ?? 0
   const page = filters.page ?? 1
@@ -70,7 +76,7 @@ function ServerStories({ filters, onPage, empty }: Props) {
 
   return (
     <>
-      <p className={styles.count} aria-live="polite">
+      <p className="tally" aria-live="polite">
         {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : plural(total, 'histoire')}
       </p>
       <div className={styles.list}>
@@ -78,19 +84,7 @@ function ServerStories({ filters, onPage, empty }: Props) {
           <StoryGroup key={group.key} group={group} />
         ))}
       </div>
-      {pages > 1 && onPage && (
-        <nav className={styles.pagination} aria-label="Pages">
-          <button type="button" disabled={page <= 1} onClick={() => onPage(page - 1)}>
-            Plus récentes
-          </button>
-          <span>
-            Page {page} sur {pages}
-          </span>
-          <button type="button" disabled={page >= pages} onClick={() => onPage(page + 1)}>
-            Plus anciennes
-          </button>
-        </nav>
-      )}
+      {onPage && <Pagination page={page} pages={pages} onPage={onPage} previous="Plus récentes" next="Plus anciennes" className={styles.pagination} />}
     </>
   )
 }
@@ -117,7 +111,11 @@ function CharacterStories({ filters, empty }: Props) {
 
   if (me.isPending) return null
   if (!me.data) return <MembersOnly />
-  if (stories.isError) return <p className={styles.count}>Impossible de charger les histoires. Réessaie dans un moment.</p>
+  if (stories.isError) return (
+      <Notice tone="error">
+        <p>Impossible de charger les histoires. Réessaie dans un moment.</p>
+      </Notice>
+    )
 
   const items = stories.data?.pages.flatMap((page) => page.items) ?? []
   const total = stories.data?.pages[0]?.total ?? 0
@@ -125,7 +123,7 @@ function CharacterStories({ filters, empty }: Props) {
   return (
     <>
       <div className={styles.bar}>
-        <p className={styles.count} aria-live="polite">
+        <p className="tally" aria-live="polite">
           {stories.isPending ? 'On parcourt le panneau…' : total === 0 ? empty : plural(total, 'histoire')}
         </p>
         {total > 1 && (
