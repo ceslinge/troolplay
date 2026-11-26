@@ -78,7 +78,7 @@ function Requests() {
   return (
     <main className={styles.page}>
       <PageTitle>Demandes</PageTitle>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h1>Demandes</h1>
         <Link to="/equipe" className={styles.crumb}>
           Espace équipe

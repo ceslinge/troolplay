@@ -127,7 +127,7 @@ function Servers() {
   return (
     <main className={styles.page}>
       <PageTitle>Serveurs</PageTitle>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h1>Serveurs</h1>
         <Link to="/equipe" className={styles.crumb}>
           Espace équipe

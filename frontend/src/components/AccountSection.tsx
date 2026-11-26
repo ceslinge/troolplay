@@ -21,7 +21,7 @@ function AccountSection({ title, seed, id, ready = true, children }: Props) {
 
   return (
     <section className={styles.section} id={id}>
-      <h2 className={styles.title}>{title}</h2>
+      <h2 className={`paper-tag ${styles.title}`}>{title}</h2>
       <Sheet seed={seed} contentClassName={styles.card}>
         {children}
       </Sheet>

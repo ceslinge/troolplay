@@ -211,3 +211,11 @@ export function formParts({ draft, set, errors, servers, server, mode, namesakes
     ),
   } as Record<keyof Draft, ReactNode>
 }
+
+/** Les parties d'une fiche, à la création comme à la modification. */
+export const FORM_GROUPS: { title: string; fields: (keyof Draft)[] }[] = [
+  { title: 'Qui est-ce ?', fields: ['name', 'server_id', 'gender'] },
+  { title: 'En jeu', fields: ['class', 'level', 'ingame_name', 'play_days', 'play_periods'] },
+  { title: 'Son histoire', fields: [...STORY_FIELDS] },
+  { title: 'Hors RP', fields: ['ooc_note'] },
+]

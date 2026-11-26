@@ -53,7 +53,7 @@ function Account({ id }: { id: number }) {
   return (
     <>
       <PageTitle>{`Compte n°${a.id}`}</PageTitle>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h1>Compte n°{a.id}</h1>
         <Link to="/equipe" className={styles.crumb}>
           Espace équipe

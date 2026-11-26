@@ -1,13 +1,3 @@
-.count {
-  margin: 0;
-  align-self: flex-start;
-  padding: 0.25rem 0.75rem;
-  background: var(--bois);
-  color: var(--laiton);
-  border-radius: 2px;
-  font-weight: 600;
-}
-
 /* Une colonne de lecture : les histoires se parcourent de haut en bas, comme un journal. */
 .list {
   display: flex;
@@ -36,30 +26,9 @@
   cursor: pointer;
 }
 
+/* La pagination garde la largeur de la liste. */
 .pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
   max-width: 46rem;
-  color: var(--papier);
-}
-
-.pagination button {
-  min-height: 2.75rem;
-  padding: 0 1rem;
-  border: 0;
-  border-radius: 4px;
-  background: var(--papier);
-  color: var(--bois);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  opacity: 0.5;
-  cursor: default;
 }
 
 /* Le nombre d'histoires, et le choix de l'ordre à côté. */

@@ -6,6 +6,7 @@ import { useMe } from '../lib/useMe'
 import FormActions from './FormActions'
 import Notice from './Notice'
 import styles from './ReportButton.module.css'
+import Field from './Field'
 
 // Dans l'ordre de la charte de modération : du hors-sujet au plus grave.
 const REASONS: { value: ReportReason; label: string }[] = [
@@ -89,10 +90,14 @@ function ReportButton({ target, targetId, mine }: Props) {
           </label>
         ))}
       </fieldset>
-      <label className={styles.details}>
-        <span className={styles.legend}>{reason === 'other' ? 'En quelques mots' : 'Préciser, si tu veux'}</span>
-        <textarea value={details} onChange={(event) => setDetails(event.target.value)} maxLength={DETAILS_MAX} rows={3} />
-      </label>
+      <Field
+        label={reason === 'other' ? 'En quelques mots' : 'Préciser, si tu veux'}
+        name="details"
+        value={details}
+        onChange={setDetails}
+        rows={3}
+        maxLength={DETAILS_MAX}
+      />
       <FormActions confirm="Envoyer le signalement" onCancel={() => setOpen(false)} busy={send.isPending} disabled={!reason || needsDetails} />
     </form>
   )

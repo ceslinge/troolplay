@@ -23,7 +23,7 @@ function TeamHome() {
   return (
     <main className={styles.page}>
       <PageTitle>Espace équipe</PageTitle>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h1>Espace équipe</h1>
         <a href="/moderation" className={styles.crumb}>
           La charte de modération

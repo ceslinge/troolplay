@@ -23,6 +23,7 @@ import {
   saveDraft,
   toCreateRequest,
   withChange,
+  FORM_GROUPS,
 } from './characterForm'
 import { setActiveCharacter, useMyCharacters } from '../lib/activeCharacter'
 import PageTitle from '../components/PageTitle'
@@ -120,12 +121,7 @@ function CreateCharacterPage() {
 
   const parts = formParts({ draft, set, errors, servers: servers.data ?? [], server, mode, namesakes })
 
-  const groups: { title: string; fields: (keyof Draft)[] }[] = [
-    { title: 'Qui est-ce ?', fields: ['name', 'server_id', 'gender'] },
-    { title: 'En jeu', fields: ['class', 'level', 'ingame_name', 'play_days', 'play_periods'] },
-    { title: 'Son histoire', fields: [...STORY_FIELDS] },
-    { title: 'Hors RP', fields: ['ooc_note'] },
-  ]
+  const groups = FORM_GROUPS
   const last = step === STEPS.length - 1
   const firstStepDone = draft.name.trim().length >= 2 && draft.server_id !== ''
 
@@ -137,7 +133,7 @@ function CreateCharacterPage() {
     return (
       <main className={styles.page}>
         <PageTitle>Présenter un nouveau personnage</PageTitle>
-        <h1 className={styles.title}>Présenter un nouveau personnage</h1>
+        <h1 className={`paper-tag ${styles.title}`}>Présenter un nouveau personnage</h1>
         <Notice>
           <p>
             Tu ne peux pas présenter de nouveau personnage : un compte peut en avoir {MAX_CHARACTERS} au plus. Pour faire de la
@@ -159,7 +155,7 @@ function CreateCharacterPage() {
     <main className={styles.page}>
       <PageTitle>Présenter un nouveau personnage</PageTitle>
       <div className={styles.top}>
-        <h1 className={styles.title}>Présenter un nouveau personnage</h1>
+        <h1 className={`paper-tag ${styles.title}`}>Présenter un nouveau personnage</h1>
       </div>
       <p className={styles.lead}>
         {me.data

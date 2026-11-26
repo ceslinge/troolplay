@@ -27,7 +27,7 @@ function Roles() {
   return (
     <main className={styles.page}>
       <PageTitle>Rôles</PageTitle>
-      <div className={styles.head}>
+      <div className={`paper-tag ${styles.head}`}>
         <h1>Rôles</h1>
         <Link to="/equipe" className={styles.crumb}>
           Espace équipe

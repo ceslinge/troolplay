@@ -554,7 +554,7 @@ function WriteStoryPage() {
   const page = (content: ReactNode) => (
     <main className={styles.page}>
       <PageTitle>{heading}</PageTitle>
-      <h1 className={styles.title}>{heading}</h1>
+      <h1 className={`paper-tag ${styles.title}`}>{heading}</h1>
       {content}
     </main>
   )

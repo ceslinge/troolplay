@@ -21,6 +21,7 @@ import { plural, ofName } from '../lib/text'
 import Notice from '../components/Notice'
 import StatusPage from '../components/StatusPage'
 import buttons from '../components/Button.module.css'
+import Pagination from '../components/Pagination'
 import { newSheetOn } from '../lib/next'
 
 /** /communaute tout court : le serveur du personnage actif, ou à défaut le premier. */
@@ -175,7 +176,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
           />
         </Sheet>
 
-        <nav className={styles.tabs} aria-label="Sections de la communauté">
+        <nav className={`paper-tag ${styles.tabs}`} aria-label="Sections de la communauté">
           <Link
             to={tabLink('lieux')}
             className={`${styles.tab} ${tab === 'lieux' ? styles.current : ''}`}
@@ -260,7 +261,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
       ) : tab === 'lieux' ? (
         <>
           {/* En panne, on ne compte rien : « personne » serait faux. */}
-          <p className={styles.count} aria-live="polite" hidden={places.isError}>
+          <p className="tally" aria-live="polite" hidden={places.isError}>
             {places.isPending
               ? 'On parcourt le panneau…'
               : places.data?.length
@@ -280,7 +281,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
         </>
       ) : (
         <>
-          <p className={styles.count} aria-live="polite" hidden={characters.isError}>
+          <p className="tally" aria-live="polite" hidden={characters.isError}>
             {characters.isPending
               ? 'On parcourt le panneau…'
               : total === 0
@@ -295,7 +296,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
           )}
           {/* Un serveur encore vide, sans filtre : on invite à y présenter le premier (#139). */}
           {characters.isSuccess && total === 0 && active === 0 && (
-            <p className={styles.invite}>
+            <p className={`paper-tag ${styles.invite}`}>
               <Link to={newSheetOn(server.id)}>Présenter le premier personnage {ofName(server.name)}</Link>
             </p>
           )}
@@ -306,19 +307,7 @@ function CommunityPage({ tab }: { tab: Tab }) {
             ))}
           </div>
 
-          {pages > 1 && (
-            <nav className={styles.pagination} aria-label="Pages">
-              <button type="button" disabled={filters.page <= 1} onClick={() => goToPage(filters.page - 1)}>
-                Précédents
-              </button>
-              <span>
-                Page {filters.page} sur {pages}
-              </span>
-              <button type="button" disabled={filters.page >= pages} onClick={() => goToPage(filters.page + 1)}>
-                Suivants
-              </button>
-            </nav>
-          )}
+          <Pagination page={filters.page} pages={pages} onPage={goToPage} previous="Précédents" next="Suivants" />
         </>
       )}
     </main>

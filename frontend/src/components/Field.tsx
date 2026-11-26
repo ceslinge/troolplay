@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { type ChangeEvent, useId } from 'react'
 import styles from './Field.module.css'
 
 type Props = {
@@ -35,38 +35,26 @@ function Field({
 }: Props) {
   const id = useId()
   const describedBy = [hint && `${id}-aide`, warning && `${id}-attention`, error && `${id}-erreur`].filter(Boolean).join(' ') || undefined
+  // Ce que le champ a en commun, sur une ligne ou sur plusieurs.
+  const common = {
+    id,
+    name,
+    value,
+    onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(event.target.value),
+    required,
+    maxLength,
+    'aria-invalid': error ? true : undefined,
+    'aria-describedby': describedBy,
+  }
   return (
     <div className={styles.field}>
       <label htmlFor={id} className={styles.label}>
         {label}
       </label>
       {rows ? (
-        <textarea
-          id={id}
-          name={name}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          required={required}
-          maxLength={maxLength}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={describedBy}
-          rows={rows}
-          className={`${styles.input} ${styles.textarea}`}
-        />
+        <textarea {...common} rows={rows} className={`${styles.input} ${styles.textarea}`} />
       ) : (
-        <input
-          id={id}
-          name={name}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          required={required}
-          maxLength={maxLength}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={describedBy}
-          type={type}
-          autoComplete={autoComplete}
-          className={styles.input}
-        />
+        <input {...common} type={type} autoComplete={autoComplete} className={styles.input} />
       )}
       {hint && (
         <span id={`${id}-aide`} className={styles.hint}>
